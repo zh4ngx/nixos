@@ -34,6 +34,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    android-studio
     jetbrains.idea-ultimate
     jetbrains.rust-rover
     gnomeExtensions.appindicator
@@ -89,6 +90,7 @@
     enableBashIntegration = true;
   };
 
+  programs.adb.enable = true;
   programs.bat.enable = true;
   programs.ripgrep.enable = true;
   programs.rio = {

@@ -92,7 +92,7 @@
   users.users.andy = {
     isNormalUser = true;
     description = "Andy";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "abdusers" ];
     packages = with pkgs; [
       firefox
     #  thunderbird

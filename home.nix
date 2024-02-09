@@ -90,7 +90,6 @@
     enableBashIntegration = true;
   };
 
-  programs.adb.enable = true;
   programs.bat.enable = true;
   programs.ripgrep.enable = true;
   programs.rio = {

@@ -135,7 +135,6 @@
       rust-lang.rust-analyzer
       tamasfe.even-better-toml
     ];
-    haskell.enable = true;
   };
 
   programs.emacs = {

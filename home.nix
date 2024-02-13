@@ -129,11 +129,13 @@
       arrterian.nix-env-selector
       dart-code.dart-code
       dart-code.flutter
+      haskell.haskell
       jnoortheen.nix-ide
       mkhl.direnv
       rust-lang.rust-analyzer
       tamasfe.even-better-toml
     ];
+    haskell.enable = true;
   };
 
   programs.emacs = {

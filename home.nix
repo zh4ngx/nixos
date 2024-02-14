@@ -131,8 +131,10 @@
       dart-code.flutter
       haskell.haskell
       jnoortheen.nix-ide
+      justusadam.language-haskell
       mkhl.direnv
       rust-lang.rust-analyzer
+      scala-lang.scala
       tamasfe.even-better-toml
     ];
   };

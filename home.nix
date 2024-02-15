@@ -133,6 +133,7 @@
       jnoortheen.nix-ide
       justusadam.language-haskell
       mkhl.direnv
+      ms-python.python
       rust-lang.rust-analyzer
       scala-lang.scala
       tamasfe.even-better-toml

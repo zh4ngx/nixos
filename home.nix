@@ -112,7 +112,8 @@
 
   programs.eza = {
     enable = true;
-    enableAliases = true;
+    enableBashIntegration = true;
+    enableFishIntegration = true;
   };
 
   programs.firefox.enable = true;

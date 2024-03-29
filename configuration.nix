@@ -151,4 +151,8 @@
       defaultNetwork.settings.dns_enabled = true;
     };
   };
+
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
+  '';
 }

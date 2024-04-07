@@ -135,6 +135,7 @@
       justusadam.language-haskell
       mkhl.direnv
       ms-python.python
+      ms-toolsai.jupyter
       rust-lang.rust-analyzer
       scala-lang.scala
       tamasfe.even-better-toml

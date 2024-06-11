@@ -35,7 +35,7 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     android-studio
-    jetbrains.idea-ultimate
+    jetbrains.idea-community
     jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock

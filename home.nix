@@ -166,7 +166,7 @@
 
   programs.mpv = {
     enable = true;
-    scripts = [ pkgs.mpvScripts.uosc ];
+    # scripts = [ pkgs.mpvScripts.uosc ];
     config = {
       vo = "gpu-next";
       gpu-api = "vulkan";

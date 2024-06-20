@@ -35,7 +35,7 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     android-studio
-    jetbrains.idea-community
+    # jetbrains.idea-community
     jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
@@ -72,6 +72,7 @@
   home.sessionVariables = {
     EDITOR = "codium";
     BROWSER = "firefox";
+    CHROME_EXECUTABLE = "google-chrome-stable";
     TERMINAL = "rio";
   };
 

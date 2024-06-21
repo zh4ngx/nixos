@@ -103,7 +103,10 @@
   nixpkgs.config.allowUnfree = true;
 
   # Enable Flakes and the new command-line tool
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    auto-optimise-store = true; 
+  }
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

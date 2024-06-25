@@ -35,7 +35,7 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     android-studio
-    # jetbrains.idea-community
+    jetbrains.idea-community
     jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
@@ -167,7 +167,7 @@
 
   programs.mpv = {
     enable = true;
-    # scripts = [ pkgs.mpvScripts.uosc ];
+    scripts = [ pkgs.mpvScripts.uosc ];
     config = {
       vo = "gpu-next";
       gpu-api = "vulkan";

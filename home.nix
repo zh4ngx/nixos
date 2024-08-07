@@ -36,6 +36,7 @@
     # '')
     android-studio
     jetbrains.idea-community
+    jetbrains.pycharm-community
     jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock

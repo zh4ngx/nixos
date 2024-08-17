@@ -140,6 +140,7 @@
       ms-toolsai.jupyter
       rust-lang.rust-analyzer
       scala-lang.scala
+      redhat.vscode-yaml
       tamasfe.even-better-toml
     ];
   };

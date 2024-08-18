@@ -62,6 +62,13 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
+  # Enable OpenGL and add video drivers
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+  services.xserver.videoDrivers = [ "amdgpu" ];
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -92,14 +99,14 @@
     isNormalUser = true;
     description = "Andy";
     extraGroups = [ "networkmanager" "wheel" "abdusers" "kvm"];
-    packages = with pkgs; [
-      firefox
-    #  thunderbird
-    ];
   };
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    android_sdk.accept_license = true;
+    allowUnfree = true;
+  };
+  hardware.enableAllFirmware = true;
 
   # Enable Flakes and the new command-line tool
   nix.settings = {

@@ -34,7 +34,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    android-studio
+    android-studio-full
     jetbrains.idea-community
     jetbrains.pycharm-community
     jetbrains.rust-rover

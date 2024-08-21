@@ -97,14 +97,22 @@
     enable = true;
     settings = {
       window = {
-        background-opacity = 0.6;
-        blur = true;
-        height = 720;
         width = 1280;
+        height = 720;
+        opacity = 0.6;
+        blur = true;
       };
       shell = {
         program = "fish";
         args = [ ];
+      };
+      editor = {
+        program = "code";
+        args = [ ];
+      };
+      renderer = {
+        performance = "High";
+        backend = "Vulkan";
       };
     };
   };

@@ -138,16 +138,10 @@
     package = pkgs.vscodium;
     extensions = with pkgs.vscode-extensions; [
       arrterian.nix-env-selector
-      dart-code.dart-code
-      dart-code.flutter
       haskell.haskell
       jnoortheen.nix-ide
-      justusadam.language-haskell
       mkhl.direnv
-      ms-python.python
-      ms-toolsai.jupyter
       rust-lang.rust-analyzer
-      scala-lang.scala
       redhat.vscode-yaml
       tamasfe.even-better-toml
     ];

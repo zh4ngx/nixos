@@ -144,6 +144,7 @@
       rust-lang.rust-analyzer
       redhat.vscode-yaml
       tamasfe.even-better-toml
+      vadimcn.vscode-lldb
     ];
   };
 

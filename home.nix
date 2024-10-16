@@ -41,6 +41,7 @@
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
     gnomeExtensions.vitals
+    ngrok
     qbittorrent
     radeontop
   ];

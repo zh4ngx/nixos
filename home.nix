@@ -34,14 +34,12 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    android-studio-full
     jetbrains.idea-community
     jetbrains.pycharm-community
     jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
     gnomeExtensions.vitals
-    ngrok
     qbittorrent
     radeontop
   ];
@@ -74,7 +72,6 @@
   home.sessionVariables = {
     EDITOR = "codium";
     BROWSER = "firefox";
-    CHROME_EXECUTABLE = "google-chrome-stable";
     TERMINAL = "rio";
   };
 

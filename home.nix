@@ -37,6 +37,7 @@
     jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
+    gnomeExtensions.just-perfection
     gnomeExtensions.vitals
     qbittorrent
     radeontop
@@ -76,8 +77,7 @@
 
   targets.genericLinux.enable = true;
   xdg.mime.enable = true;
-  xdg.systemDirs.data =
-    [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
+  xdg.systemDirs.data = [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -104,7 +104,7 @@
         args = [ ];
       };
       editor = {
-        program = "code";
+        program = "zeditor";
         args = [ ];
       };
       renderer = {
@@ -147,7 +147,10 @@
 
   programs.emacs = {
     enable = true;
-    extraPackages = epkgs: [ epkgs.nix-mode epkgs.magit ];
+    extraPackages = epkgs: [
+      epkgs.nix-mode
+      epkgs.magit
+    ];
   };
 
   programs.git = {
@@ -155,11 +158,21 @@
     userName = "Andy Zhang";
     userEmail = "1329212+zhangbanger@users.noreply.github.com";
     extraConfig = {
-      color = { ui = "auto"; };
-      push = { default = "simple"; };
-      pull = { rebase = true; };
-      branch = { autosetuprebase = "always"; };
-      init = { defaultBranch = "main"; };
+      color = {
+        ui = "auto";
+      };
+      push = {
+        default = "simple";
+      };
+      pull = {
+        rebase = true;
+      };
+      branch = {
+        autosetuprebase = "always";
+      };
+      init = {
+        defaultBranch = "main";
+      };
     };
   };
 

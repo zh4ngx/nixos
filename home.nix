@@ -164,6 +164,7 @@
       };
       push = {
         default = "simple";
+        autoSetupRemote = true;
       };
       pull = {
         rebase = true;

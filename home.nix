@@ -157,7 +157,7 @@
   programs.git = {
     enable = true;
     userName = "Andy Zhang";
-    userEmail = "1329212+zhangbanger@users.noreply.github.com";
+    userEmail = "1329212+zh4ngx@users.noreply.github.com";
     extraConfig = {
       color = {
         ui = "auto";

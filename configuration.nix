@@ -158,6 +158,10 @@
     };
   };
 
+  services.udev.packages = with pkgs; [
+    apio-udev-rules
+  ];
+
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
   '';

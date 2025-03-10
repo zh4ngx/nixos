@@ -162,6 +162,9 @@
       color = {
         ui = "auto";
       };
+      core = {
+        editor = "code --wait";
+      };
       push = {
         default = "simple";
         autoSetupRemote = true;

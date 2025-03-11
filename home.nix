@@ -34,6 +34,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    android-studio-full
     beeper
     jetbrains.rust-rover
     gnomeExtensions.appindicator
@@ -74,6 +75,7 @@
     EDITOR = "codium";
     BROWSER = "firefox";
     TERMINAL = "rio";
+    CHROME_EXECUTABLE = "google-chrome-stable";
   };
 
   targets.genericLinux.enable = true;
@@ -163,7 +165,7 @@
         ui = "auto";
       };
       core = {
-        editor = "code --wait";
+        editor = "codium --wait";
       };
       push = {
         default = "simple";

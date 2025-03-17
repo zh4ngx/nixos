@@ -194,7 +194,6 @@
     config = {
       vo = "gpu-next";
       gpu-api = "vulkan";
-      af = "@normalize:loudnorm=tp=-2";
     };
   };
 }

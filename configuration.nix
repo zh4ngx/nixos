@@ -103,12 +103,6 @@
   };
   hardware.enableAllFirmware = true;
 
-  # Use OpenRazer
-  hardware.openrazer = {
-    enable = true;
-    users = ["andy"];
-  };
-
   # Enable Flakes and the new command-line tool
   nix.settings = {
     experimental-features = [

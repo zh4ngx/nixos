@@ -40,10 +40,8 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.just-perfection
     gnomeExtensions.vitals
-    polychromatic
     qbittorrent
     radeontop
-    zed-editor
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -72,14 +70,15 @@
   #
   # if you don't want to manage your shell through Home Manager.
   home.sessionVariables = {
-    EDITOR = "codium";
+    EDITOR = "zeditor";
     BROWSER = "firefox";
     TERMINAL = "rio";
   };
 
   targets.genericLinux.enable = true;
   xdg.mime.enable = true;
-  xdg.systemDirs.data = [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
+  xdg.systemDirs.data =
+    [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -132,27 +131,9 @@
     package = pkgs.google-chrome;
   };
 
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscodium;
-    profiles.default.extensions = with pkgs.vscode-extensions; [
-      arrterian.nix-env-selector
-      haskell.haskell
-      jnoortheen.nix-ide
-      mkhl.direnv
-      rust-lang.rust-analyzer
-      redhat.vscode-yaml
-      tamasfe.even-better-toml
-      vadimcn.vscode-lldb
-    ];
-  };
-
   programs.emacs = {
     enable = true;
-    extraPackages = epkgs: [
-      epkgs.nix-mode
-      epkgs.magit
-    ];
+    extraPackages = epkgs: [ epkgs.nix-mode epkgs.magit ];
   };
 
   programs.git = {
@@ -160,25 +141,15 @@
     userName = "Andy Zhang";
     userEmail = "1329212+zh4ngx@users.noreply.github.com";
     extraConfig = {
-      color = {
-        ui = "auto";
-      };
-      core = {
-        editor = "codium --wait";
-      };
+      color = { ui = "auto"; };
+      core = { editor = "zeditor"; };
       push = {
         default = "simple";
         autoSetupRemote = true;
       };
-      pull = {
-        rebase = true;
-      };
-      branch = {
-        autosetuprebase = "always";
-      };
-      init = {
-        defaultBranch = "main";
-      };
+      pull = { rebase = true; };
+      branch = { autosetuprebase = "always"; };
+      init = { defaultBranch = "main"; };
     };
   };
 
@@ -192,6 +163,15 @@
     config = {
       vo = "gpu-next";
       gpu-api = "vulkan";
+    };
+  };
+
+  programs.zed-editor = {
+    enable = true;
+    extensions = [ "nix" "toml" "wit" ];
+    extraPackages = [ pkgs.nixd pkgs.nixfmt ];
+    userSettings = {
+      languages = { Nix = { language_servers = [ "nixd" "!nil" ]; }; };
     };
   };
 }

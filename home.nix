@@ -35,7 +35,6 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     beeper
-    jetbrains.rust-rover
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
     gnomeExtensions.just-perfection

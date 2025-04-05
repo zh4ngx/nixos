@@ -7,26 +7,23 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    { nixpkgs, home-manager, ... }:
-    {
-      nixosConfigurations = {
-        nixos = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.andy = import ./home.nix;
+  outputs = { nixpkgs, home-manager, ... }: {
+    nixosConfigurations = {
+      nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.andy = import ./home.nix;
 
-              # Optionally, use home-manager.extraSpecialArgs to pass
-              # arguments to home.nix
-            }
-          ];
-        };
+            # Optionally, use home-manager.extraSpecialArgs to pass
+            # arguments to home.nix
+          }
+        ];
       };
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     };
+  };
 }

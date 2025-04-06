@@ -141,7 +141,7 @@
     userEmail = "1329212+zh4ngx@users.noreply.github.com";
     extraConfig = {
       color = { ui = "auto"; };
-      core = { editor = "zeditor"; };
+      core = { editor = "zeditor -w"; };
       push = {
         default = "simple";
         autoSetupRemote = true;

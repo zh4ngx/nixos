@@ -74,11 +74,6 @@
     TERMINAL = "rio";
   };
 
-  targets.genericLinux.enable = true;
-  xdg.mime.enable = true;
-  xdg.systemDirs.data =
-    [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
-
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 

@@ -163,7 +163,7 @@
   programs.zed-editor = {
     enable = true;
     extensions = [ "nix" "toml" "wit" ];
-    extraPackages = [ pkgs.nixd pkgs.nixfmt ];
+    extraPackages = [ pkgs.nixd pkgs.nixfmt-rfc-style ];
     userSettings = {
       languages = { Nix = { language_servers = [ "nixd" "!nil" ]; }; };
     };

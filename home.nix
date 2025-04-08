@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -127,7 +127,10 @@
 
   programs.emacs = {
     enable = true;
-    extraPackages = epkgs: [ epkgs.nix-mode epkgs.magit ];
+    extraPackages = epkgs: [
+      epkgs.nix-mode
+      epkgs.magit
+    ];
   };
 
   programs.git = {
@@ -135,15 +138,25 @@
     userName = "Andy Zhang";
     userEmail = "1329212+zh4ngx@users.noreply.github.com";
     extraConfig = {
-      color = { ui = "auto"; };
-      core = { editor = "zeditor -w"; };
+      color = {
+        ui = "auto";
+      };
+      core = {
+        editor = "zeditor -w";
+      };
       push = {
         default = "simple";
         autoSetupRemote = true;
       };
-      pull = { rebase = true; };
-      branch = { autosetuprebase = "always"; };
-      init = { defaultBranch = "main"; };
+      pull = {
+        rebase = true;
+      };
+      branch = {
+        autosetuprebase = "always";
+      };
+      init = {
+        defaultBranch = "main";
+      };
     };
   };
 
@@ -162,10 +175,24 @@
 
   programs.zed-editor = {
     enable = true;
-    extensions = [ "nix" "toml" "wit" ];
-    extraPackages = [ pkgs.nixd pkgs.nixfmt-rfc-style ];
+    extensions = [
+      "nix"
+      "toml"
+      "wit"
+    ];
+    extraPackages = [
+      pkgs.nixd
+      pkgs.nixfmt-rfc-style
+    ];
     userSettings = {
-      languages = { Nix = { language_servers = [ "nixd" "!nil" ]; }; };
+      languages = {
+        Nix = {
+          language_servers = [
+            "nixd"
+            "!nil"
+          ];
+        };
+      };
     };
   };
 }

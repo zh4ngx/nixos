@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -88,7 +88,12 @@
   users.users.andy = {
     isNormalUser = true;
     description = "Andy";
-    extraGroups = [ "networkmanager" "wheel" "abdusers" "kvm" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "abdusers"
+      "kvm"
+    ];
   };
 
   # Allow unfree packages
@@ -100,16 +105,18 @@
 
   # Enable Flakes and the new command-line tool
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     auto-optimise-store = true;
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs;
-    [
-      vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    ];
+  environment.systemPackages = with pkgs; [
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

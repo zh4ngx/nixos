@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1744919155,
-        "narHash": "sha256-IJksPW32V9gid9vDxoloJMRk+YGjxq5drFHBFeBkKU8=",
+        "lastModified": 1745016969,
+        "narHash": "sha256-nDK8Z+LsNWrUsQ1JjnndNB57lvCmvy2QZUoCakoJCcI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "72526a5f7cde2ef9075637802a1e2a8d2d658f70",
+        "rev": "67f60ebce88a89939fb509f304ac554bcdc5bfa6",
         "type": "github"
       },
       "original": {
@@ -22,16 +22,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1744927143,
-        "narHash": "sha256-eH5kVF35dqeBp8KZmd5z8zXx1Ec6Bv/BmeBydKnX+tE=",
+        "lastModified": 1745017362,
+        "narHash": "sha256-T/dwsjukoRie0pGUCcprIWboP9InRdQvTniYQJ0S7Do=",
         "owner": "zh4ngx",
         "repo": "nixpkgs",
-        "rev": "6a98207e8e7aec070fb35947f4c5877b8cd89628",
+        "rev": "7cfda8cc234cc8f08c7dae1621617001b1dc275f",
         "type": "github"
       },
       "original": {
         "owner": "zh4ngx",
-        "ref": "appimagetools-wrap-postextract",
+        "ref": "merge-beeper-appimage",
         "repo": "nixpkgs",
         "type": "github"
       }

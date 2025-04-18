@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:zh4ngx/nixpkgs/appimagetools-wrap-postextract";
+    nixpkgs.url = "github:zh4ngx/nixpkgs/merge-beeper-appimage";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };

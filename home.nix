@@ -144,6 +144,9 @@
       core = {
         editor = "zeditor -w";
       };
+      fetch = {
+        prune = true;
+      };
       push = {
         default = "simple";
         autoSetupRemote = true;

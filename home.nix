@@ -112,6 +112,23 @@
   programs.bash.enable = true;
   programs.fish.enable = true;
 
+  programs.mcfly = {
+    enable = true;
+    enableFishIntegration = true;
+    fuzzySearchFactor = 2;
+    fzf.enable = true;
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.starship = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   programs.eza = {
     enable = true;
     enableBashIntegration = true;

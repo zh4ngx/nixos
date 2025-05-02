@@ -130,6 +130,9 @@
   programs.eza = {
     enable = true;
     enableFishIntegration = true;
+    git = true;
+    icons = "auto";
+    colors = "auto";
   };
 
   programs.firefox.enable = true;

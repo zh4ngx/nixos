@@ -80,7 +80,7 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
-    enableBashIntegration = true;
+    enableFishIntegration = true;
   };
 
   programs.bat.enable = true;
@@ -109,7 +109,6 @@
     };
   };
 
-  programs.bash.enable = true;
   programs.fish.enable = true;
 
   programs.mcfly = {
@@ -131,7 +130,6 @@
 
   programs.eza = {
     enable = true;
-    enableBashIntegration = true;
     enableFishIntegration = true;
   };
 

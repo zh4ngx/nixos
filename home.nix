@@ -184,6 +184,8 @@
 
   programs.k9s.enable = true;
 
+  programs.mangohud.enable = true;
+
   programs.mpv = {
     enable = true;
     scripts = [ pkgs.mpvScripts.uosc ];

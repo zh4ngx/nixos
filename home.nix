@@ -41,6 +41,7 @@
     gnomeExtensions.vitals
     qbittorrent
     radeontop
+    solaar
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

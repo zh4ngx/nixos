@@ -163,4 +163,6 @@
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
   '';
+
+  hardware.logitech.wireless.enable = true;
 }

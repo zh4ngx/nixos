@@ -165,4 +165,9 @@
   '';
 
   hardware.logitech.wireless.enable = true;
+
+  hardware.openrazer = {
+    enable = true;
+    users = [ "andy" ];
+  };
 }

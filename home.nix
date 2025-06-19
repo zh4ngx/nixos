@@ -39,6 +39,7 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.just-perfection
     gnomeExtensions.vitals
+    polychromatic
     qbittorrent
     radeontop
     solaar

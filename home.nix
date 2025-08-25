@@ -214,6 +214,7 @@
           language_servers = [
             "nixd"
             "!nil"
+            "!package-version-server"
           ];
         };
       };

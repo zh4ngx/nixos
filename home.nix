@@ -200,6 +200,7 @@
   programs.zed-editor = {
     enable = true;
     extensions = [
+      "haskell"
       "nix"
       "toml"
       "wit"

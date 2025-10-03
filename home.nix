@@ -208,7 +208,6 @@
     extraPackages = [
       pkgs.nixd
       pkgs.nixfmt-rfc-style
-      pkgs.package-version-server
       pkgs.haskell-language-server
     ];
     userSettings = {
@@ -216,6 +215,7 @@
         Nix = {
           language_servers = [
             "nixd"
+            "haskell-language-server"
             "!nil"
             "!package-version-server"
           ];

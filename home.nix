@@ -208,6 +208,8 @@
     extraPackages = [
       pkgs.nixd
       pkgs.nixfmt-rfc-style
+      pkgs.package-version-server
+      pkgs.haskell-language-server
     ];
     userSettings = {
       languages = {

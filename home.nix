@@ -223,8 +223,8 @@
   programs.waybar.enable = true;
 
   services.ollama = {
-    enable = true;
-    acceleration = "rocm";
+    enable = false;
+    # acceleration = "rocm";
     # rocmOverrideGfx = "10.3.0"; # Replace with your version
   };
 }

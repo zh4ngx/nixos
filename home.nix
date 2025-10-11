@@ -219,6 +219,9 @@
       };
     };
   };
+
+  programs.waybar.enable = true;
+
   services.ollama = {
     enable = true;
     acceleration = "rocm";

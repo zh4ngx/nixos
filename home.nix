@@ -75,6 +75,12 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 4d --keep 3";
+    flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
+  };
   # --- Hyprland configuration ---
   wayland.windowManager.hyprland = {
     enable = true;
@@ -180,27 +186,25 @@
       main-bar = {
         layer = "top";
         position = "top";
-        modules = [
-          {
-            "hyprland/workspaces" = { };
-            "cpu" = {
-              format = "CPU: {usage}%";
-            };
-            "memory" = {
-              format = "MEM: {used}/{total}G ({percentage}%)";
-            };
-            "clock" = {
-              format = "{:%a, %b %d %H:%M}";
-            };
-            "tray" = { };
-          }
-        ];
+        "hyprland/workspaces" = { };
+        "cpu" = {
+          format = "CPU: {usage}%";
+        };
+        "memory" = {
+          format = "MEM: {used}/{total}G ({percentage}%)";
+        };
+        "clock" = {
+          format = "{:%a, %b %d %H:%M}";
+        };
+        "tray" = { };
       };
     };
   };
 
   # Enable the application launcher (Rofi or Wofi)
   programs.rofi.enable = true;
+
+  services.walker.enable = true;
 
   # Enable the notification daemon (Mako)
   services.mako.enable = true;
@@ -308,11 +312,16 @@
     };
   };
 
+  # Try out htop, bottom, and btop
   programs.htop.enable = true;
+  programs.bottom.enable = true;
+  programs.btop.enable = true;
 
   programs.k9s.enable = true;
 
   programs.mangohud.enable = true;
+
+  programs.foot.enable = true;
 
   programs.mpv = {
     enable = true;

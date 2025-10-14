@@ -16,11 +16,8 @@ cat ~/.ssh/id_ed25519.pub # copy this key
 open https://github.com/settings/ssh/new # create a new key and paste here
 ```
 
-# Update flake
+# Periodic & manual updates
 
-The github workflow update-flake-lock handles updating the flake lock file. Update the cron schedule as needed.
+The github workflow `update-flake-lock.yml handles updating the flake lock file. Update the cron schedule as needed.
 
-```fish
-cd ~/nixos-config
-sudo nixos-rebuild switch --flake .#<hostname>
-```
+After first time setup, you can now update using the `nh os switch` command, either after updating the flake or if you change the configuration.

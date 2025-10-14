@@ -350,7 +350,6 @@
         Nix = {
           language_servers = [
             "nixd"
-            "haskell-language-server"
             "!nil"
             "!package-version-server"
           ];

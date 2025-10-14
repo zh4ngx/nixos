@@ -310,7 +310,10 @@
     };
   };
 
+  # Try out htop, bottom, and btop
   programs.htop.enable = true;
+  programs.bottom.enable = true;
+  programs.btop.enable = true;
 
   programs.k9s.enable = true;
 

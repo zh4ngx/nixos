@@ -180,19 +180,21 @@
       main-bar = {
         layer = "top";
         position = "top";
-        modules = {
-          "hyprland/workspaces" = { };
-          "cpu" = {
-            format = "CPU: {usage}%";
-          };
-          "memory" = {
-            format = "MEM: {used}/{total}G ({percentage}%)";
-          };
-          "clock" = {
-            format = "{:%a, %b %d %H:%M}";
-          };
-          "tray" = { };
-        };
+        modules = [
+          {
+            "hyprland/workspaces" = { };
+            "cpu" = {
+              format = "CPU: {usage}%";
+            };
+            "memory" = {
+              format = "MEM: {used}/{total}G ({percentage}%)";
+            };
+            "clock" = {
+              format = "{:%a, %b %d %H:%M}";
+            };
+            "tray" = { };
+          }
+        ];
       };
     };
   };

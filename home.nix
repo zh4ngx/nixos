@@ -204,6 +204,8 @@
   # Enable the application launcher (Rofi or Wofi)
   programs.rofi.enable = true;
 
+  services.walker.enable = true;
+
   # Enable the notification daemon (Mako)
   services.mako.enable = true;
 

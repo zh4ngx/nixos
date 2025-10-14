@@ -1,13 +1,13 @@
 # NixOS new machine setup
 
+Identify which host you are setting up and replace <hostname> with the appropriate hostname.
+
 ```fish
 # Set up nix flake
-nix run nixpkgs#git clone https://github.com/zh4ngx/nixos.git nix --extra-experimental-features nix-command --extra-experimental-features flakes
-cd nix
-sudo ln -f flake.lock /etc/nixos/
-sudo ln -f flake.nix /etc/nixos/
-sudo ln -f home.nix /etc/nixos/
-sudo ln -f configuration.nix /etc/nixos/
+cd ~
+nix run nixpkgs#git clone https://github.com/zh4ngx/nixos.git nixos-config --extra-experimental-features nix-command --extra-experimental-features flakes
+cd nixos-config
+sudo nixos-rebuild switch --flake .#<hostname> --extra-experimental-features nix-command --extra-experimental-features flakes
 
 # Set up github
 ssh-keygen -t ed25519 -C "1329212+zhangbanger@users.noreply.github.com"
@@ -18,10 +18,9 @@ open https://github.com/settings/ssh/new # create a new key and paste here
 
 # Update flake
 
+The github workflow update-flake-lock handles updating the flake lock file. Update the cron schedule as needed.
+
 ```fish
-cd nix
-nix flake update
-sudo ln -f flake.lock /etc/nixos/
-diff /etc/nixos/ flake.lock # double check
-sudo nixos-rebuild boot # evaluate and build new derivation for next boot
+cd ~/nixos-config
+sudo nixos-rebuild switch --flake .#<hostname>
 ```

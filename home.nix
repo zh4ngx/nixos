@@ -319,6 +319,8 @@
 
   programs.mangohud.enable = true;
 
+  programs.foot.enable = true;
+
   programs.mpv = {
     enable = true;
     scripts = [ pkgs.mpvScripts.uosc ];

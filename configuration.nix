@@ -45,12 +45,19 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  # Install and enable the Hyprland program and integrate it with UWSM.
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true; # Use the Universal Wayland Session Manager
+  };
 
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  # Enable a display manager that supports Wayland. SDDM is a reliable choice.
+  services.displayManager = {
+    sddm = {
+      enable = true;
+      wayland.enable = true;
+    };
+  };
 
   # Enable OpenGL and add video drivers
   hardware.graphics = {

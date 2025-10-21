@@ -344,6 +344,7 @@
       pkgs.nixd
       pkgs.nixfmt-rfc-style
       pkgs.haskell-language-server
+      pkgs.rust-analyzer
     ];
     userSettings = {
       languages = {

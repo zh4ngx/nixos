@@ -344,6 +344,7 @@
       pkgs.nixd
       pkgs.nixfmt-rfc-style
       pkgs.haskell-language-server
+      pkgs.package-version-server
       pkgs.rust-analyzer
     ];
     userSettings = {
@@ -352,7 +353,6 @@
           language_servers = [
             "nixd"
             "!nil"
-            "!package-version-server"
           ];
         };
       };

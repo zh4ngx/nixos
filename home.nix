@@ -284,9 +284,11 @@
 
   programs.git = {
     enable = true;
-    userName = "Andy Zhang";
-    userEmail = "1329212+zh4ngx@users.noreply.github.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Andy Zhang";
+        email = "1329212+zh4ngx@users.noreply.github.com";
+      };
       color = {
         ui = "auto";
       };

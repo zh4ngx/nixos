@@ -1,10 +1,12 @@
 { pkgs, config, ... }:
 
-{
+rec {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "andy";
-  home.homeDirectory = "/home/andy";
+  home = rec {
+    username = "andy";
+    homeDirectory = "/home/${username}";
+  };
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -69,6 +71,7 @@
   home.sessionVariables = {
     EDITOR = "zeditor";
     BROWSER = "firefox";
+    SHELL = "fish";
     TERMINAL = "rio";
   };
 
@@ -82,7 +85,7 @@
       dates = "weekly";
       extraArgs = "--keep-since 7d --keep 3 --optimise";
     };
-    flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
+    flake = "${home.homeDirectory}/nixos-config"; # sets NH_OS_FLAKE variable for you
   };
   # --- Hyprland configuration ---
   wayland.windowManager.hyprland = {
@@ -95,10 +98,10 @@
     systemd.enable = false;
     # Define Hyprland settings directly in Nix
 
-    # # Hyprland's configuration, with the terminal set to Rio.
+    # Hyprland's configuration
     settings = {
       "$mod" = "SUPER";
-      "$terminal" = "rio";
+      "$terminal" = "${home.sessionVariables.TERMINAL}";
 
       # -----------------
       # Keybindings
@@ -229,11 +232,11 @@
         blur = true;
       };
       shell = {
-        program = "fish";
+        program = "${home.sessionVariables.SHELL}";
         args = [ ];
       };
       editor = {
-        program = "zeditor";
+        program = "${home.sessionVariables.EDITOR}";
         args = [ ];
       };
       renderer = {
@@ -296,7 +299,7 @@
         ui = "auto";
       };
       core = {
-        editor = "zeditor -w";
+        editor = "${home.sessionVariables.EDITOR} -w";
       };
       fetch = {
         prune = true;

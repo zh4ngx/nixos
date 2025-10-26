@@ -77,8 +77,11 @@
 
   programs.nh = {
     enable = true;
-    clean.enable = true;
-    clean.extraArgs = "--keep-since 4d --keep 3";
+    clean = {
+      enable = true;
+      dates = "weekly";
+      extraArgs = "--keep-since 7d --keep 3 --optimise";
+    };
     flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
   };
   # --- Hyprland configuration ---

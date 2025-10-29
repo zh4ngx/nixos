@@ -318,6 +318,9 @@ rec {
         defaultBranch = "main";
       };
     };
+    ignores = [
+      ".direnv"
+    ];
   };
 
   # Try out htop, bottom, and btop

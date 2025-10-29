@@ -356,6 +356,7 @@ rec {
       pkgs.nixfmt-rfc-style
       pkgs.haskell-language-server
       pkgs.package-version-server
+      pkgs.ruff
       pkgs.rust-analyzer
     ];
     userSettings = {

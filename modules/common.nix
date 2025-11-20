@@ -117,6 +117,7 @@
       "https://crane.cachix.org"
       "https://nix-community.cachix.org"
       "https://ros.cachix.org"
+      "https://hyprland.cachix.org"
     ];
     extra-trusted-substituters = [
       "https://bytecodealliance.cachix.org"
@@ -125,6 +126,7 @@
       "https://crane.cachix.org"
       "https://nix-community.cachix.org"
       "https://ros.cachix.org"
+      "https://hyprland.cachix.org"
     ];
     extra-trusted-public-keys = [
       "bytecodealliance.cachix.org-1:0SBgh//n2n0heh0sDFhTm+ZKBRy2sInakzFGfzN531Y="
@@ -133,6 +135,7 @@
       "crane.cachix.org-1:8Scfpmn9w+hGdXH/Q9tTLiYAE/2dnJYRJP7kl80GuRk="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "ros.cachix.org-1:dSyZxI8geDCJrwgvCOHDoAfOm5sV1wCPjBkKL+38Rvo="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
   };
 

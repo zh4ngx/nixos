@@ -2,13 +2,22 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ pkgs, ... }:
+{ pkgs, home-manager, ... }:
 
 {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../modules/common.nix
+    home-manager.nixosModules.home-manager
+    {
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.users.andy = import ../../home.nix;
+
+      # Optionally, use home-manager.extraSpecialArgs to pass
+      # arguments to home.nix
+    }
   ];
 
   networking.hostName = "B550M"; # Define your hostname.

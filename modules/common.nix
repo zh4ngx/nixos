@@ -40,8 +40,14 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  # services.displayManager.gdm.enable = true;
+  # services.desktopManager.gnome.enable = true;
+
+  # Enable the COSMIC login manager
+  services.displayManager.cosmic-greeter.enable = true;
+
+  # Enable the COSMIC desktop environment
+  services.desktopManager.cosmic.enable = true;
 
   # Install and enable the Hyprland program and integrate it with UWSM.
   programs.hyprland = {
@@ -118,6 +124,7 @@
       "https://nix-community.cachix.org"
       "https://ros.cachix.org"
       "https://hyprland.cachix.org"
+      "https://cosmic.cachix.org/"
     ];
     extra-trusted-substituters = [
       "https://bytecodealliance.cachix.org"
@@ -127,6 +134,7 @@
       "https://nix-community.cachix.org"
       "https://ros.cachix.org"
       "https://hyprland.cachix.org"
+      "https://cosmic.cachix.org/"
     ];
     extra-trusted-public-keys = [
       "bytecodealliance.cachix.org-1:0SBgh//n2n0heh0sDFhTm+ZKBRy2sInakzFGfzN531Y="
@@ -136,6 +144,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "ros.cachix.org-1:dSyZxI8geDCJrwgvCOHDoAfOm5sV1wCPjBkKL+38Rvo="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="
     ];
   };
 

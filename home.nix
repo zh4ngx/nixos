@@ -359,6 +359,7 @@ rec {
   programs.zed-editor = {
     enable = true;
     extensions = [
+      "git-firefly"
       "haskell"
       "nix"
       "toml"

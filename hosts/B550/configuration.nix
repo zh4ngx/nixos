@@ -6,18 +6,10 @@
 
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../modules/nixos
     home-manager.nixosModules.home-manager
-    {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.users.andy = import ../../home.nix;
-
-      # Optionally, use home-manager.extraSpecialArgs to pass
-      # arguments to home.nix
-    }
+    ../../modules/home-manager
   ];
 
   networking.hostName = "B550"; # Define your hostname.

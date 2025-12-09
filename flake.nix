@@ -14,10 +14,7 @@
         B550M = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = attrs;
-          modules = [
-            ./hosts/B550M/configuration.nix
-            ./modules/nixos
-          ];
+          modules = [ ./hosts/B550M/configuration.nix ];
         };
         B550 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";

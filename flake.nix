@@ -11,10 +11,10 @@
     { nixpkgs, home-manager, ... }@attrs:
     {
       nixosConfigurations = {
-        B550M = nixpkgs.lib.nixosSystem {
+        MS-7C95 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = attrs;
-          modules = [ ./hosts/B550M/configuration.nix ];
+          modules = [ ./hosts/MS-7C95/configuration.nix ];
         };
         B550 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";

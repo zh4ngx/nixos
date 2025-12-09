@@ -12,7 +12,7 @@
     ../../modules/home-manager
   ];
 
-  networking.hostName = "B550M"; # Define your hostname.
+  networking.hostName = "MS-7C95"; # Define your hostname.
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 

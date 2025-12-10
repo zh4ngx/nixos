@@ -30,7 +30,7 @@
               {
                 imports = [
                   (modulesPath + "/installer/cd-dvd/installation-cd-graphical-base.nix")
-                  ./modules/nixos
+                  ./modules/nixos/iso.nix
                   home-manager.nixosModules.home-manager
                   ./modules/home-manager
                 ];

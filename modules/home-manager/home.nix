@@ -38,7 +38,6 @@ rec {
     # '')
     beeper
     gnomeExtensions.appindicator
-    gnomeExtensions.dash-to-dock
     gnomeExtensions.just-perfection
     gnomeExtensions.vitals
     polychromatic

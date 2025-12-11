@@ -16,6 +16,11 @@
           specialArgs = attrs;
           modules = [ ./hosts/MS-7C95/configuration.nix ];
         };
+        MS-7E51 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = attrs;
+          modules = [ ./hosts/MS-7E51/configuration.nix ];
+        };
         B550 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = attrs;

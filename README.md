@@ -6,8 +6,14 @@ Identify which host you are setting up and replace <hostname> with the appropria
 # Set up nix flake
 cd ~
 nix run nixpkgs#git clone https://github.com/zh4ngx/nixos.git nixos-config --extra-experimental-features nix-command --extra-experimental-features flakes
-cd nixos-config
-sudo nixos-rebuild switch --flake .#<hostname> --extra-experimental-features nix-command --extra-experimental-features flakes
+cd nixos-config/hosts
+# copy an existing host config
+cp -a hosts/B550 hosts/<hostname>
+cd hosts/<hostname>
+cp /etc/nixos/hardware-configuration.nix .
+# edit flake.nix with this new host
+# finally switch to this flake 
+sudo nixos-rebuild switch --flake .#<hostname>
 
 # Set up github
 ssh-keygen -t ed25519 -C "1329212+zhangbanger@users.noreply.github.com"

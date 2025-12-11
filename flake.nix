@@ -21,23 +21,6 @@
           specialArgs = attrs;
           modules = [ ./hosts/B550/configuration.nix ];
         };
-        iso = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = attrs;
-          modules = [
-            (
-              { modulesPath, ... }:
-              {
-                imports = [
-                  (modulesPath + "/installer/cd-dvd/installation-cd-graphical-base.nix")
-                  ./modules/nixos/iso.nix
-                  home-manager.nixosModules.home-manager
-                  ./modules/home-manager
-                ];
-              }
-            )
-          ];
-        };
       };
     };
 }

@@ -184,6 +184,11 @@ rec {
           color = "rgba(1a1a1aee)";
         };
       };
+      input = {
+        # 1:1 Tracking Settings
+        accel_profile = "flat"; # Disables acceleration
+        sensitivity = 0.0; # Neutral software multiplier (1.0x)
+      };
     };
   };
 

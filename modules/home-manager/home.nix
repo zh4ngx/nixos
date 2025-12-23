@@ -393,4 +393,11 @@ rec {
   # Integrate Home Manager environment variables with UWSM.
   xdg.configFile."uwsm/env".source =
     "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
+
+  dconf.settings = {
+    "org/gnome/desktop/peripherals/mouse" = {
+      accel-profile = "flat";
+      speed = 0.0;
+    };
+  };
 }

@@ -1,7 +1,6 @@
 {
   pkgs,
   self,
-  inputs,
   ...
 }:
 
@@ -9,8 +8,8 @@
   imports = [
     ./hardware-configuration.nix
     "${self}/modules/nixos"
-    inputs.home-manager.nixosModules.home-manager
     "${self}/modules/home-manager"
+    "${self}/modules/nixos/hardware/razer.nix"
   ];
 
   networking.hostName = "B550"; # Define your hostname.
@@ -22,9 +21,4 @@
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
   '';
-
-  hardware.openrazer = {
-    enable = true;
-    users = [ "andy" ];
-  };
 }

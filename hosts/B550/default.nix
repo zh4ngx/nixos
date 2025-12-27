@@ -1,15 +1,16 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ pkgs, home-manager, ... }:
+{
+  pkgs,
+  self,
+  inputs,
+  ...
+}:
 
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos
-    home-manager.nixosModules.home-manager
-    ../../modules/home-manager
+    "${self}/modules/nixos"
+    inputs.home-manager.nixosModules.home-manager
+    "${self}/modules/home-manager"
   ];
 
   networking.hostName = "B550"; # Define your hostname.

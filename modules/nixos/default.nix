@@ -53,6 +53,14 @@
     flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
   };
 
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:zh4ngx/nixos";
+    dates = "weekly";
+    persistent = true;
+    operation = "switch";
+  };
+
   # Enable the COSMIC login manager
   # services.displayManager.cosmic-greeter.enable = true;
 

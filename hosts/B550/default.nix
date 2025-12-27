@@ -1,6 +1,7 @@
 {
   pkgs,
   self,
+  inputs,
   ...
 }:
 
@@ -10,6 +11,8 @@
     "${self}/modules/nixos"
     "${self}/modules/home-manager"
     "${self}/modules/nixos/hardware/razer.nix"
+
+    inputs.nixos-hardware.nixosModules.gigabyte-b550
   ];
 
   networking.hostName = baseNameOf ./.;
@@ -17,8 +20,4 @@
   time.timeZone = "America/Los_Angeles";
 
   services.udev.packages = with pkgs; [ apio-udev-rules ];
-
-  services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
-  '';
 }

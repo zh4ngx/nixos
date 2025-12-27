@@ -12,8 +12,7 @@
     "${self}/modules/nixos/hardware/razer.nix"
   ];
 
-  networking.hostName = "MS-7C95"; # Define your hostname.
-  # Set your time zone.
+  networking.hostName = baseNameOf ./.;
   time.timeZone = "America/Los_Angeles";
 
   services.udev.packages = with pkgs; [ apio-udev-rules ];

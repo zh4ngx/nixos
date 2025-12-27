@@ -12,7 +12,7 @@
     "${self}/modules/nixos/hardware/razer.nix"
   ];
 
-  networking.hostName = "B550"; # Define your hostname.
+  networking.hostName = baseNameOf ./.;
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 

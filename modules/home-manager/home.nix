@@ -43,7 +43,6 @@ rec {
     polychromatic
     qbittorrent
     radeontop
-    solaar
     ugs
   ];
 

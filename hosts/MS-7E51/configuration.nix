@@ -8,6 +8,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos
+    ../../modules/nixos/hardware/logitech.nix
     home-manager.nixosModules.home-manager
     ../../modules/home-manager
   ];
@@ -17,6 +18,4 @@
   time.timeZone = "America/Los_Angeles";
 
   services.udev.packages = with pkgs; [ apio-udev-rules ];
-
-  hardware.logitech.wireless.enable = true;
 }

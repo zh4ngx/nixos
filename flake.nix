@@ -19,17 +19,17 @@
         MS-7C95 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs;
-          modules = [ ./hosts/MS-7C95/configuration.nix ];
+          modules = [ ./hosts/MS-7C95 ];
         };
         MS-7E51 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs;
-          modules = [ ./hosts/MS-7E51/configuration.nix ];
+          modules = [ ./hosts/MS-7E51 ];
         };
         B550 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs;
-          modules = [ ./hosts/B550/configuration.nix ];
+          modules = [ ./hosts/B550 ];
         };
       };
     };

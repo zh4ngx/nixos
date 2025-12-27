@@ -47,8 +47,8 @@
     enable = true;
     clean = {
       enable = true;
-      dates = "weekly";
-      extraArgs = "--keep-since 7d --keep 3 --optimise";
+      dates = "daily";
+      extraArgs = "--keep-since 3d --keep 3 --optimise";
     };
     flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
   };

@@ -56,7 +56,7 @@
   system.autoUpgrade = {
     enable = true;
     flake = "github:zh4ngx/nixos";
-    dates = "weekly";
+    dates = "daily";
     persistent = true;
     operation = "switch";
   };

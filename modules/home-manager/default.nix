@@ -100,15 +100,6 @@
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 
-        programs.nh = {
-          enable = true;
-          clean = {
-            enable = true;
-            dates = "weekly";
-            extraArgs = "--keep-since 7d --keep 3 --optimise";
-          };
-          flake = "${homeDirectory}/nixos-config"; # sets NH_OS_FLAKE variable for you
-        };
         # --- Hyprland configuration ---
         wayland.windowManager.hyprland = {
           enable = true;

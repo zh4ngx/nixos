@@ -43,6 +43,16 @@
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
+  programs.nh = {
+    enable = true;
+    clean = {
+      enable = true;
+      dates = "weekly";
+      extraArgs = "--keep-since 7d --keep 3 --optimise";
+    };
+    flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
+  };
+
   # Enable the COSMIC login manager
   # services.displayManager.cosmic-greeter.enable = true;
 

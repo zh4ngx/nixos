@@ -8,22 +8,27 @@
   };
 
   outputs =
-    { nixpkgs, home-manager, ... }@attrs:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
     {
       nixosConfigurations = {
         MS-7C95 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = attrs;
+          specialArgs = inputs;
           modules = [ ./hosts/MS-7C95/configuration.nix ];
         };
         MS-7E51 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = attrs;
+          specialArgs = inputs;
           modules = [ ./hosts/MS-7E51/configuration.nix ];
         };
         B550 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = attrs;
+          specialArgs = inputs;
           modules = [ ./hosts/B550/configuration.nix ];
         };
       };

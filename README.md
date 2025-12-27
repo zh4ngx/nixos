@@ -6,8 +6,9 @@ Identify which host you are setting up and replace <hostname> with the appropria
 # Set up nix flake
 cd ~
 nix run nixpkgs#git clone https://github.com/zh4ngx/nixos.git nixos-config --extra-experimental-features nix-command --extra-experimental-features flakes
+# insert script to run the rest of this
 cd nixos-config/hosts
-# copy an existing host config
+# copy an existing host config - this could be scripted
 cp -a hosts/B550 hosts/<hostname>
 cd hosts/<hostname>
 cp /etc/nixos/hardware-configuration.nix .
@@ -24,6 +25,6 @@ open https://github.com/settings/ssh/new # create a new key and paste here
 
 # Periodic & manual updates
 
-The github workflow `update-flake-lock.yml handles updating the flake lock file. Update the cron schedule as needed.
+The github workflow `update-flake-lock.yml` handles updating the flake lock file. Update the cron schedule as needed. Updates are auto-merged and `system.autoUpgrade` is also enabled.
 
-After first time setup, you can now update using the `nh os switch` command, either after updating the flake or if you change the configuration.
+After first time setup, you can manually update using the `nh os switch` command, either after updating the flake or if you change the configuration.

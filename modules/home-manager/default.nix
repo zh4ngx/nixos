@@ -65,7 +65,6 @@
           gnomeExtensions.appindicator
           gnomeExtensions.just-perfection
           gnomeExtensions.vitals
-          polychromatic
           qbittorrent
           radeontop
           ugs

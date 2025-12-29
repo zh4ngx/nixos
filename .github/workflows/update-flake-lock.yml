@@ -21,9 +21,10 @@ jobs:
           pr-labels: | # Labels to be set on the PR
             dependencies
             automated
+          token: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }} # Change this
       - name: Merge pull request
         # Only runs if a new PR was actually created
         if: ${{ steps.update.outputs.pull-request-number != '' }}
-        run: gh pr merge --auto --rebase "${{ steps.update.outputs.pull-request-number }}"
+        run: gh pr merge --auto --squash "${{ steps.update.outputs.pull-request-number }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }}

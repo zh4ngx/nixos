@@ -61,6 +61,11 @@
     operation = "switch";
   };
 
+  systemd.services.nixos-upgrade = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+  };
+
   # Enable the COSMIC login manager
   # services.displayManager.cosmic-greeter.enable = true;
 

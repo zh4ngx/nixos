@@ -13,18 +13,21 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/determinate-nix-action@v3
-      - uses: DeterminateSystems/update-flake-lock@main
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Determinate Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Update Nix Flake Lock
+        id: update
+        uses: DeterminateSystems/update-flake-lock@v28
         with:
-          pr-title: "Update Nix flake inputs" # Title of PR to be created
-          pr-labels: | # Labels to be set on the PR
-            dependencies
-            automated
-          token: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }} # Change this
+          token: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }}
+
       - name: Merge pull request
-        # Only runs if a new PR was actually created
-        if: ${{ steps.update.outputs.pull-request-number != '' }}
+        # Ensure 'steps.update' matches the 'id' above
+        if: steps.update.outputs.pull-request-number != ''
         run: gh pr merge --auto --squash "${{ steps.update.outputs.pull-request-number }}"
         env:
           GITHUB_TOKEN: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }}

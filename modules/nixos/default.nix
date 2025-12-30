@@ -63,11 +63,7 @@
     dates = "daily";
     persistent = true;
     operation = "switch";
-  };
-
-  systemd.services.nixos-upgrade = {
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
+    randomizedDelaySec = "5m";
   };
 
   # Enable the COSMIC login manager

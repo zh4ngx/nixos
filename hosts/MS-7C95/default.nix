@@ -23,6 +23,4 @@
   networking.hostName = baseNameOf ./.;
   time.timeZone = "America/Los_Angeles";
   hardware.amdgpu.initrd.enable = true;
-
-  services.udev.packages = with pkgs; [ apio-udev-rules ];
 }

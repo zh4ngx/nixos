@@ -374,6 +374,9 @@
             pkgs.package-version-server
             pkgs.ruff
             pkgs.rust-analyzer
+            pkgs.basedpyright
+            pkgs.nodePackages.vscode-json-languageserver
+            pkgs.yaml-language-server
           ];
           userSettings = {
             languages = {

@@ -20,7 +20,6 @@
         sessionVariables = {
           BROWSER = "firefox";
           SHELL = "fish";
-          TERMINAL = "rio";
         };
       in
       { config, ... }:
@@ -97,7 +96,6 @@
           # Hyprland's configuration
           settings = {
             "$mod" = "SUPER";
-            "$terminal" = "${sessionVariables.TERMINAL}";
 
             # -----------------
             # Keybindings
@@ -233,6 +231,7 @@
         };
         programs.rio = {
           enable = true;
+          defaultTerminal = true;
           settings = {
             window = {
               width = 1280;
@@ -349,6 +348,7 @@
 
         programs.zed-editor = {
           enable = true;
+          defaultEditor = true;
           extensions = [
             "git-firefly"
             "haskell"

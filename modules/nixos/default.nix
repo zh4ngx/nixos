@@ -45,7 +45,7 @@
       dates = "daily";
       extraArgs = "--keep-since 3d --keep 3 --optimise";
     };
-    flake = "/home/andy/nixos-config"; # sets NH_OS_FLAKE variable for you
+    flake = "/home/andy/dev/nixos";
   };
 
   system.autoUpgrade = {

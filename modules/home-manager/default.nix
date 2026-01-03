@@ -69,16 +69,6 @@
           ugs
         ];
 
-        # Home Manager is pretty good at managing dotfiles. The primary way to manage
-        # plain files is through 'home.file'.
-        home.file = {
-          "dev/.envrc".text = ''
-            if [ -f flake.nix ]; then
-              use flake
-            fi
-          '';
-        };
-
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 
@@ -217,6 +207,12 @@
         programs.direnv = {
           enable = true;
           nix-direnv.enable = true;
+          # Note: use this with caution - always audit flake.nix shellHook!
+          stdlib = ''
+            if [ -f flake.nix ] && [ ! -f .envrc ]; then
+              use flake
+            fi
+          '';
         };
 
         programs.bat.enable = true;

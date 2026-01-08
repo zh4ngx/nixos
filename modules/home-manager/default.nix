@@ -227,7 +227,6 @@
         };
         programs.rio = {
           enable = true;
-          defaultTerminal = true;
           settings = {
             window = {
               width = 1280;

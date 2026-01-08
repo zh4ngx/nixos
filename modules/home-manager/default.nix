@@ -18,7 +18,6 @@
         username = "andy";
         homeDirectory = "/home/${username}";
         sessionVariables = {
-          BROWSER = "firefox";
           SHELL = "fish";
         };
       in
@@ -71,6 +70,14 @@
 
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
+
+        xdg.mime.defaultApplications = {
+          "text/html" = "firefox.desktop";
+          "x-scheme-handler/http" = "firefox.desktop";
+          "x-scheme-handler/https" = "firefox.desktop";
+          "x-scheme-handler/about" = "firefox.desktop";
+          "x-scheme-handler/unknown" = "firefox.desktop";
+        };
 
         # --- Hyprland configuration ---
         wayland.windowManager.hyprland = {

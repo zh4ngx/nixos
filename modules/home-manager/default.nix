@@ -354,7 +354,7 @@
           ];
           extraPackages = [
             pkgs.nixd
-            pkgs.nixfmt-rfc-style
+            pkgs.nixfmt
             pkgs.haskell-language-server
             pkgs.package-version-server
             pkgs.ruff

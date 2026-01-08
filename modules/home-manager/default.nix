@@ -71,14 +71,20 @@
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 
-        xdg.mime = {
-          enable = true;
-          defaultApplications = {
-            "text/html" = "firefox.desktop";
-            "x-scheme-handler/http" = "firefox.desktop";
-            "x-scheme-handler/https" = "firefox.desktop";
-            "x-scheme-handler/about" = "firefox.desktop";
-            "x-scheme-handler/unknown" = "firefox.desktop";
+        xdg = {
+          mimeApps = {
+            enable = true;
+            defaultApplications = {
+              "text/html" = "firefox.desktop";
+              "x-scheme-handler/http" = "firefox.desktop";
+              "x-scheme-handler/https" = "firefox.desktop";
+              "x-scheme-handler/about" = "firefox.desktop";
+              "x-scheme-handler/unknown" = "firefox.desktop";
+            };
+          };
+          configFile = {
+            "mimeapps.list".force = true;
+            "uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
           };
         };
 
@@ -353,7 +359,7 @@
 
         programs.zed-editor = {
           enable = true;
-          defaultEditor = true;
+          #defaultEditor = true;
           extensions = [
             "git-firefly"
             "haskell"
@@ -389,10 +395,6 @@
           # acceleration = "rocm";
           # rocmOverrideGfx = "10.3.0"; # Replace with your version
         };
-
-        # Integrate Home Manager environment variables with UWSM.
-        xdg.configFile."uwsm/env".source =
-          "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
 
         dconf.settings = {
           "org/gnome/desktop/peripherals/mouse" = {

@@ -130,7 +130,7 @@
   users.users.andy = {
     isNormalUser = true;
     description = "Andy";
-    shell = pkgs.bash;
+    shell = pkgs.fish;
     extraGroups = [
       "networkmanager"
       "wheel"

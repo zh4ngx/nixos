@@ -76,6 +76,8 @@
   # Enable the COSMIC desktop environment
   # services.desktopManager.cosmic.enable = true;
 
+  programs.fish.enable = true;
+
   # Install and enable the Hyprland program and integrate it with UWSM.
   programs.hyprland = {
     enable = true;
@@ -119,6 +121,7 @@
   users.users.andy = {
     isNormalUser = true;
     description = "Andy";
+    shell = pkgs.bash;
     extraGroups = [
       "networkmanager"
       "wheel"

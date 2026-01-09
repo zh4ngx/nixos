@@ -17,7 +17,6 @@
     };
     kernelPackages = pkgs.linuxPackages_latest;
   };
-  programs.command-not-found.enable = false;
 
   # Enable networking
   networking.networkmanager.enable = true;

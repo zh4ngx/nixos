@@ -14,23 +14,8 @@
     useUserPackages = true;
     extraSpecialArgs = { inherit self inputs; };
     users.andy =
-      let
-        username = "andy";
-        homeDirectory = "/home/${username}";
-        sessionVariables = {
-          SHELL = "fish";
-        };
-      in
       { config, ... }:
       {
-        # Home Manager needs a bit of information about you and the paths it should
-        # manage.
-        home = {
-          inherit username;
-          inherit homeDirectory;
-          inherit sessionVariables;
-        };
-
         # This value determines the Home Manager release that your configuration is
         # compatible with. This helps avoid breakage when a new Home Manager release
         # introduces backwards incompatible changes.
@@ -251,8 +236,8 @@
               blur = true;
             };
             shell = {
-              program = "${sessionVariables.SHELL}";
-              args = [ ];
+              program = "${pkgs.fish}/bin/fish";
+              args = [ "--interactive" ];
             };
             renderer = {
               performance = "High";
@@ -261,8 +246,15 @@
           };
         };
 
-        programs.fish.enable = true;
-
+        programs.fish = {
+          enable = true;
+          plugins = [
+            {
+              name = "bass";
+              src = pkgs.fishPlugins.bass.src;
+            }
+          ];
+        };
         programs.mcfly = {
           enable = true;
           enableFishIntegration = true;
@@ -401,6 +393,7 @@
             accel-profile = "flat";
             speed = 0.0;
           };
+          "org/gnome/Console".shell = [ "${pkgs.fish}/bin/fish" ];
         };
       };
   };

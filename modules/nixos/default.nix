@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   # Bootloader.
@@ -135,6 +135,7 @@
     android_sdk.accept_license = true;
     allowUnfree = true;
   };
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
   hardware.enableAllFirmware = true;
 
   # Enable Flakes and the new command-line tool

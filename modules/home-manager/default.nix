@@ -263,7 +263,25 @@
               src = pkgs.fishPlugins.bass.src;
             }
           ];
+          interactiveShellInit = lib.mkAfter ''
+            # 1. Erase the legacy event-based handlers from memory
+            functions -e __fish_command_not_found_handler
+            functions -e fish_command_not_found
+
+            # 2. Manually define the modern nix-index / comma handler
+            # We do NOT use --on-event here; modern Fish prefers the plain function name.
+            function fish_command_not_found
+                # This uses your comma/nix-index database to suggest packages
+                if command -vq comma
+                    comma $argv
+                else
+                    # Fallback to standard error if comma isn't ready
+                    printf "Command '%s' not found\n" "$argv[1]"
+                end
+            end
+          '';
         };
+
         programs.mcfly = {
           enable = true;
           enableFishIntegration = true;

@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # Bootloader.
@@ -12,7 +17,8 @@
     };
     kernelPackages = pkgs.linuxPackages_latest;
   };
-
+  programs.command-not-found.enable = false;
+  programs.fish.vendor.config.enable = false;
   # Enable networking
   networking.networkmanager.enable = true;
 
@@ -54,6 +60,9 @@
     dates = "daily";
     persistent = true;
     operation = "switch";
+    flags = [
+      "--refresh"
+    ];
   };
 
   systemd.services.nixos-upgrade = {
@@ -136,7 +145,15 @@
     allowUnfree = true;
   };
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
+  nix.channel.enable = false;
   hardware.enableAllFirmware = true;
+
+  # In configuration.nix
+  nix.settings.use-registries = true; # Force use of flake registry
+  nix.settings.flake-registry = "";
+  nix.nixPath = lib.mkForce [ "nixpkgs=flake:nixpkgs" ];
+
+  programs.fish.vendor.functions.enable = false;
 
   # Enable Flakes and the new command-line tool
   nix.settings = {

@@ -18,7 +18,7 @@
     kernelPackages = pkgs.linuxPackages_latest;
   };
   programs.command-not-found.enable = false;
-  programs.fish.vendor.config.enable = false;
+
   # Enable networking
   networking.networkmanager.enable = true;
 
@@ -144,55 +144,57 @@
     android_sdk.accept_license = true;
     allowUnfree = true;
   };
-  nix.registry.nixpkgs.flake = inputs.nixpkgs;
-  nix.channel.enable = false;
-  hardware.enableAllFirmware = true;
 
-  # In configuration.nix
-  nix.settings.use-registries = true; # Force use of flake registry
-  nix.settings.flake-registry = "";
-  nix.nixPath = lib.mkForce [ "nixpkgs=flake:nixpkgs" ];
-
-  programs.fish.vendor.functions.enable = false;
-
-  # Enable Flakes and the new command-line tool
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    auto-optimise-store = true;
-    extra-substituters = [
-      "https://bytecodealliance.cachix.org"
-      "https://wasmcloud.cachix.org"
-      "https://nixify.cachix.org"
-      "https://crane.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://ros.cachix.org"
-      "https://hyprland.cachix.org"
-      "https://cosmic.cachix.org/"
-    ];
-    extra-trusted-substituters = [
-      "https://bytecodealliance.cachix.org"
-      "https://wasmcloud.cachix.org"
-      "https://nixify.cachix.org"
-      "https://crane.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://ros.cachix.org"
-      "https://hyprland.cachix.org"
-      "https://cosmic.cachix.org/"
-    ];
-    extra-trusted-public-keys = [
-      "bytecodealliance.cachix.org-1:0SBgh//n2n0heh0sDFhTm+ZKBRy2sInakzFGfzN531Y="
-      "wasmcloud.cachix.org-1:9gRBzsKh+x2HbVVspreFg/6iFRiD4aOcUQfXVDl3hiM="
-      "nixify.cachix.org-1:95SiUQuf8Ij0hwDweALJsLtnMyv/otZamWNRp1Q1pXw="
-      "crane.cachix.org-1:8Scfpmn9w+hGdXH/Q9tTLiYAE/2dnJYRJP7kl80GuRk="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "ros.cachix.org-1:dSyZxI8geDCJrwgvCOHDoAfOm5sV1wCPjBkKL+38Rvo="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="
-    ];
+  # 1. High-level Flake Integration (replaces nix.registry and nix.settings.flake-registry)
+  nixpkgs.flake = {
+    setFlakeRegistry = true;
+    setNixPath = true;
   };
+
+  # 2. Modern Nix Behavior
+  nix = {
+    channel.enable = false;
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      use-xdg-base-directories = true;
+      auto-optimise-store = true;
+      extra-substituters = [
+        "https://bytecodealliance.cachix.org"
+        "https://wasmcloud.cachix.org"
+        "https://nixify.cachix.org"
+        "https://crane.cachix.org"
+        "https://nix-community.cachix.org"
+        "https://ros.cachix.org"
+        "https://hyprland.cachix.org"
+        "https://cosmic.cachix.org/"
+      ];
+      extra-trusted-substituters = [
+        "https://bytecodealliance.cachix.org"
+        "https://wasmcloud.cachix.org"
+        "https://nixify.cachix.org"
+        "https://crane.cachix.org"
+        "https://nix-community.cachix.org"
+        "https://ros.cachix.org"
+        "https://hyprland.cachix.org"
+        "https://cosmic.cachix.org/"
+      ];
+      extra-trusted-public-keys = [
+        "bytecodealliance.cachix.org-1:0SBgh//n2n0heh0sDFhTm+ZKBRy2sInakzFGfzN531Y="
+        "wasmcloud.cachix.org-1:9gRBzsKh+x2HbVVspreFg/6iFRiD4aOcUQfXVDl3hiM="
+        "nixify.cachix.org-1:95SiUQuf8Ij0hwDweALJsLtnMyv/otZamWNRp1Q1pXw="
+        "crane.cachix.org-1:8Scfpmn9w+hGdXH/Q9tTLiYAE/2dnJYRJP7kl80GuRk="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "ros.cachix.org-1:dSyZxI8geDCJrwgvCOHDoAfOm5sV1wCPjBkKL+38Rvo="
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+        "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="
+      ];
+    };
+  };
+
+  hardware.enableAllFirmware = true;
 
   virtualisation.podman = {
     enable = true;

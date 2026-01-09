@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   self,
   inputs,
   ...
@@ -59,6 +60,10 @@
           enableFishIntegration = true;
         };
         programs.nix-index-database.comma.enable = true;
+        programs.command-not-found.enable = false;
+
+        # Ensure HM doesn't try to manage a legacy profile link
+        home.preferXdgDirectories = true;
 
         xdg = {
           mimeApps = {

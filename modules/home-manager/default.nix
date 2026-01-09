@@ -54,7 +54,10 @@
         programs.home-manager.enable = true;
 
         # Use nix-index and comma
-        programs.nix-index.enable = true;
+        programs.nix-index = {
+          enable = true;
+          enableFishIntegration = true;
+        };
         programs.nix-index-database.comma.enable = true;
 
         xdg = {

@@ -117,9 +117,16 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-
-    # If you want to use JACK applications, uncomment this
-    # jack.enable = true;
+    extraConfig.pipewire."99-motu-m2" = {
+      "context.properties" = {
+        # Lock the global sample rate to 96kHz
+        "default.clock.rate" = 96000;
+        # Set the buffer (quantum) to 128
+        "default.clock.quantum" = 128;
+        "default.clock.min-quantum" = 128;
+        "default.clock.max-quantum" = 128;
+      };
+    };
   };
 
   services.zenohd.enable = true;

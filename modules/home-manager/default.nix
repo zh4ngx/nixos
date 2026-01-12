@@ -44,6 +44,7 @@
           # '')
           beeper
           gnomeExtensions.appindicator
+          gnomeExtensions.hide-top-bar
           gnomeExtensions.just-perfection
           gnomeExtensions.vitals
           qbittorrent

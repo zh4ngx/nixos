@@ -378,6 +378,9 @@
         programs.zed-editor = {
           enable = true;
           #defaultEditor = true;
+          mutableUserKeymaps = false;
+          mutableUserSettings = false;
+          mutableUserTasks = false;
           extensions = [
             "git-firefly"
             "haskell"

@@ -372,6 +372,22 @@
           config = {
             vo = "gpu-next";
             gpu-api = "vulkan";
+            target-peak = 1200;
+            target-colorspace-hint = "yes";
+            scale = "ewa_lanczossharp";
+            cscale = "krigbilateral";
+            # Audio mixing (biased stereo)
+            af = "lavfi=[pan=stereo|FL=FC+0.707*FL+0.5*SL+0.5*BL+0.5*LFE|FR=FC+0.707*FR+0.5*SR+0.5*BR+0.5*LFE]";
+          };
+          profiles = {
+            SDR-Reference = {
+              profile-cond = "not p[\"video-params/sig-peak\"] or p[\"video-params/sig-peak\"] <= 1";
+              target-peak = 100;
+            };
+            HDR-Impact = {
+              profile-cond = "p[\"video-params/sig-peak\"] > 1";
+              target-peak = 1200;
+            };
           };
         };
 

@@ -380,9 +380,6 @@
         programs.zed-editor = {
           enable = true;
           #defaultEditor = true;
-          session = {
-            trust_all_worktrees = true;
-          };
           mutableUserKeymaps = false;
           mutableUserSettings = false;
           mutableUserTasks = false;
@@ -405,6 +402,9 @@
             pkgs.yaml-language-server
           ];
           userSettings = {
+            session = {
+              trust_all_worktrees = true;
+            };
             languages = {
               Nix = {
                 language_servers = [

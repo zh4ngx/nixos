@@ -381,6 +381,9 @@
         programs.zed-editor = {
           enable = true;
           #defaultEditor = true;
+          session = {
+            trust_all_worktrees = true;
+          };
           mutableUserKeymaps = false;
           mutableUserSettings = false;
           mutableUserTasks = false;
@@ -409,6 +412,18 @@
                   "nixd"
                   "!nil"
                 ];
+              };
+            };
+            lsp = {
+              nixd = {
+                binary = {
+                  path = "nixd";
+                }; # Uses the one in your $PATH
+              };
+              rust-analyzer = {
+                binary = {
+                  path = "rust-analyzer";
+                };
               };
             };
           };

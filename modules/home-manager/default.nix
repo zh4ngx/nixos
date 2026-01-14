@@ -411,19 +411,17 @@
                   "nixd"
                   "!nil"
                 ];
+                formatter.external.command = "nixfmt";
               };
             };
             lsp = {
-              nixd = {
-                binary = {
-                  path = "nixd";
-                }; # Uses the one in your $PATH
-              };
-              rust-analyzer = {
-                binary = {
-                  path = "rust-analyzer";
-                };
-              };
+              nixd.binary.path = "nixd";
+              nixfmt.binary.path = "nixfmt";
+              haskell-language-server.binary.path = "haskell-language-server";
+              rust-analyzer.binary.path = "rust-analyzer";
+              basedpyright.binary.path = "basedpyright";
+              vscode-json-languageserver.binary.path = "vscode-json-languageserver";
+              yaml-language-server.binary.path = "yaml-language-server";
             };
           };
         };

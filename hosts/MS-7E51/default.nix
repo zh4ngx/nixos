@@ -10,6 +10,7 @@
     "${self}/modules/nixos"
     "${self}/modules/home-manager"
     "${self}/modules/nixos/hardware/logitech.nix"
+    "${self}/modules/nixos/hardware/amd-6900xt.nix"
   ];
 
   # This value determines the NixOS release from which the default

@@ -381,16 +381,13 @@
           enable = true;
 
           settings = {
-            # Sets your local Qwen model as the default for all sessions
             model = "qwen2.5-coder:32b";
 
-            # Injects the necessary environment variables into the Claude process
             env = {
               ANTHROPIC_BASE_URL = "http://localhost:11434/v1";
               ANTHROPIC_API_KEY = "ollama"; # Required placeholder
             };
 
-            # Recommended for robotics/WASM: automatically trust local project files
             permissions = {
               defaultMode = "acceptEdits";
               allow = [

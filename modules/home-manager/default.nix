@@ -447,7 +447,7 @@
             };
             language_models = {
               ollama = {
-                api_url = "http://localhost:11434";
+                api_url = "http://127.0.0.1:11434";
                 low_speed_timeout_in_seconds = 60;
               };
             };

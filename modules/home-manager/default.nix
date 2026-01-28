@@ -377,25 +377,14 @@
           };
         };
 
-        programs.claude-code = {
+        programs.aider-chat = {
           enable = true;
-
           settings = {
-            model = "qwen2.5-coder:32b";
-
-            env = {
-              ANTHROPIC_BASE_URL = "http://localhost:11434/v1";
-              ANTHROPIC_API_KEY = "ollama"; # Required placeholder
-            };
-
-            permissions = {
-              defaultMode = "acceptEdits";
-              allow = [
-                "Bash"
-                "Edit"
-                "Read"
-              ];
-            };
+            model = "ollama/qwen2.5-coder:14b"; # Your fast daily driver
+            architect-model = "ollama/qwen2.5-coder:32b"; # Use the big one for planning
+            openai-api-base = "http://127.0.0.1";
+            openai-api-key = "ollama"; # Aider needs a placeholder key for local
+            edit-format = "whole"; # Best for local models to prevent hallucinating line numbers
           };
         };
 

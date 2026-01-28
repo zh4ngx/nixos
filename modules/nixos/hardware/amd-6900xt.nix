@@ -20,6 +20,10 @@
     };
   };
 
+  environment.variables = {
+    DRI_PRIME = "1";
+  };
+
   environment.systemPackages = [
     pkgs.amdgpu_top
   ];

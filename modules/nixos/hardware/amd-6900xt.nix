@@ -9,14 +9,17 @@
       "qwen2.5-coder:14b"
     ];
     environmentVariables = {
+      OLLAMA_CONTEXT_LENGTH = "8192";
       GGML_VK_VISIBLE_DEVICES = "0";
     };
   };
 
   services.open-webui = {
     enable = true;
+    host = "127.0.0.1";
     environment = {
       OLLAMA_API_BASE_URL = "http://127.0.0.1:11434";
+      WEBUI_AUTH = "False";
     };
   };
 

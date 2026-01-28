@@ -379,12 +379,23 @@
 
         programs.aider-chat = {
           enable = true;
+          package = pkgs.symlinkJoin {
+            name = "aider-wrapped";
+            paths = [ pkgs.aider-chat ];
+            buildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/aider \
+                --set OLLAMA_API_BASE "http://127.0.0.1:11434" \
+                --add-flags "--architect" \
+                --add-flags "--model ollama/qwen2.5-coder:32b" \
+                --add-flags "--editor-model ollama/qwen2.5-coder:14b"
+            '';
+          };
           settings = {
-            model = "ollama/qwen2.5-coder:14b"; # Your fast daily driver
-            architect-model = "ollama/qwen2.5-coder:32b"; # Use the big one for planning
-            openai-api-base = "http://127.0.0.1";
-            openai-api-key = "ollama"; # Aider needs a placeholder key for local
-            edit-format = "whole"; # Best for local models to prevent hallucinating line numbers
+            model = "ollama/qwen2.5-coder:32b";
+            architect = true;
+            editor-model = "ollama/qwen2.5-coder:14b";
+            edit-format = "whole";
           };
         };
 

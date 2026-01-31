@@ -100,6 +100,18 @@
 
   programs.nix-ld.enable = true;
 
+  environment.systemPackages = [ pkgs.bitwarden-desktop ];
+
+  security.polkit.enable = true;
+
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "com.bitwarden.Bitwarden" && subject.active) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";

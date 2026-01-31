@@ -43,7 +43,6 @@
           # '')
           beeper
           bitwarden-desktop
-          bitwarden-cli
           gnomeExtensions.appindicator
           gnomeExtensions.hide-top-bar
           gnomeExtensions.just-perfection

@@ -100,6 +100,8 @@
 
   programs.nix-ld.enable = true;
 
+  programs.ente-auth.enable = true;
+
   environment.systemPackages = [ pkgs.bitwarden-desktop ];
 
   security.polkit.enable = true;

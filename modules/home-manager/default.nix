@@ -78,6 +78,8 @@
           configFile = {
             "mimeapps.list".force = true;
             "uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
+            "autostart/io.ente.auth.desktop".source =
+              "${pkgs.ente-auth}/share/applications/io.ente.auth.desktop";
           };
         };
 

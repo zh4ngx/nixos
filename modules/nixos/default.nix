@@ -103,16 +103,9 @@
   programs.ente-auth.enable = true;
 
   environment.systemPackages = [ pkgs.bitwarden-desktop ];
-
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.login.enableGnomeKeyring = true;
   security.polkit.enable = true;
-
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-      if (action.id == "com.bitwarden.Bitwarden" && subject.active) {
-        return polkit.Result.YES;
-      }
-    });
-  '';
 
   # Configure keymap in X11
   services.xserver.xkb = {

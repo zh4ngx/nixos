@@ -42,6 +42,7 @@
           #   echo "Hello, ${config.home.username}!"
           # '')
           beeper
+          bitwarden-desktop
           gnomeExtensions.appindicator
           gnomeExtensions.hide-top-bar
           gnomeExtensions.just-perfection

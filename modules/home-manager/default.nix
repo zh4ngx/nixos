@@ -459,13 +459,13 @@
             };
             assistant = {
               version = "2";
-              default_model = {
+              selected_model = {
                 provider = "ollama";
                 model = "qwen2.5-coder:32b";
               };
             };
             inline_assist = {
-              default_model = {
+              selected_model = {
                 provider = "ollama";
                 model = "qwen2.5-coder:14b";
               };

@@ -361,6 +361,10 @@
             pkgs.mpvScripts.uosc
             pkgs.mpvScripts.thumbfast
           ];
+          bindings = {
+            q = "quit-watch-later";
+            "Shift+q" = "quit";
+          };
           config = {
             vo = "gpu-next";
             gpu-api = "vulkan";

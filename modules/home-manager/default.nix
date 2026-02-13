@@ -371,7 +371,7 @@
             target-peak = 1200;
             target-colorspace-hint = "yes";
             scale = "ewa_lanczossharp";
-            cscale = "krigbilateral";
+            cscale = "ewa_lanczossharp";
             # Audio mixing (biased stereo)
             af = "lavfi=[pan=stereo|FL=FC+0.707*FL+0.5*SL+0.5*BL+0.5*LFE|FR=FC+0.707*FR+0.5*SR+0.5*BR+0.5*LFE]";
             sub-auto = "fuzzy";

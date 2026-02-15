@@ -315,7 +315,7 @@
           settings = {
             user = {
               name = "Andy Zhang";
-              email = "1329212+zh4ngx@users.noreply.github.com";
+              email = "zh4ng@noreply.codeberg.org";
             };
             color = {
               ui = "auto";

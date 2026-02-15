@@ -316,6 +316,7 @@
             user = {
               name = "Andy Zhang";
               email = "zh4ng@noreply.codeberg.org";
+              signingKey = "~/.ssh/id_ed25519.pub";
             };
             color = {
               ui = "auto";
@@ -336,6 +337,8 @@
             init = {
               defaultBranch = "main";
             };
+            gpg.format = "ssh";
+            commit.gpgSign = true;
           };
           ignores = [
             ".envrc"

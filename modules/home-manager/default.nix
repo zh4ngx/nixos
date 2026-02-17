@@ -372,11 +372,15 @@
             vo = "gpu-next";
             gpu-api = "vulkan";
             target-peak = 1200;
+            target-contrast = "inf";
+            autofit-larger = "80%x80%";
+            hr-seek = "yes";
             target-colorspace-hint = "yes";
             scale = "ewa_lanczossharp";
             cscale = "ewa_lanczossharp";
             # Audio mixing (biased stereo)
             af = "lavfi=[pan=stereo|FL=FC+0.707*FL+0.5*SL+0.5*BL+0.5*LFE|FR=FC+0.707*FR+0.5*SR+0.5*BR+0.5*LFE]";
+            volume-max = 100;
             sub-auto = "fuzzy";
             slang = "eng,en";
             sub-visibility = "yes";

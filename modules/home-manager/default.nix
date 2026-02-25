@@ -41,6 +41,7 @@
           # (pkgs.writeShellScriptBin "my-hello" ''
           #   echo "Hello, ${config.home.username}!"
           # '')
+          inputs.antigravity-nix.packages.x86_64-linux.default
           beeper
           gnomeExtensions.appindicator
           gnomeExtensions.hide-top-bar

@@ -186,6 +186,8 @@
   nix = {
     channel.enable = false;
     settings = {
+      max-jobs = 4;
+      cores = 2;
       experimental-features = [
         "nix-command"
         "flakes"

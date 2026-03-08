@@ -203,6 +203,7 @@
         "https://ros.cachix.org"
         "https://hyprland.cachix.org"
         "https://cosmic.cachix.org/"
+        "https://claude-code.cachix.org"
       ];
       extra-trusted-substituters = [
         "https://bytecodealliance.cachix.org"
@@ -213,6 +214,7 @@
         "https://ros.cachix.org"
         "https://hyprland.cachix.org"
         "https://cosmic.cachix.org/"
+        "https://claude-code.cachix.org"
       ];
       extra-trusted-public-keys = [
         "bytecodealliance.cachix.org-1:0SBgh//n2n0heh0sDFhTm+ZKBRy2sInakzFGfzN531Y="
@@ -223,6 +225,7 @@
         "ros.cachix.org-1:dSyZxI8geDCJrwgvCOHDoAfOm5sV1wCPjBkKL+38Rvo="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="
+        "claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk="
       ];
     };
   };

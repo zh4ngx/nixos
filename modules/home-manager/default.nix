@@ -42,6 +42,7 @@
           #   echo "Hello, ${config.home.username}!"
           # '')
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
+          inputs.claude-code.packages.x86_64-linux.claude-code
           beeper
           gnomeExtensions.appindicator
           gnomeExtensions.hide-top-bar

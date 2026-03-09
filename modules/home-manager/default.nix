@@ -264,12 +264,24 @@
 
         programs.fish = {
           enable = true;
+          functions = {
+            plugin = ''
+              command plugin $argv
+              and ~/.claude/scripts/fix-plugins-nixos.sh
+            '';
+          };
           plugins = [
             {
               name = "bass";
               src = pkgs.fishPlugins.bass.src;
             }
           ];
+        };
+
+        # Claude Code files (managed via home.file since no canonical nixos option)
+        home.file = {
+          ".claude/CLAUDE.md".source = ./../../files/CLAUDE.md;
+          ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
         };
 
         programs.mcfly = {

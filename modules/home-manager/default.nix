@@ -366,6 +366,11 @@
         programs.bottom.enable = true;
         programs.btop.enable = true;
 
+        programs.gh = {
+          enable = true;
+          settings.git_protocol = "ssh";
+        };
+
         programs.k9s.enable = true;
 
         programs.mangohud.enable = true;

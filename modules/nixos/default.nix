@@ -172,6 +172,8 @@
     };
   };
 
+  programs.tmux.enable = true;
+
   users.users.andy = {
     isNormalUser = true;
     description = "Andy";

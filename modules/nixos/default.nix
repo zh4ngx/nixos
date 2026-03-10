@@ -158,6 +158,11 @@
 
   services.zenohd.enable = true;
 
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
   users.users.andy = {
     isNormalUser = true;
     description = "Andy";

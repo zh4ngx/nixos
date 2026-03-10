@@ -366,6 +366,22 @@
         programs.bottom.enable = true;
         programs.btop.enable = true;
 
+        programs.tmux = {
+          enable = true;
+          mouse = true;
+          terminal = "screen-256color";
+          keyMode = "vi";
+          shortcut = "a"; # Ctrl-a instead of Ctrl-b (easier on mobile)
+          extraConfig = ''
+            # Split panes with | and - (more intuitive)
+            bind | split-window -h
+            bind - split-window -v
+
+            # Reload config
+            bind r source-file ~/.config/tmux/tmux.conf \; display "Reloaded!"
+          '';
+        };
+
         programs.gh = {
           enable = true;
           settings.git_protocol = "ssh";

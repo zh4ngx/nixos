@@ -178,6 +178,9 @@
     isNormalUser = true;
     description = "Andy";
     shell = pkgs.fish;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4luyBTM8ikmWsD6YMJpna3GVn9NMqbxxsQ7Eg/vj+d"
+    ];
     extraGroups = [
       "networkmanager"
       "wheel"

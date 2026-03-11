@@ -18,7 +18,6 @@
 
   networking = {
     nameservers = [
-      "100.100.100.100" # Tailscale MagicDNS
       "9.9.9.9#dns.quad9.net"
       "149.112.112.112#dns.quad9.net"
       "2620:fe::fe#dns.quad9.net"
@@ -179,7 +178,8 @@
     description = "Andy";
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4luyBTM8ikmWsD6YMJpna3GVn9NMqbxxsQ7Eg/vj+d"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4luyBTM8ikmWsD6YMJpna3GVn9NMqbxxsQ7Eg/vj+d" # Pixel 10
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOCZ9PY00+8mhnD7SDx1luAmtHY86udWWwaX6OxBUok9" # Tablet
     ];
     extraGroups = [
       "networkmanager"

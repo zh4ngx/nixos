@@ -278,9 +278,10 @@
           ];
         };
 
-        # Claude Code files (managed via home.file since no canonical nixos option)
+        # Agent config files (single source of truth symlinked to both)
         home.file = {
-          ".claude/CLAUDE.md".source = ./../../files/CLAUDE.md;
+          ".claude/CLAUDE.md".source = ./../../agents/AGENTS.md;
+          ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
         };
 

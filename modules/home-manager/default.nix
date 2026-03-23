@@ -327,11 +327,15 @@
 
         programs.git = {
           enable = true;
+          signing = {
+            format = "ssh";
+            signByDefault = true;
+            key = "~/.ssh/id_ed25519.pub";
+          };
           settings = {
             user = {
               name = "Andy Zhang";
               email = "zh4ng@noreply.codeberg.org";
-              signingKey = "~/.ssh/id_ed25519.pub";
             };
             color = {
               ui = "auto";
@@ -352,8 +356,6 @@
             init = {
               defaultBranch = "main";
             };
-            gpg.format = "ssh";
-            commit.gpgSign = true;
           };
           ignores = [
             ".envrc"

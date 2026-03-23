@@ -372,6 +372,7 @@
           mouse = true;
           terminal = "screen-256color";
           keyMode = "vi";
+          historyLimit = 50000; # Keep 50,000 lines of history
           shortcut = "a"; # Ctrl-a instead of Ctrl-b (easier on mobile)
           extraConfig = ''
             # Split panes with | and - (more intuitive)

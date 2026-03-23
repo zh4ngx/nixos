@@ -20,7 +20,7 @@
           inputs.nix-index-database.homeModules.nix-index
         ];
 
-        home.stateVersion = "23.05"; # Please read the comment before changing.
+        home.stateVersion = "26.05"; # Please read the comment before changing.
 
         # The home.packages option allows you to install Nix packages into your
         # environment.

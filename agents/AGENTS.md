@@ -51,6 +51,11 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 ## Git Commits
 - **No Co-Authored-By**: Do not add "Co-authored-by: Claude ..." to commit messages. Keep commit history clean.
 
+## Rebuilding NixOS
+Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
+
+**Why:** Passwordless sudo is configured for `nixos-rebuild`, not `nh`. Using the former allows automated rebuilds without prompting for password.
+
 ## Sudo Command Paths
 When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
 

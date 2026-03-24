@@ -269,6 +269,9 @@
               command plugin $argv
               and ~/.claude/scripts/fix-plugins-nixos.sh
             '';
+            # ccode: create/attach project tmux session with claude
+            # Tries to continue existing conversation, falls back to fresh start
+            ccode = "tmux new-session -A -s (basename $PWD | string replace -a . _) fish -c 'claude --dangerously-skip-permissions --teammate-mode tmux --continue; or claude --dangerously-skip-permissions --teammate-mode tmux'";
           };
           plugins = [
             {
@@ -284,7 +287,8 @@
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
           # Claude Code settings from sops-nix template (decrypted at boot)
-          ".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings.json";
+          ".claude/settings.json".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings.json";
         };
 
         programs.mcfly = {

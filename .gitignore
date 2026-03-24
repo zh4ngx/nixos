@@ -1,0 +1,8 @@
+# Nix build results
+result
+result-*
+
+# Editor
+*.swp
+*.swo
+*~

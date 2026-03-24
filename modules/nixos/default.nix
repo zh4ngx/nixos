@@ -1,9 +1,15 @@
 {
   pkgs,
+  inputs,
   ...
 }:
 
 {
+  imports = [ inputs.sops-nix.nixosModules.sops ];
+
+  # Sops-nix configuration
+  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+
   # Bootloader.
   boot = {
     loader = {

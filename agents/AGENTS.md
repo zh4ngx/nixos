@@ -45,3 +45,19 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
 - **Three Strikes**: If a command fails 3x, STOP and report. Do not loop.
 - **Destructive Warning**: Print "DESTRUCTIVE ACTION" before rm/mv/nix-collect-garbage.
+
+## Git Commits
+- **No Co-Authored-By**: Do not add "Co-authored-by: Claude ..." to commit messages. Keep commit history clean.
+
+## Sudo Command Paths
+When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
+
+**Why:** sudo does NOT follow symlinks when matching command rules. The nix store path won't match when running `sudo <command>` because that resolves to `/run/current-system/sw/bin/<command>` (a symlink).
+
+```nix
+# ✓ Correct
+command = "/run/current-system/sw/bin/nixos-rebuild";
+
+# ✗ Wrong - symlink not followed, rule won't match
+command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
+```

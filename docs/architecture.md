@@ -30,6 +30,23 @@ This document describes the architecture and ongoing projects for the NixOS conf
 2. **Sudo paths**: Use `/run/current-system/sw/bin/<command>` for sudo rules (symlink issue)
 3. **Store protection**: Never edit `/nix/store` directly; trace symlinks to source files
 
+### CI/Automation
+
+**Current setup:**
+- GitHub workflow (`update-flake-lock.yml`) runs daily, updates nixpkgs, auto-merges
+- `system.autoUpgrade` pulls from GitHub daily, rebuilds locally
+- Rollback is cheap (boot previous NixOS generation)
+
+**Future improvements:**
+- Add build verification step to CI before auto-merge:
+  ```yaml
+  - name: Build NixOS configuration
+    run: nix build .#nixosConfigurations.MS-7E51.config.system.build.toplevel
+  ```
+  This catches breaking changes before they hit the machine.
+- Consider Cachix for binary cache (instant pulls on local rebuild)
+- Consider Renovate for more granular update control
+
 ---
 
 ## Project: Headless Worker Node

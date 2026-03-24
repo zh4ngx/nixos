@@ -1,7 +1,9 @@
 keys:
   - &andy age1n8tv84p2027x8hrsrhjcgwv2gmvhalzwvn8xuudsjcqtff5g69ss8ny64s
+  - &ms7e51 age17msaxy9ft8mtpv2ru90zt85txc77razjgpljqlxyp0feca8sx5rssnaa9l
 creation_rules:
   - path_regex: secrets/[^/]+\.yaml$
     key_groups:
     - age:
       - *andy
+      - *ms7e51

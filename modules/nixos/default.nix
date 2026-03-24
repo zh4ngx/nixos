@@ -8,7 +8,11 @@
   imports = [ inputs.sops-nix.nixosModules.sops ];
 
   # Sops-nix configuration
-  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+  sops = {
+    defaultSopsFile = ../../secrets/secrets.yaml;
+    # Test secret to verify sops is working
+    secrets.example_secret = { };
+  };
 
   # Bootloader.
   boot = {

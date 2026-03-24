@@ -189,6 +189,20 @@
     ];
   };
 
+  # Passwordless sudo for NixOS rebuild (remote access, automation)
+  security.sudo.extraRules = [
+    {
+      users = [ "andy" ];
+      commands = [
+        {
+          # Use the system profile path (symlink target) since sudo doesn't follow symlinks
+          command = "/run/current-system/sw/bin/nixos-rebuild";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
   # Allow unfree packages
   nixpkgs.config = {
     android_sdk.accept_license = true;

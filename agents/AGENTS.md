@@ -31,6 +31,8 @@ NEVER run imperative installers:
 ## Store Protection
 `/nix/store` is read-only. All config changes via .nix files, never direct edits.
 
+**Symlinks to nix store:** Many config files (e.g., `~/.claude/CLAUDE.md`) are symlinks into `/nix/store`. Always trace symlinks to find the source file in your nix config before editing.
+
 ## Plugin Issues
 Plugin hook scripts often have hardcoded `/bin/bash` shebangs.
 Fix script: `~/.claude/scripts/fix-plugins-nixos.sh`

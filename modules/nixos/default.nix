@@ -1,17 +1,48 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }:
 
 {
   imports = [ inputs.sops-nix.nixosModules.sops ];
 
-  # Sops-nix configuration
+  # Sops-nix configuration - all decryption at NixOS level using host key
   sops = {
     defaultSopsFile = ../../secrets/secrets.yaml;
-    # Test secret to verify sops is working
-    secrets.example_secret = { };
+
+    secrets = {
+      tailscale_auth_key = { };
+      glm_token = {
+        # Make readable by andy for Claude Code
+        owner = "andy";
+      };
+    };
+
+    # Generate Claude Code settings.json with injected secret
+    templates."claude-settings.json" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = builtins.toJSON {
+        env = {
+          ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+          ANTHROPIC_AUTH_TOKEN = config.sops.placeholder.glm_token;
+          ANTHROPIC_MODEL = "glm-5";
+          CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+        };
+        statusLine = {
+          type = "command";
+          command = "~/.claude/statusline.sh";
+        };
+        skipDangerousModePermissionPrompt = true;
+        effortLevel = "high";
+        enabledPlugins = {
+          "ralph-loop@claude-plugins-official" = true;
+        };
+      };
+    };
   };
 
   # Bootloader.
@@ -171,6 +202,7 @@
   services.tailscale = {
     enable = true;
     openFirewall = true;
+    authKeyFile = config.sops.secrets.tailscale_auth_key.path;
   };
 
   services.openssh = {

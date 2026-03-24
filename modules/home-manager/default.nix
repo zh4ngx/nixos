@@ -271,7 +271,15 @@
             '';
             # ccode: create/attach project tmux session with claude
             # Tries to continue existing conversation, falls back to fresh start
-            ccode = "tmux new-session -A -s (basename $PWD | string replace -a . _) fish -c 'claude --dangerously-skip-permissions --teammate-mode tmux --continue; or claude --dangerously-skip-permissions --teammate-mode tmux'";
+            ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --dangerously-skip-permissions --teammate-mode tmux --continue; or claude --dangerously-skip-permissions --teammate-mode tmux'";
+            # Title hook - sets window name for tmux to pass through
+            fish_title = ''
+              if set -q TMUX
+                echo (status current-command)
+              else
+                echo (basename $PWD)
+              end
+            '';
           };
           plugins = [
             {
@@ -389,6 +397,10 @@
 
             # Reload config
             bind r source-file ~/.config/tmux/tmux.conf \; display "Reloaded!"
+
+            # Pass title to terminal (Rio/Termux)
+            set-option -g set-titles on
+            set-option -g set-titles-string "🤖 #S - #W"
           '';
         };
 

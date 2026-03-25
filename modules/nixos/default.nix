@@ -23,31 +23,35 @@
       };
     };
 
-    # Generate Claude Code settings.json with injected secret
+    # Generate Claude Code settings.json from template
+    # Template file at secrets/settings.json.tpl serves as reference
     templates."claude-settings.json" = {
       owner = "andy";
       group = "users";
       mode = "0400";
-      content = builtins.toJSON {
-        env = {
-          ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-          ANTHROPIC_AUTH_TOKEN = config.sops.placeholder.glm_token;
-          ANTHROPIC_MODEL = "glm-5";
-          CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-        };
-        statusLine = {
-          type = "command";
-          command = "~/.claude/statusline.sh";
-        };
-        skipDangerousModePermissionPrompt = true;
-        effortLevel = "high";
-        enabledPlugins = {
-          "ralph-loop@claude-plugins-official" = true;
-        };
-      };
+      content = ''
+        {
+          "env": {
+            "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+            "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder.glm_token}",
+            "ANTHROPIC_MODEL": "glm-5",
+            "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+          },
+          "statusLine": {
+            "type": "command",
+            "command": "~/.claude/statusline.sh"
+          },
+          "skipDangerousModePermissionPrompt": true,
+          "effortLevel": "high",
+          "enabledPlugins": {
+            "ralph-loop@claude-plugins-official": true
+          }
+        }
+      '';
     };
 
-    # Generate tea CLI config with injected token (YAML format)
+    # Generate tea CLI config from template
+    # Template file at secrets/tea-config.yml.tpl serves as reference
     templates."tea-config.yml" = {
       owner = "andy";
       group = "users";

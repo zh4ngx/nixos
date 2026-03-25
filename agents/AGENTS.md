@@ -67,10 +67,18 @@ File-based team coordination using shared task lists. Teammates run in separate 
 ```
 
 **Commands:**
-- `dev` - Director session in ~/dev (team-aware, dispatches work to teammates)
-- `teamup` - Start all teammates (separate tmux sessions, polling for tasks)
-- `teammate <name>` - Start a single teammate manually
+- `teamup` - Start director + all teammates (background sessions)
+- `dev` - Attach to director (creates if not exists)
+- `teammate <name>` - Attach to specific teammate (creates if not exists)
 - `ccode` - Standalone project session (for manual debugging)
+
+**Quick Start:**
+```bash
+teamup          # Start everything in background
+dev             # Attach to director
+# ... work in director ...
+Ctrl-a d        # Detach (session keeps running)
+```
 
 **Teammates:**
 | Name | Working Directory | Purpose |
@@ -86,14 +94,18 @@ File-based team coordination using shared task lists. Teammates run in separate 
 4. Teammates poll every 1 minute, pick up assigned tasks, execute, mark complete
 
 **Teammate Behavior:**
-On startup, teammates:
-1. Read team config to confirm membership
-2. Set up `CronCreate` with 1-minute interval to poll TaskList
-3. When task assigned to them: execute, mark complete, check for more
+On startup, teammates run `/teammate` skill which:
+1. Reads team config to confirm membership
+2. Sets up `CronCreate` with 1-minute interval to poll TaskList
+3. When task assigned: execute, mark complete, check for more
 4. When idle: wait for next poll
 
+**Safety:**
+- Use `Ctrl-a d` to detach (session keeps running)
+- NOT `Ctrl-d` or `exit` (kills the session)
+
 **When to use:**
-- `dev` + `teamup` for multi-project work (recommended daily driver)
+- `teamup` + `dev` for multi-project work (recommended daily driver)
 - `ccode` for isolated, single-project work or debugging a stuck teammate
 
 ## Sudo Command Paths

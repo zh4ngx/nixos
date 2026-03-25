@@ -41,7 +41,14 @@
             "type": "command",
             "command": "~/.claude/statusline.sh"
           },
-          "skipDangerousModePermissionPrompt": true,
+          "teammateMode": "tmux",
+          "permissions": {
+            "defaultMode": "bypassPermissions"
+          },
+          "attribution": {
+            "commit": "",
+            "pr": ""
+          },
           "effortLevel": "high",
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true

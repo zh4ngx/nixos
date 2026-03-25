@@ -56,6 +56,46 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 
 **Why:** Passwordless sudo is configured for `nixos-rebuild`, not `nh`. Using the former allows automated rebuilds without prompting for password.
 
+## Teammate Sessions
+
+**Architecture:**
+File-based team coordination using shared task lists. Teammates run in separate tmux sessions and poll for assigned work.
+
+```
+~/.claude/teams/andy-dev/config.json  # Team member registry
+~/.claude/tasks/andy-dev/              # Shared task files
+```
+
+**Commands:**
+- `dev` - Director session in ~/dev (team-aware, dispatches work to teammates)
+- `teamup` - Start all teammates (separate tmux sessions, polling for tasks)
+- `teammate <name>` - Start a single teammate manually
+- `ccode` - Standalone project session (for manual debugging)
+
+**Teammates:**
+| Name | Working Directory | Purpose |
+|------|-------------------|---------|
+| home-manager | ~/dev/home-manager | Home Manager PRs and issues |
+| clade-research | ~/dev/clade-research | Research notes and experiments |
+| obsidian | ~/dev/obsidian | Knowledge base and notations |
+
+**Director Workflow:**
+1. You talk to the director (in `dev` session)
+2. Director creates tasks with `TaskCreate`
+3. Director assigns tasks to teammates with `TaskUpdate({ owner: "teammate-name" })`
+4. Teammates poll every 1 minute, pick up assigned tasks, execute, mark complete
+
+**Teammate Behavior:**
+On startup, teammates:
+1. Read team config to confirm membership
+2. Set up `CronCreate` with 1-minute interval to poll TaskList
+3. When task assigned to them: execute, mark complete, check for more
+4. When idle: wait for next poll
+
+**When to use:**
+- `dev` + `teamup` for multi-project work (recommended daily driver)
+- `ccode` for isolated, single-project work or debugging a stuck teammate
+
 ## Sudo Command Paths
 When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
 

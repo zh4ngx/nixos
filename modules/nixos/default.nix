@@ -18,6 +18,9 @@
         # Make readable by andy for Claude Code
         owner = "andy";
       };
+      codeberg_token = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json with injected secret
@@ -42,6 +45,24 @@
           "ralph-loop@claude-plugins-official" = true;
         };
       };
+    };
+
+    # Generate tea CLI config with injected token (YAML format)
+    templates."tea-config.yml" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        logins:
+          - name: codeberg
+            url: https://codeberg.org
+            token: ${config.sops.placeholder.codeberg_token}
+            default: true
+            ssh_host: codeberg.org
+            ssh_key: /home/andy/.ssh/id_ed25519
+            insecure: false
+            user: zh4ng
+      '';
     };
   };
 

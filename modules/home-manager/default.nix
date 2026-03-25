@@ -44,6 +44,7 @@
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
           inputs.claude-code.packages.x86_64-linux.claude-code
           beeper
+          tea # Codeberg CLI
           gnomeExtensions.appindicator
           gnomeExtensions.hide-top-bar
           gnomeExtensions.just-perfection
@@ -297,6 +298,9 @@
           # Claude Code settings from sops-nix template (decrypted at boot)
           ".claude/settings.json".source =
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings.json";
+          # tea CLI config from sops-nix template
+          ".config/tea/config.yml".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/tea-config.yml";
         };
 
         programs.mcfly = {

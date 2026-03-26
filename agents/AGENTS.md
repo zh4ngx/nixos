@@ -62,13 +62,6 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 ## Sudo Command Paths
 When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
 
-## ~/dev/ Projects: Spawn Single Subagent
-When working on any project under `~/dev/{project-name}`, spawn a **single subagent** to handle that project.
-
-**Why:** Isolates project work in a separate context. The subagent owns the task end-to-end.
-
-**How:** Use Agent tool with appropriate subagent_type (Explore for research, Plan for planning, general-purpose for implementation). Don't create a team - just one agent.
-
 ## Hooks: Declarative Only
 Claude Code hooks and settings should be managed in NixOS config, not by editing ~/.claude/settings.json directly.
 

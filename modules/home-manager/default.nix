@@ -271,9 +271,9 @@
               and ~/.claude/scripts/fix-plugins-nixos.sh
             '';
             # dev: start claude in a tmux session
-            dev = "cd ~/dev && tmux new-session -A -D -s dev fish -c 'claude --continue; or claude'";
+            dev = "cd ~/dev && tmux new-session -A -D -s dev fish -c 'claude --continue; or claude --dangerously-skip-permissions'";
             # ccode: standalone project session
-            ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --continue; or claude'";
+            ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --continue; or claude --dangerously-skip-permissions'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

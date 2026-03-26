@@ -45,6 +45,7 @@
           },
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
+          "skipDangerousModePermissionPrompt": true,
           "attribution": {
             "commit": "",
             "pr": ""

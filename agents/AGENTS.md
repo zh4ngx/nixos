@@ -48,9 +48,6 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **Three Strikes**: If a command fails 3x, STOP and report. Do not loop.
 - **Destructive Warning**: Print "DESTRUCTIVE ACTION" before rm/mv/nix-collect-garbage.
 
-## Git Commits
-- **No Co-Authored-By**: Do not add "Co-authored-by: Claude ..." to commit messages. Keep commit history clean.
-
 ## Rebuilding NixOS
 Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 
@@ -59,15 +56,17 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 ## Teammate Sessions
 
 **Architecture:**
-File-based team coordination using shared task lists. Teammates run in separate tmux sessions and poll for assigned work.
+File-based team coordination using shared task JSON files. Teammates run in separate tmux sessions and poll for assigned work.
 
 ```
 ~/.claude/teams/andy-dev/config.json  # Team member registry
-~/.claude/tasks/andy-dev/              # Shared task files
+~/.claude/tasks/andy-dev/*.json       # Shared task files
 ```
 
 **Commands:**
 - `teamup` - Start director + all teammates (background sessions)
+- `teamdown` - Kill all teammate sessions (director persists)
+- `team-restart` - Restart all teammates (pick up skill changes)
 - `dev` - Attach to director (creates if not exists)
 - `teammate <name>` - Attach to specific teammate (creates if not exists)
 - `ccode` - Standalone project session (for manual debugging)
@@ -83,22 +82,48 @@ Ctrl-a d        # Detach (session keeps running)
 **Teammates:**
 | Name | Working Directory | Purpose |
 |------|-------------------|---------|
+| nixos | ~/dev/nixos | NixOS system configuration |
 | home-manager | ~/dev/home-manager | Home Manager PRs and issues |
 | clade-research | ~/dev/clade-research | Research notes and experiments |
 | obsidian | ~/dev/obsidian | Knowledge base and notations |
 
 **Director Workflow:**
 1. You talk to the director (in `dev` session)
-2. Director creates tasks with `TaskCreate`
-3. Director assigns tasks to teammates with `TaskUpdate({ owner: "teammate-name" })`
-4. Teammates poll every 1 minute, pick up assigned tasks, execute, mark complete
+2. Director creates task files in `~/.claude/tasks/andy-dev/`
+3. Director sets `owner` field to teammate name
+4. Teammates poll every 1 minute, pick up assigned tasks, execute, update status
+
+**Task File Format:**
+```json
+{
+  "id": "1",
+  "subject": "Brief task title",
+  "description": "Detailed description with context and steps",
+  "status": "pending",
+  "owner": "home-manager",
+  "notes": "Optional: clarifications from human",
+  "blockedBy": [],
+  "blocks": []
+}
+```
+
+**Human Interjection:**
+- **Attach directly**: `teammate <name>` to type in their session
+- **Add notes**: Edit task file's `notes` field with clarifications
+- **Block task**: Set `status: "blocked"` to pause execution
 
 **Teammate Behavior:**
 On startup, teammates run `/teammate` skill which:
 1. Reads team config to confirm membership
-2. Sets up `CronCreate` with 1-minute interval to poll TaskList
-3. When task assigned: execute, mark complete, check for more
+2. Sets up `CronCreate` with 1-minute interval to poll task files
+3. When task assigned: read file, execute, update status via Edit
 4. When idle: wait for next poll
+
+**Restarting After Updates:**
+After updating the teammate skill or other configuration:
+```bash
+team-restart    # Kills and restarts all teammates
+```
 
 **Safety:**
 - Use `Ctrl-a d` to detach (session keeps running)

@@ -10,6 +10,11 @@
     "command": "~/.claude/statusline.sh"
   },
   "skipDangerousModePermissionPrompt": true,
+  "bypassPermissions": [
+    { "tool": "Bash", "prompt": "rm *" },
+    { "tool": "Write", "prompt": "*tasks/andy-dev*" },
+    { "tool": "Edit", "prompt": "*tasks/andy-dev*" }
+  ],
   "effortLevel": "high",
   "enabledPlugins": {
     "ralph-loop@claude-plugins-official": true

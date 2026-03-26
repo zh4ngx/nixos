@@ -20,18 +20,60 @@ You are a teammate in the "andy-dev" team. Your job is to autonomously execute t
 3. **Set up polling** with CronCreate:
    ```
    CronCreate with cron: "*/1 * * * *" (every 1 minute)
-   prompt: "Check TaskList for tasks assigned to me. If found, execute them and mark complete."
+   prompt: "Check for task files assigned to me. If found, execute them and update status."
    ```
+
+## Task File Format
+
+Tasks are JSON files in `~/.claude/tasks/andy-dev/`:
+
+```json
+{
+  "id": "1",
+  "subject": "Brief task title",
+  "description": "Detailed description with steps and context",
+  "status": "pending | in_progress | completed | blocked",
+  "owner": "your-teammate-name",
+  "notes": "Optional: human clarifications or additional context",
+  "blockedBy": [],
+  "blocks": []
+}
+```
 
 ## Task Execution Loop
 
-When polling finds an assigned task:
+When polling finds a task where `owner` matches your name AND `status` is `pending`:
 
-1. **Read the task** with `TaskGet` to understand requirements
-2. **Mark in progress** with `TaskUpdate({ status: "in_progress" })`
-3. **Execute the task** - do the work described
-4. **Mark complete** with `TaskUpdate({ status: "completed" })`
-5. **Check for more** - call `TaskList` to see if there's additional work
+1. **Read the task file** with `Read` tool to understand requirements
+2. **Check for human notes** in the `notes` field - this contains clarifications from the user
+3. **Mark in progress** by updating the file with `status: "in_progress"`
+4. **Execute the task** - do the work described
+5. **Mark complete** by updating the file with `status: "completed"`
+6. **Check for more** - read other task files to see if there's additional work
+
+## File Operations
+
+Use the Read and Edit tools directly on task files:
+
+```
+# Read task
+Read ~/.claude/tasks/andy-dev/1.json
+
+# Update status
+Edit ~/.claude/tasks/andy-dev/1.json
+  old_string: "status": "pending"
+  new_string: "status": "in_progress"
+```
+
+## Human Interjection
+
+The human can intervene in several ways:
+
+1. **Attach to your session**: `teammate <name>` lets them type directly
+2. **Add notes to task**: Director can add a `notes` field with clarifications
+3. **Change status**: Setting `status: "blocked"` signals you should pause
+
+If you see `status: "blocked"` or new content in `notes`, pause and wait for human guidance before continuing.
 
 ## Idle Behavior
 
@@ -43,12 +85,12 @@ When no tasks are assigned:
 ## Communication
 
 - You do NOT have direct communication with other sessions (SendMessage doesn't work across tmux sessions)
-- All coordination happens through the shared task list
-- The director (in `dev` session) assigns work to you
-- You execute and mark complete
+- All coordination happens through the shared task files
+- The director (in `dev` session) creates and assigns tasks
+- You execute and update status
 
 ## If Something Goes Wrong
 
-- If a task is blocked: mark it in_progress and add a note to the description explaining the blocker
-- If you can't complete a task: mark it in_progress and describe what's needed
-- The user may switch to your tmux pane to help debug
+- If a task is blocked: update `status` to `"blocked"` and add explanation to `notes`
+- If you can't complete a task: update `status` to `"blocked"` with details in `notes`
+- The user may attach to your tmux session to help debug

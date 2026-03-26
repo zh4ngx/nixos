@@ -23,8 +23,7 @@
       };
     };
 
-    # Generate Claude Code settings.json from template
-    # Template file at secrets/settings.json.tpl serves as reference
+    # Generate Claude Code settings.json
     templates."claude-settings.json" = {
       owner = "andy";
       group = "users";
@@ -43,7 +42,7 @@
           },
           "teammateMode": "tmux",
           "permissions": {
-            "defaultMode": "bypassPermissions"
+            "defaultMode": "auto"
           },
           "attribution": {
             "commit": "",

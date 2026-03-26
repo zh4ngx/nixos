@@ -270,55 +270,9 @@
               command plugin $argv
               and ~/.claude/scripts/fix-plugins-nixos.sh
             '';
-            # dev: director session in ~/dev (team-aware)
+            # dev: start claude in a tmux session
             dev = "cd ~/dev && tmux new-session -A -D -s dev fish -c 'claude --continue; or claude'";
-            # teamup: start director + all teammates (separate tmux sessions)
-            teamup = ''
-              echo "Starting dev director and teammates..."
-              tmux new-session -d -s dev -c ~/dev fish -c 'claude --continue; or claude'
-              tmux new-session -d -s nixos -c ~/dev/nixos fish -c 'claude --continue; or claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              tmux new-session -d -s home-manager -c ~/dev/home-manager fish -c 'claude --continue; or claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              tmux new-session -d -s clade-research -c ~/dev/clade-research fish -c 'claude --continue; or claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              tmux new-session -d -s obsidian -c ~/dev/obsidian fish -c 'claude --continue; or claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              echo "Started: dev (director), nixos, home-manager, clade-research, obsidian"
-              echo "Attach with: tmux attach -t <name>"
-              echo "List sessions: tmux ls"
-            '';
-            # teammate: start a single teammate by name
-            teammate = ''
-              set -l name $argv[1]
-              set -l dir ~/dev/$name
-              if test -d $dir
-                tmux new-session -A -D -s $name -c $dir fish -c 'claude --continue; or claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              else
-                echo "Unknown teammate: $name"
-                echo "Available: nixos, home-manager, clade-research, obsidian"
-              end
-            '';
-            # teamdown: kill all teammate sessions (director persists)
-            teamdown = ''
-              echo "Stopping teammates..."
-              tmux kill-session -t nixos 2>/dev/null; or true
-              tmux kill-session -t home-manager 2>/dev/null; or true
-              tmux kill-session -t clade-research 2>/dev/null; or true
-              tmux kill-session -t obsidian 2>/dev/null; or true
-              echo "Teammates stopped. Director (dev) session still running."
-            '';
-            # team-restart: restart all teammates (pick up skill changes)
-            team-restart = ''
-              echo "Restarting teammates..."
-              tmux kill-session -t nixos 2>/dev/null; or true
-              tmux kill-session -t home-manager 2>/dev/null; or true
-              tmux kill-session -t clade-research 2>/dev/null; or true
-              tmux kill-session -t obsidian 2>/dev/null; or true
-              sleep 1
-              tmux new-session -d -s nixos -c ~/dev/nixos fish -c 'claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              tmux new-session -d -s home-manager -c ~/dev/home-manager fish -c 'claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              tmux new-session -d -s clade-research -c ~/dev/clade-research fish -c 'claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              tmux new-session -d -s obsidian -c ~/dev/obsidian fish -c 'claude -p "Run the /teammate skill to join the team and start polling for tasks."'
-              echo "Teammates restarted with fresh sessions."
-            '';
-            # ccode: standalone project session (for manual debugging)
+            # ccode: standalone project session
             ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --continue; or claude'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
@@ -342,30 +296,6 @@
           ".claude/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
-          ".claude/skills/teammate.md".source = ./../../agents/skills/teammate.md;
-          # Team config for file-based coordination
-          ".claude/teams/andy-dev/config.json".text = builtins.toJSON {
-            name = "andy-dev";
-            description = "Andy's development team";
-            teammates = {
-              nixos = {
-                cwd = "~/dev/nixos";
-                description = "NixOS system configuration";
-              };
-              home-manager = {
-                cwd = "~/dev/home-manager";
-                description = "Home Manager PRs and issues";
-              };
-              clade-research = {
-                cwd = "~/dev/clade-research";
-                description = "Research notes and experiments";
-              };
-              obsidian = {
-                cwd = "~/dev/obsidian";
-                description = "Knowledge base and notations";
-              };
-            };
-          };
           # Claude Code settings from sops-nix template (decrypted at boot)
           ".claude/settings.json".source =
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings.json";

@@ -553,6 +553,10 @@
           };
         };
 
+        programs.obsidian = {
+          enable = true;
+        };
+
         dconf.settings = {
           "org/gnome/desktop/peripherals/mouse" = {
             accel-profile = "flat";

@@ -34,16 +34,18 @@
             "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
             "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder.glm_token}",
             "ANTHROPIC_MODEL": "glm-5",
-            "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+            "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+            "DISABLE_TELEMETRY": "1",
+            "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": “1”,
+            "DISABLE_ERROR_REPORTING": "1"
           },
           "statusLine": {
             "type": "command",
             "command": "~/.claude/statusline.sh"
           },
+          "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
-          "permissions": {
-            "defaultMode": "auto"
-          },
+          "skipDangerousModePermissionPrompt": true,
           "attribution": {
             "commit": "",
             "pr": ""

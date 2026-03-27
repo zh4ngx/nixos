@@ -16,6 +16,7 @@ let
       mainJsHash,
       manifestHash,
       stylesHash,
+      settings ? null,
     }:
     let
       baseUrl = "https://github.com/${owner}/${repo}/releases/download/${version}";
@@ -31,21 +32,22 @@ let
         url = "${baseUrl}/styles.css";
         hash = stylesHash;
       };
+      pkg = pkgs.stdenv.mkDerivation {
+        pname = "obsidian-plugin-${pluginId}";
+        inherit version;
+
+        # Skip default phases - we just need install
+        phases = [ "installPhase" ];
+
+        installPhase = ''
+          mkdir -p $out
+          cp ${mainJs} $out/main.js
+          cp ${manifest} $out/manifest.json
+          cp ${styles} $out/styles.css 2>/dev/null || true
+        '';
+      };
     in
-    pkgs.stdenv.mkDerivation {
-      pname = "obsidian-plugin-${pluginId}";
-      inherit version;
-
-      # Skip default phases - we just need install
-      phases = [ "installPhase" ];
-
-      installPhase = ''
-        mkdir -p $out
-        cp ${mainJs} $out/main.js
-        cp ${manifest} $out/manifest.json
-        cp ${styles} $out/styles.css 2>/dev/null || true
-      '';
-    };
+    { inherit pkg; } // lib.optionalAttrs (settings != null) { inherit settings; };
 
 in
 {
@@ -64,6 +66,10 @@ in
           mainJsHash = "sha256-YKTRDXDyhujCUI2S2ItJLO2c3APMyJKMByw8+SDSklU=";
           manifestHash = "sha256-+5Bpq0hF7qIWBKUGo/P5alRiGHIusY/FKqHgfjKfu2E=";
           stylesHash = "sha256-z8T/vXpQffcNan0khWGks5v2y1RbuEeKWoCsju4YxGw=";
+          settings = {
+            enableIJsQueries = true;
+            enableInlineQueries = true;
+          };
         })
         # Media DB - query APIs for movies, games, music, etc.
         (buildObsidianPlugin {
@@ -74,6 +80,16 @@ in
           mainJsHash = "sha256-dKlW7bdNlj/hU/PMttXSWDqPIRHcKREcor6GD17TfEY=";
           manifestHash = "sha256-Hx7+OIHZVlwh8roeZbdBdffOqivbDmjoquq7/uLW+fY=";
           stylesHash = "sha256-8AzOMvISGCnRiT83oA7xrHYy05gF6wBDEGjaz0FqAtQ=";
+          settings = {
+            movieTemplate = "02-areas/media/Templates/Movie Template.md";
+            movieFolder = "02-areas/media/to-watch";
+            seriesTemplate = "02-areas/media/Templates/Movie Template.md";
+            seriesFolder = "02-areas/media/to-watch";
+            sources = {
+              omdb = true;
+              tmdb = true;
+            };
+          };
         })
       ];
     };

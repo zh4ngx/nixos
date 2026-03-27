@@ -21,6 +21,9 @@
       codeberg_token = {
         owner = "andy";
       };
+      gemini_token = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json
@@ -74,6 +77,19 @@
             ssh_key: /home/andy/.ssh/id_ed25519
             insecure: false
             user: zh4ng
+      '';
+    };
+
+    # Generate OpenCode auth.json with API keys
+    templates."opencode-auth.json" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        {
+          "zai": "${config.sops.placeholder.glm_token}",
+          "gemini": "${config.sops.placeholder.gemini_token}"
+        }
       '';
     };
   };

@@ -19,6 +19,7 @@
         imports = [
           inputs.nix-index-database.homeModules.nix-index
           ./obsidian.nix
+          ./opencode.nix
         ];
 
         home.stateVersion = "26.05"; # Please read the comment before changing.

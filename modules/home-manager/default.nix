@@ -14,10 +14,11 @@
     useUserPackages = true;
     extraSpecialArgs = { inherit self inputs; };
     users.andy =
-      { config, ... }:
+      { config, lib, ... }:
       {
         imports = [
           inputs.nix-index-database.homeModules.nix-index
+          ./obsidian.nix
         ];
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
@@ -551,10 +552,6 @@
               };
             };
           };
-        };
-
-        programs.obsidian = {
-          enable = true;
         };
 
         dconf.settings = {

@@ -21,8 +21,10 @@ This document describes the architecture and ongoing projects for the NixOS conf
 ### Secrets Management
 
 - **sops-nix**: Encrypted secrets stored in `secrets/secrets.yaml`
-- **Age key**: Derived from SSH key (`~/.ssh/id_ed25519.pub`)
-- **Decryption**: Secrets decrypted to `/run/secrets/` at activation time
+- **Age keys**: Both derived from SSH keys via `ssh-to-age` (not standalone age keys)
+  - User key (from `~/.ssh/id_ed25519`): `age1n8tv84p2027x8hrsrhjcgwv2gmvhalzwvn8xuudsjcqtff5g69ss8ny64s`
+  - Host key (from `/etc/ssh/ssh_host_ed25519_key`): `age17msaxy9ft8mtpv2ru90zt85txc77razjgpljqlxyp0feca8sx5rssnaa9l`
+- **Decryption**: Secrets decrypted to `/run/secrets/` at boot via host SSH key
 
 ### Key Decisions
 
@@ -106,19 +108,21 @@ The current Windows 11 machine (gaming, music recording, specialized hardware) w
 
 ```bash
 cd ~/dev/nixos
-nix shell nixpkgs#sops --command sops secrets/secrets.yaml
+export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
+  && sops edit secrets/secrets.yaml
 ```
 
 ### Rebuilding
 
 ```bash
 # Local
-nh os switch
+sudo nixos-rebuild switch --flake .
 
 # Remote
 sudo nixos-rebuild switch --flake .#<hostname> --target-host root@<ip>
 ```
 
-### Age Key
+### Age Keys
 
-Derived from SSH key: `age1n8tv84p2027x8hrsrhjcgwv2gmvhalzwvn8xuudsjcqtff5g69ss8ny64s`
+- User (andy): `age1n8tv84p2027x8hrsrhjcgwv2gmvhalzwvn8xuudsjcqtff5g69ss8ny64s` (from `~/.ssh/id_ed25519`)
+- Host (ms7e51): `age17msaxy9ft8mtpv2ru90zt85txc77razjgpljqlxyp0feca8sx5rssnaa9l` (from `/etc/ssh/ssh_host_ed25519_key`)

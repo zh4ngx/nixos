@@ -304,6 +304,9 @@
           # tea CLI config from sops-nix template
           ".config/tea/config.yml".source =
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/tea-config.yml";
+          # MCP server config from sops-nix template (Tavily)
+          ".claude/.mcp.json".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/mcp-config.json";
         };
 
         programs.mcfly = {

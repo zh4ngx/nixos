@@ -37,6 +37,9 @@
       sutro_group_chat_id = {
         owner = "andy";
       };
+      tavily_api_key = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json
@@ -62,6 +65,9 @@
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,
+          "permissions": {
+            "deny": ["WebSearch"]
+          },
           "attribution": {
             "commit": "",
             "pr": ""
@@ -102,6 +108,26 @@
         {
           "zai": "${config.sops.placeholder.glm_token}",
           "gemini": "${config.sops.placeholder.gemini_token}"
+        }
+      '';
+    };
+
+    # Generate MCP server config with Tavily API key
+    templates."mcp-config.json" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        {
+          "mcpServers": {
+            "tavily": {
+              "command": "nix",
+              "args": ["run", "nixpkgs#nodejs_22", "--", "npx", "-y", "tavily-mcp@latest"],
+              "env": {
+                "TAVILY_API_KEY": "${config.sops.placeholder.tavily_api_key}"
+              }
+            }
+          }
         }
       '';
     };

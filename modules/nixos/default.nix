@@ -24,6 +24,19 @@
       gemini_token = {
         owner = "andy";
       };
+      # SutroYaro Telegram credentials
+      telegram_api_id = {
+        owner = "andy";
+      };
+      telegram_api_hash = {
+        owner = "andy";
+      };
+      telegram_bot_token = {
+        owner = "andy";
+      };
+      sutro_group_chat_id = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json
@@ -212,7 +225,11 @@
 
   programs.ente-auth.enable = true;
 
-  environment.systemPackages = [ pkgs.bitwarden-desktop ];
+  environment.systemPackages = [
+    pkgs.bitwarden-desktop
+    pkgs.sops
+    pkgs.ssh-to-age
+  ];
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.login.enableGnomeKeyring = true;
   security.polkit.enable = true;

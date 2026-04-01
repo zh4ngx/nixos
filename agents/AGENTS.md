@@ -59,6 +59,32 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 
 **Why:** Passwordless sudo is configured for `nixos-rebuild`, not `nh`. Using the former allows automated rebuilds without prompting for password.
 
+**Always `git pull` before rebuilding.** Auto-upgrade may have pushed newer flake.lock or config changes to origin.
+
+## Sops Secrets
+Secrets use SSH-derived age keys (not standalone age keys). `sops` and `ssh-to-age` are in system PATH.
+
+### Editing secrets
+```bash
+# Convert SSH key to age identity, then use sops
+export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
+  && sops edit secrets/secrets.yaml
+
+# Set a single key without opening editor
+export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
+  && sops set secrets/secrets.yaml '["key_name"]' '"value"'
+```
+
+### Adding new secrets
+1. Add key to `secrets/secrets.yaml` via `sops set` (above)
+2. Declare in `modules/nixos/default.nix` under `sops.secrets` with `owner = "andy"`
+3. Reference in config via `config.sops.placeholder.<name>` (templates) or `config.sops.secrets.<name>.path` (`/run/secrets/<name>`)
+
+### Rules
+- **Never use `yq` to edit secrets.yaml** — it writes plaintext and breaks the sops MAC
+- **No standalone age key file** — keys are SSH-derived via `ssh-to-age` at runtime, nothing persists on disk
+- Secrets decrypt to `/run/secrets/<name>` at boot via sops-nix using the host SSH key
+
 ## Sudo Command Paths
 When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
 

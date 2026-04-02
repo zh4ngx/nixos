@@ -112,7 +112,7 @@
       '';
     };
 
-    # Generate MCP server config with Tavily API key
+    # Generate MCP server config with Tavily remote MCP (HTTP transport)
     templates."mcp-config.json" = {
       owner = "andy";
       group = "users";
@@ -121,11 +121,7 @@
         {
           "mcpServers": {
             "tavily": {
-              "command": "nix",
-              "args": ["run", "nixpkgs#nodejs_22", "--", "npx", "-y", "tavily-mcp@latest"],
-              "env": {
-                "TAVILY_API_KEY": "${config.sops.placeholder.tavily_api_key}"
-              }
+              "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=${config.sops.placeholder.tavily_api_key}"
             }
           }
         }

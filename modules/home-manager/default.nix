@@ -470,7 +470,12 @@
           enable = true;
           package = pkgs.symlinkJoin {
             name = "aider-wrapped";
-            paths = [ pkgs.aider-chat ];
+            paths = [
+              (pkgs.aider-chat.overrideAttrs (finalAttrs: prevAttrs: {
+                doCheck = false;
+                doInstallCheck = false;
+              }))
+            ];
             buildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/aider \
@@ -509,7 +514,7 @@
             pkgs.ruff
             pkgs.rust-analyzer
             pkgs.basedpyright
-            pkgs.nodePackages.vscode-json-languageserver
+            pkgs.vscode-langservers-extracted
             pkgs.yaml-language-server
           ];
           userSettings = {

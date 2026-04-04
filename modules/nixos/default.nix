@@ -40,7 +40,6 @@
       openrouter_api_key = {
         owner = "andy";
       };
-
     };
 
     # Generate Claude Code settings.json
@@ -100,18 +99,18 @@
       '';
     };
 
-    # Generate OpenCode auth.json with API keys
+    # Generate OpenCode auth.json with correct format
     templates."opencode-auth.json" = {
       owner = "andy";
       group = "users";
       mode = "0400";
-      content = ''
-        {
-          "openrouter": "${config.sops.placeholder.openrouter_api_key}"
-        }
-      '';
+      content = builtins.toJSON {
+        openrouter = {
+          type = "api";
+          key = config.sops.placeholder.openrouter_api_key;
+        };
+      };
     };
-
 
   };
 

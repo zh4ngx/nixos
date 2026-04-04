@@ -1,36 +1,18 @@
-{ config, lib, pkgs, ... }:
+{ config, ... }:
 {
-  # Install OpenCode package
-  home.packages = [ pkgs.opencode ];
+  programs.opencode = {
+    enable = true;
 
-  # OpenCode configuration
-  xdg.configFile."opencode/opencode.json" = {
-    text = builtins.toJSON {
-      "$schema" = "https://opencode.ai/config.json";
-
-      # Z.AI GLM-5.1 provider (OpenAI-compatible)
+    settings = {
+      model = "openrouter/qwen3.6-plus:free";
       provider = {
-        zai = {
+        openrouter = {
           npm = "@ai-sdk/openai-compatible";
-          name = "Z.AI";
-          options.baseURL = "https://api.z.ai/api/coding/paas/v4";
+          name = "OpenRouter";
+          options.baseURL = "https://openrouter.ai/api/v1";
           models = {
-            "glm-5.1" = {
-              name = "GLM-5.1";
-              limit = {
-                context = 200000;
-                output = 131072;
-              };
-            };
-          };
-        };
-        # Gemini provider for long context
-        gemini = {
-          npm = "@ai-sdk/google";
-          name = "Google Gemini";
-          models = {
-            "gemini-2.5-pro" = {
-              name = "Gemini 2.5 Pro";
+            "qwen3.6-plus:free" = {
+              name = "Qwen 3.6 Plus";
               limit = {
                 context = 1000000;
                 output = 65536;
@@ -39,9 +21,6 @@
           };
         };
       };
-
-      # Default to GLM-5.1
-      model = "zai/glm-5.1";
     };
   };
 

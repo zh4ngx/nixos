@@ -37,6 +37,9 @@
       sutro_group_chat_id = {
         owner = "andy";
       };
+      openrouter_api_key = {
+        owner = "andy";
+      };
 
     };
 
@@ -104,8 +107,7 @@
       mode = "0400";
       content = ''
         {
-          "zai": "${config.sops.placeholder.glm_token}",
-          "gemini": "${config.sops.placeholder.gemini_token}"
+          "openrouter": "${config.sops.placeholder.openrouter_api_key}"
         }
       '';
     };

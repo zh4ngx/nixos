@@ -37,9 +37,7 @@
       sutro_group_chat_id = {
         owner = "andy";
       };
-      tavily_api_key = {
-        owner = "andy";
-      };
+
     };
 
     # Generate Claude Code settings.json
@@ -112,21 +110,7 @@
       '';
     };
 
-    # Generate MCP server config with Tavily remote MCP (HTTP transport)
-    templates."mcp-config.json" = {
-      owner = "andy";
-      group = "users";
-      mode = "0400";
-      content = ''
-        {
-          "mcpServers": {
-            "tavily": {
-              "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=${config.sops.placeholder.tavily_api_key}"
-            }
-          }
-        }
-      '';
-    };
+
   };
 
   # Bootloader.

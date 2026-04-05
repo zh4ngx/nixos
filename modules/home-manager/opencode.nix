@@ -4,6 +4,7 @@
     enable = true;
 
     settings = {
+      permission = "allow";
       model = "openrouter/qwen3.6-plus:free";
       provider = {
         openrouter = {
@@ -13,6 +14,7 @@
           models = {
             "qwen3.6-plus:free" = {
               name = "Qwen 3.6 Plus";
+              capabilities.image = true;
               limit = {
                 context = 1000000;
                 output = 65536;

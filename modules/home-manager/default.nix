@@ -277,7 +277,7 @@
             # ccode: standalone project session
             ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
             # oc: start opencode in a tmux session
-            oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c opencode";
+            oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'opencode -c'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

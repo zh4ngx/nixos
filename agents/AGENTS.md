@@ -20,8 +20,11 @@ NixOS does NOT ship with standard FHS command sets. Many commands that exist on 
 1. **Verify first**: Before running any command (non-obvious ones), check with `command -v <cmd>` or `type <cmd>`. If it returns nothing, the command is not installed.
 2. **Use nix run**: For packages not in base PATH, use `nix run nixpkgs#<package> -- <args>`
 3. **Known to be in PATH**: `git`, `nix`, `sudo`, `command`, `ls`, `cp`, `mv`, `rm`, `cat`, `mkdir`, `chmod`, `curl`, `wget`, `ssh`, `echo`, `date`, `systemctl`, `fish`, `bash`, `sops`, `ssh-to-age`, `rg` (ripgrep), `htop`
-4. **Flag unknown**: When the user mentions a tool you aren't sure about, check nixpkgs availability first: `nix search nixpkgs <package-name>`. Do NOT attempt to run it blindly.
-5. **Capability discovery pattern**: When unsure what tools are available, reference our capability discovery approach (from Obsidian vault notes) — check what is actually installed before assuming anything standard exists.
+4. **Capability discovery stack** (use in order):
+   - `command -v <cmd>` — runtime PATH check (always first)
+   - Read `flake.nix` / `configuration.nix` — declarative intent
+   - `mcp-nixos` MCP tool (`action="search"`, `source="nixos"`) — structured package discovery (primary, not fallback)
+5. **Flag unknown**: Do NOT attempt to run commands blindly. If not found via discovery stack, confirm with user.
 
 ### Missing Commands (Common Examples)
 Many standard commands are not in PATH. Use nix-run syntax:

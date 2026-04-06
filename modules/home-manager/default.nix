@@ -59,7 +59,7 @@
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENROUTER_API_KEY=$(cat /run/secrets/openrouter_api_key)
-            exec qwen-code "$@"
+            exec ${pkgs.qwen-code}/bin/qwen-code "$@"
           '')
         ];
 

@@ -55,6 +55,12 @@
           radeontop
           ugs
           mcp-nixos
+          qwen-code
+          (pkgs.writeShellScriptBin "qwencode" ''
+            #!/usr/bin/env bash
+            export OPENROUTER_API_KEY=$(cat /run/secrets/openrouter_api_key)
+            exec qwen-code "$@"
+          '')
         ];
 
         # Let Home Manager install and manage itself.
@@ -179,6 +185,8 @@
             ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
             # oc: start opencode in a tmux session
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
+            # qc: start qwen-code in a tmux session
+            qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX
@@ -312,6 +320,9 @@
             # Pass title to terminal (Rio/Termux)
             set-option -g set-titles on
             set-option -g set-titles-string "🤖 #S - #W"
+
+            # Open qwen-code in a new window
+            bind q new-window "fish -c 'qwencode'"
           '';
         };
 

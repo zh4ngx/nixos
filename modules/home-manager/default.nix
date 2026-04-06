@@ -199,6 +199,7 @@
         home.file = {
           ".claude/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
+          ".config/opencode/AGENTS.md".source = ./../../agents/AGENTS.md;
           ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
           # Claude Code settings from sops-nix template (decrypted at boot)
           ".claude/settings.json".source =

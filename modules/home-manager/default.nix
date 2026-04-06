@@ -465,27 +465,6 @@
           };
         };
 
-        programs.aider-chat = {
-          enable = true;
-          package = pkgs.symlinkJoin {
-            name = "aider-wrapped";
-            paths = [ pkgs.aider-chat ];
-            buildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/aider \
-                --set OLLAMA_API_BASE "http://127.0.0.1:11434" \
-                --add-flags "--architect" \
-                --add-flags "--model ollama/qwen2.5-coder:32b" \
-                --add-flags "--editor-model ollama/qwen2.5-coder:14b"
-            '';
-          };
-          settings = {
-            model = "ollama/qwen2.5-coder:32b";
-            architect = true;
-            editor-model = "ollama/qwen2.5-coder:14b";
-            edit-format = "whole";
-          };
-        };
 
         programs.zed-editor = {
           enable = true;
@@ -508,7 +487,7 @@
             pkgs.ruff
             pkgs.rust-analyzer
             pkgs.basedpyright
-            pkgs.nodePackages.vscode-json-languageserver
+            pkgs.vscode-langservers-extracted
             pkgs.yaml-language-server
           ];
           userSettings = {

@@ -5,18 +5,18 @@
 
     settings = {
       permission = "allow";
-      model = "openrouter/qwen3.6-plus:free";
+      model = "openrouter/google/gemma-4-26b-a4b-it";
       provider = {
         openrouter = {
           npm = "@ai-sdk/openai-compatible";
           name = "OpenRouter";
           options.baseURL = "https://openrouter.ai/api/v1";
           models = {
-            "qwen3.6-plus:free" = {
-              name = "Qwen 3.6 Plus";
+            "google/gemma-4-26b-a4b-it" = {
+              name = "Gemma 4 26B A4B IT";
               limit = {
-                context = 1000000;
-                output = 65536;
+                context = 262144;
+                output = 262144;
               };
             };
           };

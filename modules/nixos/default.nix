@@ -37,6 +37,9 @@
       sutro_group_chat_id = {
         owner = "andy";
       };
+      openrouter_api_key = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json
@@ -98,12 +101,12 @@
       owner = "andy";
       group = "users";
       mode = "0400";
-      content = ''
-        {
-          "zai": "${config.sops.placeholder.glm_token}",
-          "gemini": "${config.sops.placeholder.gemini_token}"
-        }
-      '';
+      content = builtins.toJSON {
+        openrouter = {
+          type = "api";
+          key = config.sops.placeholder.openrouter_api_key;
+        };
+      };
     };
   };
 

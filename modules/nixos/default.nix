@@ -109,8 +109,6 @@
       };
     };
   };
-
-  # Bootloader.
   boot = {
     loader = {
       systemd-boot = {

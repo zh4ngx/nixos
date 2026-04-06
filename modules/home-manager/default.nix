@@ -58,8 +58,9 @@
           qwen-code
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
-            export OPENROUTER_API_KEY=$(cat /run/secrets/openrouter_api_key)
-            exec ${pkgs.qwen-code}/bin/qwen-code "$@"
+            export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
+            export OPENAI_BASE_URL=https://openrouter.ai/api/v1
+            exec ${pkgs.qwen-code}/bin/qwen --auth-type openai -m qwen/qwen3.6-plus:free "$@"
           '')
         ];
 

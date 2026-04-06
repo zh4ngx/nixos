@@ -48,6 +48,7 @@ NEVER run imperative installers:
 - **Prefer `programs.*` modules** over raw `home.packages` when a HM module exists (e.g. `programs.opencode`, `programs.tmux`, `programs.fish`)
 - **Wrap binaries** with `writeShellScriptBin` when you need runtime env var injection (e.g. secrets from `/run/secrets/`)
 - For env vars known at build time, prefer `sessionVariables` or `home.sessionVariables`
+- **Never manipulate files at runtime in wrappers** (`ln -sf`, `cp`, `cat >`) — use sops templates, `home.file`, or CLI flags instead
 
 ## Store Protection
 `/nix/store` is read-only. All config changes via .nix files, never direct edits.

@@ -70,6 +70,12 @@
             "pr": ""
           },
           "effortLevel": "high",
+          "mcpServers": {
+            "nixos": {
+              "command": "mcp-nixos",
+              "args": []
+            }
+          },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true
           }

@@ -54,6 +54,7 @@
           qbittorrent
           radeontop
           ugs
+          mcp-nixos
         ];
 
         # Let Home Manager install and manage itself.

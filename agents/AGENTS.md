@@ -44,6 +44,11 @@ NEVER run imperative installers:
 - `npm install -g`, `pip install`, `apt install`, `curl | bash`
 - If a tool is missing, add to flake.nix or use `nix shell nixpkgs#tool --`
 
+## Home Manager Best Practices
+- **Prefer `programs.*` modules** over raw `home.packages` when a HM module exists (e.g. `programs.opencode`, `programs.tmux`, `programs.fish`)
+- **Wrap binaries** with `writeShellScriptBin` when you need runtime env var injection (e.g. secrets from `/run/secrets/`)
+- For env vars known at build time, prefer `sessionVariables` or `home.sessionVariables`
+
 ## Store Protection
 `/nix/store` is read-only. All config changes via .nix files, never direct edits.
 

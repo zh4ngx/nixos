@@ -24,12 +24,37 @@
       ...
     }@inputs:
     let
+      # Overlay to pin llama.cpp to a version with Gemma 4 support
+      # TODO: remove when nixpkgs has llama-cpp >= b8693
+      llama-cpp-overlay = final: prev: {
+        llama-cpp = prev.llama-cpp.overrideAttrs (finalAttrs: prevAttrs: {
+          version = "8693";
+          src = prev.fetchFromGitHub {
+            owner = "ggml-org";
+            repo = "llama.cpp";
+            tag = "b${finalAttrs.version}";
+            hash = "sha256-L1Rkg2T7nQCfEhou4eNJxtCLHXwM3JPMBjuGcWVnJ6g=";
+            leaveDotGit = true;
+            postFetch = ''
+              git -C "$out" rev-parse --short HEAD > $out/COMMIT
+              find "$out" -name .git -print0 | xargs -0 rm -rf
+            '';
+          };
+          npmDepsHash = "sha256-eeftjKt0FuS0Dybez+Iz9VTVMA4/oQVh+3VoIqvhVMw=";
+          # b8693 no longer ships this file; override postPatch
+          postPatch = ''
+            rm -f tools/server/public/index.html.gz
+          '';
+        });
+      };
+
       mkHost =
         hostname:
         nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit self inputs; };
           modules = [
+            { nixpkgs.overlays = [ llama-cpp-overlay ]; }
             ./hosts/${hostname}
           ];
         };

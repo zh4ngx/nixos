@@ -1,16 +1,29 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
-  services.ollama = {
+  services.llama-cpp = {
     enable = true;
-    package = pkgs.ollama-vulkan;
-    loadModels = [
-      "qwen2.5-coder:32b"
-      "qwen2.5-coder:14b"
+    package = pkgs.llama-cpp.override { vulkanSupport = true; };
+    host = "127.0.0.1";
+    port = 8081;
+    model = "/var/lib/llama-cpp/models/gemma-4-26b-a4b-q4km.gguf";
+    extraFlags = [
+      "-ngl" "99"
+      "-c" "262144"
     ];
-    environmentVariables = {
-      OLLAMA_CONTEXT_LENGTH = "8192";
-      GGML_VK_VISIBLE_DEVICES = "0";
+  };
+
+  # Override systemd service to run as andy and set Vulkan device
+  systemd.services.llama-cpp = {
+    serviceConfig = {
+      User = lib.mkForce "andy";
+      Group = lib.mkForce "users";
+      DynamicUser = lib.mkForce false;
+      ProtectHome = lib.mkForce false;
+      Environment = [
+        "LLAMA_CACHE=/var/cache/llama-cpp"
+        "GGML_VK_VISIBLE_DEVICES=0"
+      ];
     };
   };
 
@@ -18,7 +31,7 @@
     enable = true;
     host = "127.0.0.1";
     environment = {
-      OLLAMA_API_BASE_URL = "http://127.0.0.1:11434";
+      OLLAMA_API_BASE_URL = "http://127.0.0.1:8081/v1";
       WEBUI_AUTH = "False";
     };
   };

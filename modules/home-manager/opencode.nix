@@ -30,13 +30,13 @@
             };
           };
         };
-        ollama = {
+        local = {
           npm = "@ai-sdk/openai-compatible";
-          name = "Ollama (Local)";
-          options.baseURL = "http://localhost:11434/v1";
+          name = "Local (llama.cpp)";
+          options.baseURL = "http://localhost:8081/v1";
           models = {
-            "gemma4:31b-it-q4" = {
-              name = "Gemma 4 31B IT Q4 (Local)";
+            "gemma-4-26b-a4b" = {
+              name = "Gemma 4 26B A4B IT (Local)";
               limit = {
                 context = 262144;
                 output = 262144;

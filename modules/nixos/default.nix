@@ -289,6 +289,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4luyBTM8ikmWsD6YMJpna3GVn9NMqbxxsQ7Eg/vj+d" # Pixel 10
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOCZ9PY00+8mhnD7SDx1luAmtHY86udWWwaX6OxBUok9" # Tablet
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeFN6/k5sdKmL1CBtnUdL0LGcY31Vel1XUOkUTngvy+" # Windows
     ];
     extraGroups = [
       "networkmanager"

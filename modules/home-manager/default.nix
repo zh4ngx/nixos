@@ -187,7 +187,7 @@
             # oc: start opencode in a tmux session
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
             # qc: start qwen-code in a tmux session
-            qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode'";
+            qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

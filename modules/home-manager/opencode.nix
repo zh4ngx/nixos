@@ -6,7 +6,7 @@
     settings = {
       permission = "allow";
       model = "openrouter/moonshotai/kimi-k2.5";
-      small_model = "openrouter/google/gemma-4-26b-a4b-it";
+      small_model = "local/gemma-4-26b-a4b";
 
       provider = {
         openrouter = {
@@ -16,13 +16,6 @@
           models = {
             "moonshotai/kimi-k2.5" = {
               name = "Kimi K2.5";
-              limit = {
-                context = 262144;
-                output = 262144;
-              };
-            };
-            "google/gemma-4-26b-a4b-it" = {
-              name = "Gemma 4 26B A4B IT (MoE)";
               limit = {
                 context = 262144;
                 output = 262144;

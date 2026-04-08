@@ -60,7 +60,7 @@
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
             export OPENAI_BASE_URL=https://openrouter.ai/api/v1
-            exec ${pkgs.qwen-code}/bin/qwen --auth-type openai -m qwen/qwen3.6-plus:free "$@"
+            exec ${pkgs.qwen-code}/bin/qwen --auth-type openai -m nvidia/nemotron-3-super-120b-a12b:free "$@"
           '')
         ];
 

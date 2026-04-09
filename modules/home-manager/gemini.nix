@@ -6,6 +6,16 @@
     settings = {
       general = {
         vimMode = true;
+        sessionRetention.enabled = false;
+        checkpointing.enabled = true;
+      };
+      model = {
+        compressionThreshold = 0.9;
+      };
+      ui = {
+        hideContextPercentage = false;
+        showMemoryUsage = true;
+        hideBanner = true;
       };
       privacy = {
         usageStatisticsEnabled = false;

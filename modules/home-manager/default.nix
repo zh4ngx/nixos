@@ -309,7 +309,7 @@
         programs.tmux = {
           enable = true;
           mouse = true;
-          terminal = "screen-256color";
+          terminal = "tmux-256color";
           keyMode = "vi";
           historyLimit = 50000; # Keep 50,000 lines of history
           shortcut = "a"; # Ctrl-a instead of Ctrl-b (easier on mobile)
@@ -324,6 +324,10 @@
             # Pass title to terminal (Rio/Termux)
             set-option -g set-titles on
             set-option -g set-titles-string "🤖 #S - #W"
+
+            # Pass through extended keys for better terminal compatibility
+            set -s extended-keys on
+            set -g xterm-keys on
 
             # Open qwen-code in a new window
             bind q new-window "fish -c 'qwencode'"

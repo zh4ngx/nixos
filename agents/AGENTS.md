@@ -49,6 +49,7 @@ NEVER run imperative installers:
 - **Wrap binaries** with `writeShellScriptBin` when you need runtime env var injection (e.g. secrets from `/run/secrets/`)
 - For env vars known at build time, prefer `sessionVariables` or `home.sessionVariables`
 - **Never manipulate files at runtime in wrappers** (`ln -sf`, `cp`, `cat >`) — use sops templates, `home.file`, or CLI flags instead
+- **Never use activation scripts to replace HM-managed symlinks with writable copies.** If a program needs to write to its config, preconfigure all required fields in the HM settings module so it never needs to write. If a setting truly can't be preconfigured declaratively, document that limitation rather than working around it with activation scripts.
 
 ## Store Protection
 `/nix/store` is read-only. All config changes via .nix files, never direct edits.

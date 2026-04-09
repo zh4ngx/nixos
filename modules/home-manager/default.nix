@@ -20,6 +20,7 @@
           inputs.nix-index-database.homeModules.nix-index
           ./obsidian.nix
           ./opencode.nix
+          ./gemini.nix
         ];
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
@@ -188,6 +189,8 @@
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
             # qc: start qwen-code in a tmux session
             qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
+            # gc: start gemini-cli in a tmux session
+            gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

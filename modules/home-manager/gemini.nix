@@ -2,7 +2,7 @@
 {
   programs.gemini-cli = {
     enable = true;
-    defaultModel = "gemini-3.1-pro-preview";
+    defaultModel = "auto";
     settings = {
       general = {
         vimMode = true;
@@ -10,7 +10,7 @@
         checkpointing.enabled = false;
       };
       model = {
-        name = "gemini-3.1-pro-preview";
+        name = "auto";
         compressionThreshold = 0.9;
       };
       ui = {

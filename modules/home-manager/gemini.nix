@@ -7,9 +7,10 @@
       general = {
         vimMode = true;
         sessionRetention.enabled = false;
-        checkpointing.enabled = true;
+        checkpointing.enabled = false;
       };
       model = {
+        name = "gemini-3.1-pro-preview";
         compressionThreshold = 0.9;
       };
       ui = {

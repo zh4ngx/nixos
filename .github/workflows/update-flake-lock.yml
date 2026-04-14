@@ -26,8 +26,7 @@ jobs:
           token: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }}
 
       - name: Merge pull request
-        # Ensure 'steps.update' matches the 'id' above
         if: steps.update.outputs.pull-request-number != ''
-        run: gh pr merge --auto --squash "${{ steps.update.outputs.pull-request-number }}"
+        run: gh pr merge --squash "${{ steps.update.outputs.pull-request-number }}"
         env:
           GITHUB_TOKEN: ${{ secrets.FLAKE_AUTOMERGE_TOKEN }}

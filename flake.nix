@@ -24,6 +24,23 @@
       ...
     }@inputs:
     let
+      # Overlay to pin rio to 0.3.10 (clipboard crash fix)
+      # TODO: remove when nixpkgs has rio >= 0.3.2
+      rio-overlay = final: prev: {
+        rio = prev.rio.overrideAttrs (finalAttrs: prevAttrs: rec {
+          version = "0.3.10";
+          src = prev.fetchFromGitHub {
+            owner = "raphamorim";
+            repo = "rio";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-5WXYyC/+apZHI3/A48WRucmRvtuoQmGze0XmvQ8wxlY=";
+          };
+          cargoDeps = prev.rustPlatform.importCargoLock {
+            lockFile = finalAttrs.src + "/Cargo.lock";
+          };
+        });
+      };
+
       # Overlay to pin llama.cpp to a version with Gemma 4 support
       # TODO: remove when nixpkgs has llama-cpp >= b8693
       llama-cpp-overlay = final: prev: {
@@ -54,7 +71,7 @@
           system = "x86_64-linux";
           specialArgs = { inherit self inputs; };
           modules = [
-            { nixpkgs.overlays = [ llama-cpp-overlay ]; }
+            { nixpkgs.overlays = [ rio-overlay llama-cpp-overlay ]; }
             ./hosts/${hostname}
           ];
         };

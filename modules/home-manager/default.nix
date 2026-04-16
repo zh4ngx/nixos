@@ -308,6 +308,10 @@
             ".direnv/"
             ".envrc.local"
           ];
+          aliases = {
+            sync = "!git fetch upstream 2>/dev/null && git checkout main && git rebase upstream/main && git push origin main --force-with-lease && echo '✓ synced with upstream'";
+            pb = "push -u origin HEAD";
+          };
         };
 
         # Try out htop, bottom, and btop

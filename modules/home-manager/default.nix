@@ -338,6 +338,9 @@
             set -s extended-keys on
             set -g xterm-keys on
 
+            # Fix cursor/style escapes for TUI apps (opencode, etc.)
+            set -as terminal-overrides ",*:Ss=\\E[%p1%d q:Se"
+
             # Open qwen-code in a new window
             bind q new-window "fish -c 'qwencode'"
           '';

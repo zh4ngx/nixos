@@ -2,7 +2,7 @@
 {
   programs.gemini-cli = {
     enable = true;
-    defaultModel = "auto";
+    defaultModel = "gemini-3.1-pro-preview";
     settings = {
       general = {
         vimMode = true;
@@ -10,7 +10,7 @@
         checkpointing.enabled = false;
       };
       model = {
-        name = "auto";
+        name = "gemini-3.1-pro-preview";
         compressionThreshold = 0.9;
       };
       ui = {
@@ -29,9 +29,10 @@
     };
   };
 
-  # Configure Vertex AI authentication via ADC
+  # Configure Vertex AI authentication and model pinning
   programs.fish.shellInit = ''
     set -gx GOOGLE_CLOUD_PROJECT "capped-gemini"
     set -gx GOOGLE_CLOUD_LOCATION "global"
+    set -gx GEMINI_MODEL "gemini-3.1-pro-preview"
   '';
 }

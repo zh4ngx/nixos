@@ -56,12 +56,16 @@
           radeontop
           ugs
           mcp-nixos
-          qwen-code
+          wl-clipboard
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
             export OPENAI_BASE_URL=https://openrouter.ai/api/v1
-            exec ${pkgs.qwen-code}/bin/qwen --auth-type openai -m nvidia/nemotron-3-super-120b-a12b:free "$@"
+            exec ${pkgs.qwen-code}/bin/qwen --auth-type openai -m qwen/qwen3.6-plus "$@"
+          '')
+          (pkgs.writeShellScriptBin "minimax-opencode" ''
+            #!/usr/bin/env bash
+            exec ${pkgs.opencode}/bin/opencode -m openrouter/minimax/minimax-m2.5:free "$@"
           '')
         ];
 
@@ -101,16 +105,13 @@
           };
         };
 
-        # --- Peripheral program declarations ---
-        # Define and enable the status bar (Waybar)
+        # --- Wayland desktop tools (useful with any compositor) ---
         programs.waybar = {
           enable = true;
-          # Configure Waybar directly in Nix
           settings = {
             main-bar = {
               layer = "top";
               position = "top";
-              "hyprland/workspaces" = { };
               "cpu" = {
                 format = "CPU: {usage}%";
               };
@@ -124,13 +125,8 @@
             };
           };
         };
-
-        # Enable the application launcher (Rofi or Wofi)
         programs.rofi.enable = true;
-
         services.walker.enable = true;
-
-        # Enable the notification daemon (Mako)
         services.mako.enable = true;
 
         programs.direnv = {
@@ -183,13 +179,19 @@
             '';
             # dev: start claude in a tmux session
             dev = "cd ~/dev && tmux new-session -A -D -s dev fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
-            # ccode: standalone project session
-            ccode = "tmux new-session -A -D -s (basename $PWD | string replace -a . _) fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
-            # oc: start opencode in a tmux session
+            # cc: Claude Code + GLM 5.1
+            cc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cc fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
+            # ccode: Alias for cc
+            ccode = "cc";
+            # oc: start opencode (Default: Kimi 2.5 TUI)
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
-            # qc: start qwen-code in a tmux session
+            # mc: start opencode with MiniMax 2.5 (FREE TUI)
+            mc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-mc fish -c 'minimax-opencode -c'";
+            # lc: start opencode with Local Gemma 4 (LOCAL TUI)
+            lc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-lc fish -c 'opencode -m local/gemma-4-26b-a4b -c'";
+            # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
-            # gc: start gemini-cli in a tmux session (resume or new)
+            # gc: start gemini-cli
             gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo -r latest || gemini --yolo'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
@@ -293,6 +295,10 @@
             init = {
               defaultBranch = "main";
             };
+            aliases = {
+              sync = "!git fetch upstream 2>/dev/null && git checkout main && git rebase upstream/main && git push origin main --force-with-lease && echo '✓ synced with upstream'";
+              pb = "push -u origin HEAD";
+            };
           };
           ignores = [
             ".envrc"
@@ -329,7 +335,12 @@
             set -s extended-keys on
             set -g xterm-keys on
 
-            # Open qwen-code in a new window
+            # Fix cursor/style escapes and layout for TUI apps (opencode, etc.)
+            set -as terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[2 q:RGB'
+            # Allow TUI apps to pass through escape sequences directly
+            set -g allow-passthrough on
+
+            # Open qwen-code in a new window (Paid 3.6 Plus)
             bind q new-window "fish -c 'qwencode'"
           '';
         };
@@ -387,7 +398,6 @@
             };
           };
         };
-
 
         programs.zed-editor = {
           enable = true;

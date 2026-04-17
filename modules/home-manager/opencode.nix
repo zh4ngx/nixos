@@ -21,6 +21,13 @@
                 output = 262144;
               };
             };
+            "minimax/minimax-m2.5:free" = {
+              name = "MiniMax 2.5 (Free)";
+              limit = {
+                context = 128000;
+                output = 128000;
+              };
+            };
           };
         };
         local = {

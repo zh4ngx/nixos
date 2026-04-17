@@ -208,12 +208,6 @@
 
   programs.fish.enable = true;
 
-  # Install and enable the Hyprland program and integrate it with UWSM.
-  programs.hyprland = {
-    enable = true;
-    withUWSM = true; # Use the Universal Wayland Session Manager
-  };
-
   # Enable a display manager that supports Wayland. SDDM is a reliable choice.
   # services.displayManager = {
   #   sddm = {
@@ -329,8 +323,6 @@
   nix = {
     channel.enable = false;
     settings = {
-      max-jobs = 4;
-      cores = 2;
       experimental-features = [
         "nix-command"
         "flakes"
@@ -344,7 +336,6 @@
         "https://crane.cachix.org"
         "https://nix-community.cachix.org"
         "https://ros.cachix.org"
-        "https://hyprland.cachix.org"
         "https://cosmic.cachix.org/"
         "https://claude-code.cachix.org"
       ];
@@ -355,7 +346,6 @@
         "https://crane.cachix.org"
         "https://nix-community.cachix.org"
         "https://ros.cachix.org"
-        "https://hyprland.cachix.org"
         "https://cosmic.cachix.org/"
         "https://claude-code.cachix.org"
       ];
@@ -366,7 +356,6 @@
         "crane.cachix.org-1:8Scfpmn9w+hGdXH/Q9tTLiYAE/2dnJYRJP7kl80GuRk="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "ros.cachix.org-1:dSyZxI8geDCJrwgvCOHDoAfOm5sV1wCPjBkKL+38Rvo="
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="
         "claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk="
       ];

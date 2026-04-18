@@ -399,6 +399,22 @@
           };
         };
 
+        programs.vscode = {
+          enable = true;
+          package = pkgs.vscode;
+          profiles.default = {
+            extensions = [
+              pkgs.vscode-extensions.banacorn.agda-mode
+            ];
+            userSettings = {
+              "files.associations" = {
+                "*.agda" = "agda";
+                "*.lagda.md" = "agda";
+              };
+            };
+          };
+        };
+
         programs.zed-editor = {
           enable = true;
           #defaultEditor = true;

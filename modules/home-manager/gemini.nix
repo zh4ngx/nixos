@@ -23,16 +23,14 @@
       };
       security = {
         auth = {
-          selectedType = "vertex-ai";
+          selectedType = "oauth-personal";
         };
       };
     };
   };
 
-  # Configure Vertex AI authentication and model pinning
+  # Gemini model pinning
   programs.fish.shellInit = ''
-    set -gx GOOGLE_CLOUD_PROJECT "capped-gemini"
-    set -gx GOOGLE_CLOUD_LOCATION "global"
     set -gx GEMINI_MODEL "gemini-3.1-pro-preview"
   '';
 }

@@ -108,6 +108,16 @@ export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
 - **No standalone age key file** — keys are SSH-derived via `ssh-to-age` at runtime, nothing persists on disk
 - Secrets decrypt to `/run/secrets/<name>` at boot via sops-nix using the host SSH key
 
+## Git Branch Naming
+Never use conventional-commit branch prefixes (`feat/`, `fix/`, `chore/`, `docs/`, etc.). These are noise in small-team and personal projects.
+
+Use short descriptive names without prefixes:
+- `vscode-agda` not `feat/vscode-agda`
+- `gemini-oauth` not `fix/auth-method`
+- `flake-lock-update` not `chore/deps`
+
+If a project has its own CONTRIBUTING.md or branch convention, follow that instead. This rule is the default override.
+
 ## Sudo Command Paths
 When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
 

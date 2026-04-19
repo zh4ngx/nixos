@@ -109,12 +109,13 @@ export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
 - Secrets decrypt to `/run/secrets/<name>` at boot via sops-nix using the host SSH key
 
 ## Git Branch Naming
-Never use conventional-commit branch prefixes (`feat/`, `fix/`, `chore/`, `docs/`, etc.). These are noise in small-team and personal projects.
+Never use `feat/`, `fix/`, or `chore/` branch prefixes — they're meaningless noise in small-team and personal projects. `docs/` is acceptable when the branch is genuinely docs-only.
 
-Use short descriptive names without prefixes:
+Use short descriptive names:
 - `vscode-agda` not `feat/vscode-agda`
 - `gemini-oauth` not `fix/auth-method`
 - `flake-lock-update` not `chore/deps`
+- `docs/api-reference` — ok, this one actually means something
 
 If a project has its own CONTRIBUTING.md or branch convention, follow that instead. This rule is the default override.
 

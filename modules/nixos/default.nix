@@ -58,6 +58,10 @@
           "attribution": {
             "commit": "",
             "pr": ""
+          },
+          "statusLine": {
+            "type": "command",
+            "command": "~/.claude-shared/scripts/statusline.sh"
           }
         }
       '';

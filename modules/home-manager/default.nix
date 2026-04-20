@@ -392,8 +392,10 @@
             set -s extended-keys on
             set -g xterm-keys on
 
+            # Enable focus events for auto-reloading and UI pausing in TUIs
+            set-option -g focus-events on
             # Enable true color natively for the Rio terminal
-            set -as terminal-features ',rio:RGB'
+            set -as terminal-features ',rio:RGB:focus'
 
             # Open qwen-code in a new window (Paid 3.6 Plus)
             bind q new-window "fish -c 'qwencode'"

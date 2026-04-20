@@ -84,6 +84,8 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 
 **Always `git pull` before rebuilding.** Auto-upgrade may have pushed newer flake.lock or config changes to origin.
 
+**Don't specify `.#<hostname>` unless cross-host deploying.** Plain `.` auto-matches by `hostname -s` and fails safely on mismatch. Manually typing the hostname risks silently activating the wrong machine's config (recoverable via rollback to previous generation, but disruptive).
+
 ## Sops Secrets
 Secrets use SSH-derived age keys (not standalone age keys). `sops` and `ssh-to-age` are in system PATH.
 

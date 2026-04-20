@@ -56,7 +56,38 @@
           radeontop
           ugs
           mcp-nixos
+          socat
           wl-clipboard
+          # Bridge: Wyoming STT → Unix socket for voice-inject
+          # Reads Wyoming Transcript events from the STT TCP server,
+          # writes plain text lines to /run/voice-stt.sock
+          # Requires: netcat, socat (added below)
+          (pkgs.writeShellScriptBin "voice-stt-bridge" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            SOCKET="/run/voice-stt.sock"
+            STT_HOST="100.80.128.117"
+            STT_PORT="10300"
+
+            # Create socket if missing
+            if [ ! -S "$SOCKET" ]; then
+              echo "voice-stt-bridge: creating $SOCKET (needs sudo or tmpfiles.d rule)"
+              socat UNIX-LISTEN:"$SOCKET",fork STDOUT
+            fi
+
+            # TODO: This is a v1 placeholder. The full bridge needs a Wyoming protocol
+            # parser (Python recommended) that:
+            # 1. Accepts incoming audio streams from the Android app
+            # 2. Forwards them to the Wyoming STT server
+            # 3. Parses Transcript events from the response
+            # 4. Writes transcript text to $SOCKET
+            #
+            # For now, this allows manual testing:
+            #   echo "test transcription" | socat STDIN UNIX-CONNECT:/run/voice-stt.sock
+            echo "voice-stt-bridge: placeholder — needs Wyoming protocol implementation"
+            echo "For manual testing: echo 'text' | socat - UNIX-CONNECT:$SOCKET"
+          '')
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
@@ -219,6 +250,38 @@
             qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
             # gc: start gemini-cli
             gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo -r latest || gemini --yolo'";
+            # vi: voice-inject — inject STT transcriptions into a tmux session
+            # Reads from /run/voice-stt.sock (written by Wyoming bridge)
+            # Usage: vi [session-name] (default: auto-detect first agent session)
+            vi = ''
+              set -l socket /run/voice-stt.sock
+              set -l session "$argv[1]"
+
+              if test -z "$session"
+                # Auto-detect: pick first active agent session
+                set -l candidates (tmux list-sessions -F '#{session_name}' 2>/dev/null | grep -E '(co|cg|dev)$')
+                if test (count $candidates) -eq 0
+                  echo "No agent sessions found. Start one with co/cg/dev first."
+                  return 1
+                end
+                set session $candidates[1]
+              end
+
+              echo "voice-inject: listening on $socket → tmux session '$session'"
+
+              # Read lines from socket, inject into tmux
+              # Append Enter if line ends with wake phrase
+              while read -l line
+                if test -z "$line"
+                  continue
+                end
+                tmux send-keys -t "$session" -- "$line"
+                # Wake phrases trigger Enter
+                if string match -qr '(?:ship it|send it|execute|do it)$' -- "$line"
+                  tmux send-keys -t "$session" Enter
+                end
+              end < $socket
+            '';
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

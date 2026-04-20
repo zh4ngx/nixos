@@ -292,6 +292,19 @@
     authKeyFile = config.sops.secrets.tailscale_auth_key.path;
   };
 
+  # Local STT via Wyoming protocol (Faster Whisper)
+  # Bind to Tailscale interface only — Android phone streams audio over Tailnet
+  # TODO: ROCm acceleration — module only supports cpu/cuda/auto, no AMD option yet
+  services.wyoming.faster-whisper.servers.stt = {
+    enable = true;
+    uri = "tcp://100.80.128.117:10300";
+    model = "turbo";
+    language = "en";
+    device = "cpu";
+    initialPrompt = "NixOS, tmux, Claude, agent, flake, rebuild, sops";
+    beamSize = 5;
+  };
+
   services.openssh = {
     enable = true;
     settings = {

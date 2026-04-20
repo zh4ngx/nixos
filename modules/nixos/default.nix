@@ -300,6 +300,7 @@
     model = "turbo";
     language = "en";
     device = "cpu";
+    sttLibrary = "faster-whisper";
     initialPrompt = "NixOS, tmux, Claude, agent, flake, rebuild, sops";
     beamSize = 5;
   };

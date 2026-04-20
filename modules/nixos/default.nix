@@ -49,6 +49,9 @@
       mode = "0400";
       content = ''
         {
+          "thinking": {
+            "type": "adaptive"
+          },
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,

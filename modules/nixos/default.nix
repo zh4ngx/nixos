@@ -89,8 +89,7 @@
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,
           "attribution": {
-            "commit": "",
-            "pr": ""
+            "commit": "Co-Authored-By: GLM 5.1 <noreply@z.ai>"
           },
           "statusLine": {
             "type": "command",

@@ -61,7 +61,7 @@
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
             export OPENAI_BASE_URL=https://openrouter.ai/api/v1
-            exec ${pkgs.qwen-code}/bin/qwen --auth-type openai -m qwen/qwen3.6-plus "$@"
+            exec ${pkgs.qwen-code.overrideAttrs (old: { postInstall = (old.postInstall or "") + "sed -i 's/DEFAULT_TOKEN_LIMIT = 131072/DEFAULT_TOKEN_LIMIT = 1000000/g' $out/share/qwen-code/cli.js\n"; })}/bin/qwen --auth-type openai -m qwen3.6-plus "$@"
           '')
           (pkgs.writeShellScriptBin "minimax-opencode" ''
             #!/usr/bin/env bash

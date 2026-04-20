@@ -9,7 +9,7 @@ Android phone ──(audio over Tailnet)──→ Wyoming STT (0.0.0.0:10300, fi
                                              │
                                         STT bridge (TODO: Python Wyoming protocol parser)
                                              │
-                                        /run/voice-stt.sock
+                                        $XDG_RUNTIME_DIR/voice-stt.sock
                                              │
                                         voice-inject systemd user service
                                              │
@@ -35,11 +35,11 @@ The voice-inject service re-evaluates the tmux target on every transcription:
 ### Manual testing
 
 ```bash
-# Create a test socket
-socat UNIX-LISTEN:/run/voice-stt.sock,fork -
+# Create a test socket in user runtime dir
+socat UNIX-LISTEN:$XDG_RUNTIME_DIR/voice-stt.sock,fork -
 
 # In another terminal, inject test text
-echo "hello from voice" | socat - UNIX-CONNECT:/run/voice-stt.sock
+echo "hello from voice" | socat - UNIX-CONNECT:$XDG_RUNTIME_DIR/voice-stt.sock
 ```
 
 ### Tailscale endpoint

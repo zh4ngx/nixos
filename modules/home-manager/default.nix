@@ -65,7 +65,7 @@
           #   1. Accept audio from Android app over Tailscale
           #   2. Forward to Wyoming STT server
           #   3. Parse Transcript events from the response
-          #   4. Write transcript text to /run/voice-stt.sock
+          #   4. Write transcript text to $XDG_RUNTIME_DIR/voice-stt.sock
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
@@ -99,7 +99,7 @@
         ];
 
         # Voice dictation: inject STT transcriptions into tmux agent sessions
-        # Connects to /run/voice-stt.sock (written by Wyoming STT bridge)
+        # Connects to $XDG_RUNTIME_DIR/voice-stt.sock (written by Wyoming STT bridge)
         # Re-evaluates attached tmux session per transcription, injects via send-keys
         systemd.user.services.voice-inject = {
           Unit.Description = "Inject STT transcriptions into tmux agent sessions";
@@ -108,7 +108,7 @@
               #!/usr/bin/env bash
               set -euo pipefail
 
-              SOCKET="/run/voice-stt.sock"
+              SOCKET="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/voice-stt.sock"
 
               # Wait for socket to exist (bridge may not be running yet)
               while [ ! -S "$SOCKET" ]; do
@@ -130,8 +130,8 @@
 
                 ${pkgs.tmux}/bin/tmux send-keys -t "$session" -- "$line"
 
-                # Wake phrases trigger Enter
-                if [[ "$line" =~ (ship\ it|send\ it|execute|do\ it)$ ]]; then
+                # Wake phrases trigger Enter (case-insensitive)
+                if [[ "''${line,,}" =~ (ship it|send it|execute|do it)$ ]]; then
                   ${pkgs.tmux}/bin/tmux send-keys -t "$session" Enter
                 fi
               done

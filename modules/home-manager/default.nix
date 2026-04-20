@@ -87,13 +87,6 @@
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
-            export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
-            export ANTHROPIC_AUTH_TOKEN="$(cat /run/secrets/glm_token)"
-            export ANTHROPIC_MODEL="glm-5.1"
-            export ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES="effort"
-            export ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES="effort"
-            export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES="effort"
-            export CLAUDE_CODE_EFFORT_LEVEL="high"
             exec claude "$@"
           '')
         ];

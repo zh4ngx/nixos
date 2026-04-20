@@ -58,36 +58,14 @@
           mcp-nixos
           socat
           wl-clipboard
-          # Bridge: Wyoming STT → Unix socket for voice-inject
-          # Reads Wyoming Transcript events from the STT TCP server,
-          # writes plain text lines to /run/voice-stt.sock
-          # Requires: netcat, socat (added below)
-          (pkgs.writeShellScriptBin "voice-stt-bridge" ''
-            #!/usr/bin/env bash
-            set -euo pipefail
-
-            SOCKET="/run/voice-stt.sock"
-            STT_HOST="100.80.128.117"
-            STT_PORT="10300"
-
-            # Create socket if missing
-            if [ ! -S "$SOCKET" ]; then
-              echo "voice-stt-bridge: creating $SOCKET (needs sudo or tmpfiles.d rule)"
-              socat UNIX-LISTEN:"$SOCKET",fork STDOUT
-            fi
-
-            # TODO: This is a v1 placeholder. The full bridge needs a Wyoming protocol
-            # parser (Python recommended) that:
-            # 1. Accepts incoming audio streams from the Android app
-            # 2. Forwards them to the Wyoming STT server
-            # 3. Parses Transcript events from the response
-            # 4. Writes transcript text to $SOCKET
-            #
-            # For now, this allows manual testing:
-            #   echo "test transcription" | socat STDIN UNIX-CONNECT:/run/voice-stt.sock
-            echo "voice-stt-bridge: placeholder — needs Wyoming protocol implementation"
-            echo "For manual testing: echo 'text' | socat - UNIX-CONNECT:$SOCKET"
-          '')
+          # Bridge: Wyoming STT → Unix socket for voice-inject daemon
+          # NOTE: services.wyoming.satellite exists but is a local-mic-to-Wyoming proxy
+          # for Home Assistant pipelines. It doesn't output transcriptions to a socket/file.
+          # A custom Python Wyoming protocol bridge is still needed to:
+          #   1. Accept audio from Android app over Tailscale
+          #   2. Forward to Wyoming STT server
+          #   3. Parse Transcript events from the response
+          #   4. Write transcript text to /run/voice-stt.sock
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
@@ -119,6 +97,50 @@
             exec claude "$@"
           '')
         ];
+
+        # Voice dictation: inject STT transcriptions into tmux agent sessions
+        # Connects to /run/voice-stt.sock (written by Wyoming STT bridge)
+        # Re-evaluates attached tmux session per transcription, injects via send-keys
+        systemd.user.services.voice-inject = {
+          Unit.Description = "Inject STT transcriptions into tmux agent sessions";
+          Service = {
+            ExecStart = "${pkgs.writeShellScript "voice-inject-daemon" ''
+              #!/usr/bin/env bash
+              set -euo pipefail
+
+              SOCKET="/run/voice-stt.sock"
+
+              # Wait for socket to exist (bridge may not be running yet)
+              while [ ! -S "$SOCKET" ]; do
+                sleep 2
+              done
+
+              ${pkgs.socat}/bin/socat - UNIX-CONNECT:"$SOCKET" | while read -r line; do
+                [ -z "$line" ] && continue
+
+                # Target the tmux session with an attached client (re-evaluated per transcription)
+                session=$(${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}:#{session_attached}' 2>/dev/null \
+                  | grep ':1$' | head -1 | cut -d: -f1) || true
+
+                # Fall back to first agent session if nothing is attached
+                if [ -z "$session" ]; then
+                  session=$(${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' 2>/dev/null \
+                    | grep -E '(co|cg|dev)$' | head -1) || continue
+                fi
+
+                ${pkgs.tmux}/bin/tmux send-keys -t "$session" -- "$line"
+
+                # Wake phrases trigger Enter
+                if [[ "$line" =~ (ship\ it|send\ it|execute|do\ it)$ ]]; then
+                  ${pkgs.tmux}/bin/tmux send-keys -t "$session" Enter
+                fi
+              done
+            ''}";
+            Restart = "on-failure";
+            RestartSec = "5s";
+          };
+          Install.WantedBy = [ "default.target" ];
+        };
 
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
@@ -250,38 +272,6 @@
             qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
             # gc: start gemini-cli
             gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo -r latest || gemini --yolo'";
-            # vi: voice-inject — inject STT transcriptions into a tmux session
-            # Reads from /run/voice-stt.sock (written by Wyoming bridge)
-            # Usage: vi [session-name] (default: auto-detect first agent session)
-            vi = ''
-              set -l socket /run/voice-stt.sock
-              set -l session "$argv[1]"
-
-              if test -z "$session"
-                # Auto-detect: pick first active agent session
-                set -l candidates (tmux list-sessions -F '#{session_name}' 2>/dev/null | grep -E '(co|cg|dev)$')
-                if test (count $candidates) -eq 0
-                  echo "No agent sessions found. Start one with co/cg/dev first."
-                  return 1
-                end
-                set session $candidates[1]
-              end
-
-              echo "voice-inject: listening on $socket → tmux session '$session'"
-
-              # Read lines from socket, inject into tmux
-              # Append Enter if line ends with wake phrase
-              while read -l line
-                if test -z "$line"
-                  continue
-                end
-                tmux send-keys -t "$session" -- "$line"
-                # Wake phrases trigger Enter
-                if string match -qr '(?:ship it|send it|execute|do it)$' -- "$line"
-                  tmux send-keys -t "$session" Enter
-                end
-              end < $socket
-            '';
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

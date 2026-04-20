@@ -5,42 +5,47 @@ Dictate from Android phone over Tailscale → NixOS host transcribes with Whispe
 ## Architecture
 
 ```
-Android phone ──(audio over Tailscale)──→ Wyoming STT (100.80.128.117:10300)
-                                              │
-                                         voice-stt-bridge
-                                              │
-                                         /run/voice-stt.sock
-                                              │
-                                         voice-inject (vi)
-                                              │
-                                         tmux send-keys → agent session
+Android phone ──(audio over Tailnet)──→ Wyoming STT (0.0.0.0:10300, firewall: tailscale0 only)
+                                             │
+                                        STT bridge (TODO: Python Wyoming protocol parser)
+                                             │
+                                        /run/voice-stt.sock
+                                             │
+                                        voice-inject systemd user service
+                                             │
+                                        tmux send-keys → attached agent session
 ```
 
 ## NixOS Side
 
-Already configured in `modules/nixos/default.nix`:
+Configured across `modules/nixos/default.nix` and `modules/home-manager/default.nix`:
 
-- **Wyoming Faster Whisper** on `tcp://100.80.128.117:10300` (Tailscale interface only)
+- **Wyoming Faster Whisper** on `tcp://0.0.0.0:10300` (firewall restricts to `tailscale0` interface)
 - Model: `turbo` (faster than large-v3), English, CPU mode
-- `voice-stt-bridge` placeholder script (needs Wyoming protocol implementation)
-- `vi` fish function for injecting transcriptions into tmux
+- **voice-inject** systemd user service (starts at login, auto-detects attached tmux session)
+- STT bridge placeholder (needs Python Wyoming protocol implementation)
+
+### How targeting works
+
+The voice-inject service re-evaluates the tmux target on every transcription:
+1. Finds the session with an attached client (`session_attached == 1`)
+2. Falls back to the first `*-co` / `*-cg` / `*-dev` session if nothing is attached
+3. Injects text via `tmux send-keys`; appends Enter on wake phrases ("ship it", "send it", "execute", "do it")
 
 ### Manual testing
 
 ```bash
-# Start a Wyoming listener that writes to the socket
-socat UNIX-LISTEN:/run/voice-stt.sock,fork STDOUT
+# Create a test socket
+socat UNIX-LISTEN:/run/voice-stt.sock,fork -
 
 # In another terminal, inject test text
 echo "hello from voice" | socat - UNIX-CONNECT:/run/voice-stt.sock
-
-# Or use vi directly with a test file
-echo "test transcription" | vi dev-co
 ```
 
 ### Tailscale endpoint
 
-The STT server is at: `ws://100.80.128.117:10300` (Wyoming protocol over TCP)
+Use the host's MagicDNS name (not hardcoded IP): `<hostname>:10300`
+The firewall only accepts connections on the `tailscale0` interface.
 
 ## Android Side
 
@@ -53,8 +58,8 @@ The STT server is at: `ws://100.80.128.117:10300` (Wyoming protocol over TCP)
 
 ### Configuration
 
-Point the app's STT server to your Tailscale IP and port:
-- Host: `100.80.128.117`
+Point the app's STT server to your Tailscale hostname and port:
+- Host: your machine's Tailscale MagicDNS name
 - Port: `10300`
 - Protocol: Wyoming (TCP)
 
@@ -62,9 +67,9 @@ The app must be on the same Tailnet. Install Tailscale on the phone from the Pla
 
 ## Status
 
-- [x] Wyoming STT service configured
-- [x] voice-inject fish function (`vi`)
-- [x] Unix socket bridge placeholder
+- [x] Wyoming STT service configured (firewall-restricted to tailscale0)
+- [x] voice-inject systemd user service (persistent, auto-targeting)
+- [x] Socket read via socat (not fish stdin redirection)
 - [ ] Wyoming protocol bridge implementation (Python recommended)
 - [ ] ROCm GPU acceleration (module only supports cpu/cuda/auto)
 - [ ] Android app tested with real audio

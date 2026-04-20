@@ -42,8 +42,26 @@
       };
     };
 
-    # Generate Claude Code settings.json
-    templates."claude-settings.json" = {
+    # Generate Claude Code settings.json for Opus instance (Anthropic direct, OAuth)
+    templates."claude-settings-opus.json" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        {
+          "cleanupPeriodDays": 99999,
+          "teammateMode": "tmux",
+          "skipDangerousModePermissionPrompt": true,
+          "attribution": {
+            "commit": "",
+            "pr": ""
+          }
+        }
+      '';
+    };
+
+    # Generate Claude Code settings.json for GLM instance (Z.AI endpoint)
+    templates."claude-settings-glm.json" = {
       owner = "andy";
       group = "users";
       mode = "0400";
@@ -52,15 +70,13 @@
           "env": {
             "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
             "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder.glm_token}",
-            "ANTHROPIC_MODEL": "glm-5.1",
+            "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.1",
+            "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5.1",
+            "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.1",
             "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
             "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1"
-          },
-          "statusLine": {
-            "type": "command",
-            "command": "~/.claude/statusline.sh"
           },
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
@@ -69,7 +85,10 @@
             "commit": "",
             "pr": ""
           },
-          "effortLevel": "high",
+          "statusLine": {
+            "type": "command",
+            "command": "~/.claude-shared/scripts/statusline.sh"
+          },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true
           }
@@ -109,6 +128,7 @@
       };
     };
   };
+
   boot = {
     loader = {
       systemd-boot = {

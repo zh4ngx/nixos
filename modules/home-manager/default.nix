@@ -61,11 +61,33 @@
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
             export OPENAI_BASE_URL=https://openrouter.ai/api/v1
-            exec ${pkgs.qwen-code.overrideAttrs (old: { postInstall = (old.postInstall or "") + "sed -i 's/DEFAULT_TOKEN_LIMIT = 131072/DEFAULT_TOKEN_LIMIT = 1000000/g' $out/share/qwen-code/cli.js\n"; })}/bin/qwen --auth-type openai -m qwen3.6-plus "$@"
+            # We override qwen-code to permanently bump its unknown model fallback limit from 131k to 1M
+            exec ${pkgs.qwen-code.overrideAttrs (old: {
+              postInstall = (old.postInstall or "") + ''
+                sed -i 's/DEFAULT_TOKEN_LIMIT = 131072/DEFAULT_TOKEN_LIMIT = 1000000/g' $out/share/qwen-code/cli.js
+              '';
+            })}/bin/qwen --auth-type openai -m qwen3.6-plus "$@"
           '')
           (pkgs.writeShellScriptBin "minimax-opencode" ''
             #!/usr/bin/env bash
             exec ${pkgs.opencode}/bin/opencode -m openrouter/minimax/minimax-m2.5:free "$@"
+          '')
+          (pkgs.writeShellScriptBin "claude-opus" ''
+            export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
+            export ANTHROPIC_MODEL="claude-opus-4-7"
+            export CLAUDE_CODE_EFFORT_LEVEL="xhigh"
+            exec claude "$@"
+          '')
+          (pkgs.writeShellScriptBin "claude-glm" ''
+            export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
+            export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
+            export ANTHROPIC_AUTH_TOKEN="$(cat /run/secrets/glm_token)"
+            export ANTHROPIC_MODEL="glm-5.1"
+            export ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES="effort"
+            export ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES="effort"
+            export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES="effort"
+            export CLAUDE_CODE_EFFORT_LEVEL="high"
+            exec claude "$@"
           '')
         ];
 
@@ -177,12 +199,10 @@
               command plugin $argv
               and ~/.claude/scripts/fix-plugins-nixos.sh
             '';
-            # dev: start claude in a tmux session
-            dev = "cd ~/dev && tmux new-session -A -D -s dev fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
-            # cc: Claude Code + GLM 5.1
-            cc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cc fish -c 'claude --continue --dangerously-skip-permissions; or claude --dangerously-skip-permissions'";
-            # ccode: Alias for cc
-            ccode = "cc";
+            # co: Claude Code with Anthropic Opus (Pro plan)
+            co = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-co fish -c 'claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions'";
+            # cg: Claude Code with Z.AI GLM
+            cg = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cg fish -c 'claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions'";
             # oc: start opencode (Default: Kimi 2.5 TUI)
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
             # mc: start opencode with MiniMax 2.5 (FREE TUI)
@@ -210,15 +230,44 @@
           ];
         };
 
-        # Agent config files (single source of truth symlinked to both)
+        # Agent config files - ~/.claude-shared is the canonical shared home
         home.file = {
-          ".claude/CLAUDE.md".source = ./../../agents/AGENTS.md;
+          # Canonical shared resources in ~/.claude-shared
+          ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
+          ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
+
+          # Claude Code GLM - symlinks to shared resources from ~/.claude-shared
+          ".claude-glm/settings.json".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings-glm.json";
+          ".claude-glm/CLAUDE.md".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/CLAUDE.md";
+          ".claude-glm/scripts".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/scripts";
+          ".claude-glm/plugins".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/plugins";
+          ".claude-glm/skills".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/skills";
+          ".claude-glm/commands".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/commands";
+
+          # Claude Code Opus - symlinks to shared resources from ~/.claude-shared
+          ".claude-opus/settings.json".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings-opus.json";
+          ".claude-opus/CLAUDE.md".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/CLAUDE.md";
+          ".claude-opus/scripts".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/scripts";
+          ".claude-opus/plugins".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/plugins";
+          ".claude-opus/skills".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/skills";
+          ".claude-opus/commands".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/commands";
+
+          # Other agent config files
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".config/opencode/AGENTS.md".source = ./../../agents/AGENTS.md;
-          ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
-          # Claude Code settings from sops-nix template (decrypted at boot)
-          ".claude/settings.json".source =
-            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings.json";
+
           # tea CLI config from sops-nix template
           ".config/tea/config.yml".source =
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/tea-config.yml";

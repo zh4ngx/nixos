@@ -121,6 +121,16 @@ Use short descriptive names:
 
 If a project has its own CONTRIBUTING.md or branch convention, follow that instead. This rule is the default override.
 
+## Branch Cleanup After Merge
+
+After any merge to main, delete both local and remote feature branch:
+
+- **If merged via `gh pr merge`**: pass `--delete-branch` to auto-clean the remote, then `git branch -d <name>` locally.
+- **If merged locally (fast-forward)**: `git branch -d <name>` + `git push origin --delete <name>`.
+- **After cleanup**: run `clear-pr-notification <N>` to dismiss the GitHub notification thread.
+
+Skip for long-lived branches: main, release/*, hotfix/*, gh-pages.
+
 ## Sudo Command Paths
 When configuring `security.sudo.extraRules`, use `/run/current-system/sw/bin/<command>` instead of `${pkgs.<package>}/bin/<command>`.
 

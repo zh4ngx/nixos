@@ -273,6 +273,25 @@
                 echo (basename $PWD)
               end
             '';
+            clear-pr-notification = ''
+              set pr_num $argv[1]
+              if test -z "$pr_num"
+                echo "Usage: clear-pr-notification <pr-number>"
+                return 1
+              end
+              set id (gh api "notifications?all=true&participating=true" \
+                --jq ".[] | select(.subject.url | endswith(\"/pulls/$pr_num\")) | .id")
+              if test -z "$id"
+                echo "No notification found for PR #$pr_num"
+                return 0
+              end
+              gh api -X DELETE "notifications/threads/$id"
+              echo "Cleared notification $id for PR #$pr_num"
+            '';
+            pr-merge-clean = ''
+              set pr_num $argv[1]
+              gh pr merge $pr_num --delete-branch && clear-pr-notification $pr_num
+            '';
           };
           plugins = [
             {

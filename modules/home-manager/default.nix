@@ -75,6 +75,7 @@
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
             export ANTHROPIC_MODEL="claude-opus-4-7"
+            export CLAUDE_CODE_EFFORT_LEVEL="xhigh"
             exec claude "$@"
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''

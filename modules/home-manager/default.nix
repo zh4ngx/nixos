@@ -392,10 +392,8 @@
             set -s extended-keys on
             set -g xterm-keys on
 
-            # Fix cursor/style escapes and layout for TUI apps (opencode, etc.)
-            set -as terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[2 q:RGB'
-            # Allow TUI apps to pass through escape sequences directly
-            set -g allow-passthrough on
+            # Enable true color natively for the Rio terminal
+            set -as terminal-features ',rio:RGB'
 
             # Open qwen-code in a new window (Paid 3.6 Plus)
             bind q new-window "fish -c 'qwencode'"

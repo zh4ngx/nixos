@@ -54,10 +54,6 @@
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,
-          "attribution": {
-            "commit": "",
-            "pr": ""
-          },
           "statusLine": {
             "type": "command",
             "command": "~/.claude-shared/scripts/statusline.sh"

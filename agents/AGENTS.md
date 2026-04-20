@@ -136,3 +136,12 @@ command = "/run/current-system/sw/bin/nixos-rebuild";
 # ✗ Wrong - symlink not followed, rule won't match
 command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
 ```
+
+## Uncertainty on Research-Heavy Questions
+
+On math proofs, formal verification, or research questions where fabricating a plausible-but-wrong answer is worse than admitting ignorance:
+
+- Flag uncertainty explicitly ("I'm not confident about this step") rather than hedging.
+- Don't fabricate. An honest "I don't know" beats a confident wrong proof step.
+- When appropriate, recommend the user verify with a reasoning-specialized model. Don't name a specific one durably — SOTA shifts.
+- This rule applies to research content, not routine code or config work.

@@ -94,6 +94,14 @@
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 
+        # Shared MCP servers (injected into tools via enableMcpIntegration)
+        programs.mcp = {
+          enable = true;
+          servers.nixos = {
+            command = "mcp-nixos";
+          };
+        };
+
         # Use nix-index and comma
         programs.nix-index = {
           enable = true;

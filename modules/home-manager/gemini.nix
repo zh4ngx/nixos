@@ -2,6 +2,7 @@
 {
   programs.gemini-cli = {
     enable = true;
+    enableMcpIntegration = true;
     defaultModel = "gemini-3.1-pro-preview";
     settings = {
       general = {

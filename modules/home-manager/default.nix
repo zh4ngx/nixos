@@ -259,8 +259,8 @@
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
             # mc: start opencode with MiniMax 2.5 (FREE TUI)
             mc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-mc fish -c 'minimax-opencode -c'";
-            # lc: start opencode with Local Gemma 4 (LOCAL TUI)
-            lc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-lc fish -c 'opencode -m local/gemma-4-26b-a4b -c'";
+            # og: start opencode with Local Gemma 4 E4B (LOCAL TUI)
+            og = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-og fish -c 'opencode -m local/gemma-4-e4b -c'";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
             # gc: start gemini-cli

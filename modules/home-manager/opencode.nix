@@ -6,7 +6,7 @@
     settings = {
       permission = "allow";
       model = "openrouter/moonshotai/kimi-k2.5";
-      small_model = "local/gemma-4-26b-a4b";
+      small_model = "local/gemma-4-e4b";
 
       provider = {
         openrouter = {
@@ -35,11 +35,11 @@
           name = "Local (llama.cpp)";
           options.baseURL = "http://localhost:8081/v1";
           models = {
-            "gemma-4-26b-a4b" = {
-              name = "Gemma 4 26B A4B IT (Local)";
+            "gemma-4-e4b" = {
+              name = "Gemma 4 E4B IT (Local)";
               limit = {
-                context = 262144;
-                output = 262144;
+                context = 131072;
+                output = 131072;
               };
             };
           };

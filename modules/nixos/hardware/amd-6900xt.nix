@@ -6,10 +6,10 @@
     package = pkgs.llama-cpp.override { vulkanSupport = true; };
     host = "127.0.0.1";
     port = 8081;
-    model = "/var/lib/llama-cpp/models/gemma-4-26b-a4b-q4km.gguf";
+    model = "/var/lib/llama-cpp/models/gemma-4-e4b-q4km.gguf";
     extraFlags = [
       "-ngl" "99"
-      "-c" "262144"
+      "-c" "131072"
     ];
   };
 

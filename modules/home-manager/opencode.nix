@@ -5,7 +5,7 @@
 
     settings = {
       permission = "allow";
-      model = "openrouter/moonshotai/kimi-k2.5";
+      model = "openrouter/moonshotai/kimi-k2.6";
       small_model = "local/gemma-4-e4b";
 
       provider = {

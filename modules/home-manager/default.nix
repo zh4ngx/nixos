@@ -77,10 +77,6 @@
               '';
             })}/bin/qwen --auth-type openai -m qwen3.6-plus "$@"
           '')
-          (pkgs.writeShellScriptBin "minimax-opencode" ''
-            #!/usr/bin/env bash
-            exec ${pkgs.opencode}/bin/opencode -m openrouter/minimax/minimax-m2.5:free "$@"
-          '')
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
             exec claude "$@"
@@ -255,10 +251,8 @@
             co = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-co fish -c 'claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions'";
             # cg: Claude Code with Z.AI GLM
             cg = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cg fish -c 'claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions'";
-            # oc: start opencode (Default: Kimi 2.5 TUI)
+            # oc: start opencode (Default: MiniMax M2.7 via Ollama Cloud)
             oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
-            # mc: start opencode with MiniMax 2.5 (FREE TUI)
-            mc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-mc fish -c 'minimax-opencode -c'";
             # og: start opencode with Local Gemma 4 E4B (LOCAL TUI)
             og = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-og fish -c 'opencode -m local/gemma-4-e4b -c'";
             # qc: start qwen-code (Paid 3.6 Plus CLI)

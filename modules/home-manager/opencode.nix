@@ -2,13 +2,29 @@
 {
   programs.opencode = {
     enable = true;
+    enableMcpIntegration = true;
 
     settings = {
       permission = "allow";
-      model = "openrouter/moonshotai/kimi-k2.6";
+      autoupdate = false;
+      model = "ollama/minimax-m2.7:cloud";
       small_model = "local/gemma-4-e4b";
 
       provider = {
+        ollama = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "Ollama Cloud";
+          options.baseURL = "https://ollama.com/v1";
+          models = {
+            "minimax-m2.7:cloud" = {
+              name = "MiniMax M2.7 (Ollama Cloud)";
+              limit = {
+                context = 262144;
+                output = 262144;
+              };
+            };
+          };
+        };
         openrouter = {
           npm = "@ai-sdk/openai-compatible";
           name = "OpenRouter";

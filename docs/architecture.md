@@ -107,7 +107,7 @@ The current Windows 11 machine (gaming, music recording, specialized hardware) w
 ### Adding/Editing Secrets
 
 ```bash
-cd ~/dev/nixos
+cd ~/nixos
 export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
   && sops edit secrets/secrets.yaml
 ```

@@ -62,7 +62,7 @@ Fix script: `~/.claude/scripts/fix-plugins-nixos.sh`
 Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad interpreter"
 
 ## Plugin Management
-- **Vendor First**: Plugins live in `~/dev/nixos/agents/plugins/`, symlinked via home-manager.
+- **Vendor First**: Plugins live in `~/nixos/agents/plugins/`, symlinked via home-manager.
 - **Patch for NixOS**: Fix shebangs to use `#!/usr/bin/env nix-shell` with required packages.
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 

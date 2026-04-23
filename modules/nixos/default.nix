@@ -205,7 +205,7 @@
       dates = "daily";
       extraArgs = "--keep-since 3d --keep 3 --optimise";
     };
-    flake = "/home/andy/dev/nixos";
+    flake = "/home/andy/nixos";
   };
 
   system.autoUpgrade = {

@@ -67,15 +67,20 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-Claude is started with `--dangerously-skip-permissions` via the `dev` and `ccode` fish functions.
+All AI CLI launchers (`co`, `cg`, `main`, `gc`, `oc`, `og`, `qc`) run with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
 - **Three Strikes**: If a command fails 3x, STOP and report. Do not loop.
 - **Destructive Warning**: Print "DESTRUCTIVE ACTION" before rm/mv/nix-collect-garbage.
 
 ### Fish Functions
-- `dev` - Start Claude in ~/dev with tmux (session: dev)
-- `ccode` - Start Claude in current directory with tmux (session: project name)
+- `co` - Claude Opus, per-project (session: `{dir}-co`)
+- `cg` - Claude GLM, per-project (session: `{dir}-cg`)
+- `main` - MainLoop Opus with vault scope (session: `main`)
+- `oc` - OpenCode, MiniMax M2.7 (session: `{dir}-oc`)
+- `og` - OpenCode, local Gemma 4 E4B (session: `{dir}-og`)
+- `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
+- `gc` - Gemini CLI (session: `{dir}-gc`)
 
 ## Rebuilding NixOS
 Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.

@@ -44,6 +44,20 @@
                 output = 128000;
               };
             };
+            "deepseek/deepseek-v4-pro" = {
+              name = "DeepSeek V4 Pro";
+              limit = {
+                context = 1048576;
+                output = 131072;
+              };
+            };
+            "deepseek/deepseek-v4-flash" = {
+              name = "DeepSeek V4 Flash";
+              limit = {
+                context = 1048576;
+                output = 131072;
+              };
+            };
           };
         };
         local = {

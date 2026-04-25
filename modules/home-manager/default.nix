@@ -480,6 +480,15 @@
           '';
         };
 
+        # Parallel install with tmux for evaluation — user will compare and decide
+        # whether to migrate AI launchers (co, cg, main, oc, og, qc, gc) later.
+        programs.zellij = {
+          enable = true;
+          settings = {
+            theme = "nord";
+          };
+        };
+
         programs.gh = {
           enable = true;
           settings.git_protocol = "ssh";

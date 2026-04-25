@@ -262,8 +262,10 @@
           functions = {
             plugin = ''
               command plugin $argv
-              and ~/.claude/scripts/fix-plugins-nixos.sh
+              and ~/.claude-shared/scripts/fix-plugins-nixos.sh
             '';
+            # claude: bare default instance retired 2026-04-25 (was pre-split GLM-routed; history preserved in ~/.claude-glm/).
+            claude = "echo '⚠ bare claude retired — use co (Opus) or cg (GLM)' >&2; return 1";
             # co: Claude Code with Anthropic Opus (Pro plan)
             co = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-co fish -c 'claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions'";
             # cg: Claude Code with Z.AI GLM

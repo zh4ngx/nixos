@@ -30,6 +30,16 @@
     memoryPercent = 50; # Up to 15GB on 30GB RAM system
   };
 
+  # Disk-backed swap as spillover for transient peaks (added 2026-04-25 after
+  # OOM cascade: 3 concurrent Opus TUIs peaked at ~42GB demand; zram alone left
+  # ~37GB usable budget). zram stays priority 5 (preferred); disk defaults lower.
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 32 * 1024; # 32 GB in MiB
+    }
+  ];
+
   services.udev.packages = [
     pkgs.apio-udev-rules
     pkgs.keychron-udev-rules

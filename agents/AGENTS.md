@@ -47,14 +47,21 @@ NEVER run imperative installers:
 ## Home Manager Best Practices
 - **Prefer `programs.*` modules** over raw `home.packages` when a HM module exists (e.g. `programs.opencode`, `programs.tmux`, `programs.fish`)
 - **Wrap binaries** with `writeShellScriptBin` when you need runtime env var injection (e.g. secrets from `/run/secrets/`)
-- For env vars known at build time, prefer `sessionVariables` or `home.sessionVariables`
+- **Env var scoping — narrowest scope first.** When a var affects one tool, prefer in this order:
+  1. **Tool's own `env` block** in its config file (e.g. Claude Code `~/.claude-*/settings.json` `env`, opencode provider `options`, `programs.<tool>.settings.env`) — narrowest, never leaks
+  2. **Per-binary wrapper** via `writeShellScriptBin` setting the env before `exec` — also right pattern for runtime secrets injection
+  3. **systemd service `Environment=`** — per-service scope when the var only matters for one daemon
+  4. **`programs.fish.functions`** function setting `set -x VAR …` before launching — fish-only, per-invocation
+  5. **`home.sessionVariables`** — **last resort**, exports to *every* user process. Only legitimate for truly user-global vars (`EDITOR`, `BROWSER`)
+  
+  Don't reach for `home.sessionVariables` because it's easy — narrow scope means less surprise downstream. Concrete example: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` belongs in the sops template that renders `~/.claude-*/settings.json`'s `env` block (option 1), not in `home.sessionVariables` (option 5).
 - **Never manipulate files at runtime in wrappers** (`ln -sf`, `cp`, `cat >`) — use sops templates, `home.file`, or CLI flags instead
 - **Never use activation scripts to replace HM-managed symlinks with writable copies.** If a program needs to write to its config, preconfigure all required fields in the HM settings module so it never needs to write. If a setting truly can't be preconfigured declaratively, document that limitation rather than working around it with activation scripts.
 
 ## Store Protection
 `/nix/store` is read-only. All config changes via .nix files, never direct edits.
 
-**Symlinks to nix store:** Many config files (e.g., `~/.claude/CLAUDE.md`) are symlinks into `/nix/store`. Always trace symlinks to find the source file in your nix config before editing.
+**Symlinks to nix store:** Many config files (e.g., `~/.claude-shared/CLAUDE.md`, `~/.claude-opus/settings.json`) are symlinks into `/nix/store`. Always trace symlinks (`readlink -f <path>`) to find the source file in your nix config before editing.
 
 ## Plugin Issues
 Plugin hook scripts often have hardcoded `/bin/bash` shebangs.

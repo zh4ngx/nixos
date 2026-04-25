@@ -54,8 +54,8 @@ in
   programs.obsidian = {
     enable = true;
 
-    vaults.Notes = {
-      target = "Notes";
+    vaults.vault = {
+      target = "vault";
       settings.communityPlugins = [
         # Dataview - complex data views for notes
         (buildObsidianPlugin {

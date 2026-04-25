@@ -25,6 +25,23 @@
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
 
+        xdg.enable = true;
+
+        # All XDG user dirs → ~/inbox (single triage zone). See vault/01-projects/xdg-inbox-refactor.md.
+        xdg.userDirs = {
+          enable = true;
+          createDirectories = true;
+          download = "$HOME/inbox";
+          documents = "$HOME/inbox";
+          pictures = "$HOME/inbox";
+          videos = "$HOME/inbox";
+          music = "$HOME/inbox";
+          desktop = "$HOME/inbox";
+          templates = "$HOME/inbox";
+          publicShare = "$HOME/inbox";
+          projects = "$HOME/dev";
+        };
+
         # The home.packages option allows you to install Nix packages into your
         # environment.
         home.packages = with pkgs; [

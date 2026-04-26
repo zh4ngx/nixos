@@ -56,7 +56,8 @@
             "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
             "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-            "DISABLE_ERROR_REPORTING": "1"
+            "DISABLE_ERROR_REPORTING": "1",
+            "ANTHROPIC_BETA": "compact-2026-01-12"
           },
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,
@@ -66,6 +67,16 @@
           "statusLine": {
             "type": "command",
             "command": "~/.claude-shared/scripts/statusline.sh"
+          },
+          "context_management": {
+            "edits": [{
+              "type": "compact_20260112",
+              "trigger": {"type": "input_tokens", "value": 600000},
+              "instruction": "Preserve mathematical formulations, design decisions, code references, file paths, key open questions. Discard tool-result chatter and stale debugging output."
+            }]
+          },
+          "enabledPlugins": {
+            "hindsight-memory@hindsight": true
           }
         }
       '';
@@ -261,6 +272,7 @@
 
   environment.systemPackages = [
     pkgs.bitwarden-desktop
+    pkgs.python3
     pkgs.sops
     pkgs.ssh-to-age
   ];

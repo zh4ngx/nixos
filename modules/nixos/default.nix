@@ -87,15 +87,6 @@
           },
           "enabledPlugins": {
             "hindsight-memory@hindsight": true
-          },
-          "mcpServers": {
-            "brave-search": {
-              "command": "nix",
-              "args": ["shell", "nixpkgs#nodejs", "-c", "npx", "-y", "@modelcontextprotocol/server-brave-search"],
-              "env": {
-                "BRAVE_API_KEY": "${config.sops.placeholder.brave_api_key}"
-              }
-            }
           }
         }
       '';
@@ -136,7 +127,19 @@
           },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true
-          },
+          }
+        }
+      '';
+    };
+
+    # Shared MCP config for both claude-opus and claude-glm.
+    # Loaded via --mcp-config flag (claude does not read mcpServers from settings.json).
+    templates."claude-mcp.json" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        {
           "mcpServers": {
             "brave-search": {
               "command": "nix",

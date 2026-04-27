@@ -100,11 +100,11 @@
           '')
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
-            exec claude "$@"
+            exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
-            exec claude "$@"
+            exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
           '')
         ];
 

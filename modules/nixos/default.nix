@@ -63,7 +63,6 @@
             "ANTHROPIC_BETA": "compact-2026-01-12",
             "CLAUDE_CODE_EFFORT_LEVEL": "max",
             "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
-            "HINDSIGHT_API_URL": "http://localhost:9077",
             "HINDSIGHT_DYNAMIC_BANK_ID": "true"
           },
           "effortLevel": "xhigh",

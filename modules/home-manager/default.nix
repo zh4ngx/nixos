@@ -96,7 +96,7 @@
               postInstall = (old.postInstall or "") + ''
                 sed -i 's/DEFAULT_TOKEN_LIMIT = 131072/DEFAULT_TOKEN_LIMIT = 1000000/g' $out/share/qwen-code/cli.js
               '';
-            })}/bin/qwen --auth-type openai -m qwen3.6-plus "$@"
+            })}/bin/qwen --auth-type openai -m qwen3.6-max-preview "$@"
           '')
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
@@ -502,6 +502,7 @@
           settings = {
             theme = "nord";
             show_release_notes = false;
+            welcome_screen = false;
           };
           layouts.main = ''
             layout {

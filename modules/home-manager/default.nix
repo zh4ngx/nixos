@@ -284,7 +284,7 @@
                 zellij attach main
               else
                 pushd ~
-                zellij --layout main -s main
+                zellij -n main -s main
                 popd
               end
             '';

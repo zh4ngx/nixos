@@ -25,6 +25,10 @@
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
 
+        home.sessionVariables = {
+          EDITOR = "zeditor --wait";
+        };
+
         xdg.enable = true;
 
         # All XDG user dirs → ~/inbox (single triage zone). See vault/01-projects/xdg-inbox-refactor.md.

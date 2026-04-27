@@ -284,9 +284,10 @@
             main = "tmux new-session -A -D -s main -c ~ fish -c 'claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault'";
             # mz: MainLoop via zellij (parallel install for evaluation vs tmux `main`)
             mz = ''
-              if zellij list-sessions -sn 2>/dev/null | grep -qx main
+              if zellij list-sessions -sn --active 2>/dev/null | grep -qx main
                 zellij attach main
               else
+                zellij delete-session main --force 2>/dev/null
                 pushd ~
                 zellij -n main -s main
                 popd
@@ -503,7 +504,7 @@
           };
           layouts.main = ''
             layout {
-                pane command="fish" {
+                pane command="fish" close_on_exit=true {
                     args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault"
                 }
             }

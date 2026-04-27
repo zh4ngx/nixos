@@ -43,6 +43,9 @@
       openrouter_api_key = {
         owner = "andy";
       };
+      brave_api_key = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json for Opus instance (Anthropic direct, OAuth)
@@ -79,6 +82,15 @@
           },
           "enabledPlugins": {
             "hindsight-memory@hindsight": true
+          },
+          "mcpServers": {
+            "brave-search": {
+              "command": "nix",
+              "args": ["shell", "nixpkgs#nodejs", "-c", "npx", "-y", "@modelcontextprotocol/server-brave-search"],
+              "env": {
+                "BRAVE_API_KEY": "${config.sops.placeholder.brave_api_key}"
+              }
+            }
           }
         }
       '';
@@ -119,6 +131,15 @@
           },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true
+          },
+          "mcpServers": {
+            "brave-search": {
+              "command": "nix",
+              "args": ["shell", "nixpkgs#nodejs", "-c", "npx", "-y", "@modelcontextprotocol/server-brave-search"],
+              "env": {
+                "BRAVE_API_KEY": "${config.sops.placeholder.brave_api_key}"
+              }
+            }
           }
         }
       '';

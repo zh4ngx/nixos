@@ -275,6 +275,7 @@
     pkgs.python3
     pkgs.sops
     pkgs.ssh-to-age
+    pkgs.uv
   ];
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.login.enableGnomeKeyring = true;
@@ -378,6 +379,22 @@
     android_sdk.accept_license = true;
     allowUnfree = true;
   };
+
+  # Disable flaky aioboto3 tests (moto/werkzeug "Duplicate 'Server' header"
+  # failures on nixpkgs unstable rev 01fbdeef, Apr 23 2026). Cascades to
+  # py-key-value-aio -> fastmcp -> mcp-nixos -> home-manager-path.
+  nixpkgs.overlays = [
+    (final: prev: {
+      python313 = prev.python313.override {
+        packageOverrides = pyFinal: pyPrev: {
+          aioboto3 = pyPrev.aioboto3.overridePythonAttrs (_: {
+            doCheck = false;
+            doInstallCheck = false;
+          });
+        };
+      };
+    })
+  ];
 
   # 1. High-level Flake Integration (replaces nix.registry and nix.settings.flake-registry)
   nixpkgs.flake = {

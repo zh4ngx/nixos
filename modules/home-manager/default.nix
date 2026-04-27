@@ -501,6 +501,7 @@
           enable = true;
           settings = {
             theme = "nord";
+            show_release_notes = false;
           };
           layouts.main = ''
             layout {

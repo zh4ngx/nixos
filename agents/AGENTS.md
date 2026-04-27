@@ -89,6 +89,82 @@ All AI CLI launchers (`co`, `cg`, `main`, `gc`, `oc`, `og`, `qc`) run with auto-
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `gc` - Gemini CLI (session: `{dir}-gc`)
 
+## Project Boundaries (Dispatch)
+
+This rule is **agent-agnostic** — applies to Claude Code, OpenCode, Codex, Qwen
+Code, Gemini CLI, or any other AI agent operating across this user's project
+roots. Examples below use Claude CLI flags as one concrete instance; substitute
+the equivalent headless mode for other agents.
+
+**Project-scoped work uses project-scoped agents.** When work in one root
+(e.g. `~/nixos`) would spill into another (`~/vault`, `~/dev/<repo>`),
+dispatch to a separate headless agent for that project rather than reaching
+across roots.
+
+### The work being dispatched
+
+Spawn a fresh agent instance scoped to the target project, run a single bounded
+task, capture output to a known location. Claude example:
+
+```fish
+cd ~/<repo> && stdbuf -oL -eL claude-opus -p "..." \
+  --dangerously-skip-permissions --add-dir ~/<repo> \
+  --output-format=stream-json --verbose --include-partial-messages \
+  > /tmp/<task>.jsonl 2>&1
+```
+
+For other agents, use their headless / non-interactive mode (consult agent docs
+for exact flags). The principle is constant.
+
+**Trace continuity** lives in the agent's project-slug directory (Claude:
+`~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own
+schemes). Project-scoped traces enable agent `--continue` semantics and keep
+project-specific knowledge out of the parent session's global context.
+
+### How the parent agent launches it — two patterns
+
+**Default: parent-agent's backgrounded-shell facility.** For Claude Code, that
+is `Bash(run_in_background: true)`; equivalents exist in OpenCode, Codex, etc.
+The parent tracks the subprocess in its UI (statusline shows it), output is
+pollable via the parent's shell-output facility. Lifecycle is tied to the
+parent agent — acceptable in this user's setup because the parent always runs
+inside tmux/zellij, which preserves the parent across SSH disconnect, terminal
+close, machine sleep.
+
+**Edge case: shell-detach `(cmd &)`.** Use only when the dispatch must outlive
+a deliberate parent-agent `/exit`, span machine reboot, or be true
+fire-and-forget walk-away. Trade-off: invisible to parent UI, no convenient
+poll handle. Wrap as `(cd ~/<repo> && ... > /tmp/<task>.jsonl 2>&1) &` so the
+process is orphaned to init and the cd stays local.
+
+### Concurrency
+
+**Essentially uncapped** on this host (32GB RAM + 15GB zram + 32GB disk swap on
+MS-7E51). Don't pre-throttle headless dispatches. If RAM pressure surfaces
+(OOM, swap thrashing), back off then.
+
+### Anti-patterns
+
+**In-process sub-agent for project work.** The parent agent's in-process
+sub-agent tool (e.g. Claude Code's `Agent` tool with `general-purpose` subagent
+type) keeps the trace in the parent's project slug, not the target project's
+slug. Use only for cross-project research / synthesis where the trace
+genuinely belongs in the parent.
+
+**Interactive attach by default.** Don't default to spawning interactive
+`co`/`cg`/`oc`/`gc`/`qc` instances. Reserve for tasks that genuinely need
+real-time human steering — and ask the user first.
+
+**`cd` in parent-agent shell tool calls without a subshell.** Use
+`git -C <path>`, `cmd -C <path>`, `--flake <path>`, or `(cd /path && cmd)`.
+If the parent's CWD drifts mid-session, project slug and tool resolution break.
+
+### Canonical version
+
+The full canonical version of this rule (with vault cross-links and
+session-history rationale) lives in
+`~/vault/02-areas/agents/user-preferences.md` §"Project-scoped dispatch (default pattern)".
+
 ## Rebuilding NixOS
 Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 

@@ -63,7 +63,11 @@
             "ANTHROPIC_BETA": "compact-2026-01-12",
             "CLAUDE_CODE_EFFORT_LEVEL": "max",
             "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
-            "HINDSIGHT_DYNAMIC_BANK_ID": "true"
+            "HINDSIGHT_DYNAMIC_BANK_ID": "true",
+            "HINDSIGHT_API_LLM_PROVIDER": "openai",
+            "HINDSIGHT_API_LLM_BASE_URL": "https://openrouter.ai/api/v1",
+            "HINDSIGHT_API_LLM_API_KEY": "${config.sops.placeholder.openrouter_api_key}",
+            "HINDSIGHT_API_LLM_MODEL": "openai/gpt-4o-mini"
           },
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,

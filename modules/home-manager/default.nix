@@ -278,6 +278,16 @@
             qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
             # main: MainLoop (Opus 4.7 at ~, vault in scope)
             main = "tmux new-session -A -D -s main -c ~ fish -c 'claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault'";
+            # mz: MainLoop via zellij (parallel install for evaluation vs tmux `main`)
+            mz = ''
+              if zellij list-sessions -sn 2>/dev/null | grep -qx main
+                zellij attach main
+              else
+                pushd ~
+                zellij --session main --layout-string 'layout { pane command="fish" { args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault" } }'
+                popd
+              end
+            '';
             # gc: start gemini-cli
             gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo -r latest || gemini --yolo'";
             # Title hook - sets window name for tmux to pass through

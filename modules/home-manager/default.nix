@@ -284,7 +284,7 @@
                 zellij attach main
               else
                 pushd ~
-                zellij --session main --layout-string 'layout { pane command="fish" { args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault" } }'
+                zellij --layout main -s main
                 popd
               end
             '';
@@ -497,6 +497,13 @@
           settings = {
             theme = "nord";
           };
+          layouts.main = ''
+            layout {
+                pane command="fish" {
+                    args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault"
+                }
+            }
+          '';
         };
 
         programs.gh = {

@@ -502,7 +502,7 @@
           settings = {
             theme = "nord";
             show_release_notes = false;
-            welcome_screen = false;
+            show_startup_tips = false;
           };
           layouts.main = ''
             layout {

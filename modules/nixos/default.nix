@@ -443,14 +443,23 @@
     allowUnfree = true;
   };
 
-  # Disable flaky aioboto3 tests (moto/werkzeug "Duplicate 'Server' header"
-  # failures on nixpkgs unstable rev 01fbdeef, Apr 23 2026). Cascades to
-  # py-key-value-aio -> fastmcp -> mcp-nixos -> home-manager-path.
+  # Disable flaky tests for python packages where upstream test brittleness
+  # blocks NixOS rebuilds.
+  # - aioboto3: moto/werkzeug "Duplicate 'Server' header" failures on nixpkgs
+  #   unstable rev 01fbdeef (Apr 23 2026). Cascades to py-key-value-aio ->
+  #   fastmcp -> mcp-nixos -> home-manager-path.
+  # - fastmcp: pytest hangs on multi-client/keep-alive/timeout/sampling tests
+  #   despite ~30 explicit -k exclusions in the derivation. test_sampling_tool
+  #   in particular reliably hangs builds; rebuilds take 10+ min when uncached.
   nixpkgs.overlays = [
     (final: prev: {
       python313 = prev.python313.override {
         packageOverrides = pyFinal: pyPrev: {
           aioboto3 = pyPrev.aioboto3.overridePythonAttrs (_: {
+            doCheck = false;
+            doInstallCheck = false;
+          });
+          fastmcp = pyPrev.fastmcp.overridePythonAttrs (_: {
             doCheck = false;
             doInstallCheck = false;
           });

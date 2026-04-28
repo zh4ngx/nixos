@@ -81,7 +81,7 @@
           "context_management": {
             "edits": [{
               "type": "compact_20260112",
-              "trigger": {"type": "input_tokens", "value": 600000},
+              "trigger": {"type": "input_tokens", "value": 400000},
               "instruction": "Preserve mathematical formulations, design decisions, code references, file paths, key open questions. Discard tool-result chatter and stale debugging output."
             }]
           },
@@ -297,7 +297,26 @@
   #   };
   # };
 
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    # Extra libs needed by hindsight-embed's bundled PostgreSQL 18.1 binary
+    # (initdb, postgres). The default nix-ld set covers libssl, libcrypto,
+    # libzstd, libz. The bundled binary expects libxml2's legacy soname
+    # (libxml2.so.2) — current nixpkgs libxml2 uses libxml2.so.16, so we
+    # explicitly pull libxml2_13 which still ships .so.2.
+    libraries = with pkgs; [
+      krb5 # libgssapi_krb5.so.2
+      lz4 # liblz4.so.1
+      libxml2_13 # libxml2.so.2 (legacy soname)
+    ];
+  };
+
+  # hindsight-embed's bundled PostgreSQL was built with
+  # --with-system-tzdata=/usr/share/zoneinfo (hardcoded). NixOS doesn't
+  # populate /usr, so symlink that path to the system zoneinfo.
+  systemd.tmpfiles.rules = [
+    "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo"
+  ];
 
   programs.ente-auth.enable = true;
 

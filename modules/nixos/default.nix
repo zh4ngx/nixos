@@ -299,15 +299,17 @@
 
   programs.nix-ld = {
     enable = true;
-    # Extra libs needed by hindsight-embed's bundled PostgreSQL 18.1 binary
-    # (initdb, postgres). The default nix-ld set covers libssl, libcrypto,
-    # libzstd, libz. The bundled binary expects libxml2's legacy soname
-    # (libxml2.so.2) — current nixpkgs libxml2 uses libxml2.so.16, so we
-    # explicitly pull libxml2_13 which still ships .so.2.
+    # Extra libs needed by hindsight-embed's bundled PostgreSQL 18.1 binaries
+    # (initdb, postgres, psql — pg0-embedded shells out to psql to create
+    # the hindsight role + database during first init). The default nix-ld
+    # set covers libssl, libcrypto, libzstd, libz. The bundled binary expects
+    # libxml2's legacy soname (libxml2.so.2) — current nixpkgs libxml2 uses
+    # libxml2.so.16, so we explicitly pull libxml2_13 which still ships .so.2.
     libraries = with pkgs; [
       krb5 # libgssapi_krb5.so.2
       lz4 # liblz4.so.1
       libxml2_13 # libxml2.so.2 (legacy soname)
+      readline # libreadline.so.8 (psql)
     ];
   };
 

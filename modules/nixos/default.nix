@@ -63,11 +63,7 @@
             "ANTHROPIC_BETA": "compact-2026-01-12",
             "CLAUDE_CODE_EFFORT_LEVEL": "max",
             "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
-            "HINDSIGHT_DYNAMIC_BANK_ID": "true",
-            "HINDSIGHT_API_LLM_PROVIDER": "openai",
-            "HINDSIGHT_API_LLM_BASE_URL": "https://openrouter.ai/api/v1",
-            "HINDSIGHT_API_LLM_API_KEY": "${config.sops.placeholder.openrouter_api_key}",
-            "HINDSIGHT_API_LLM_MODEL": "openai/gpt-4o-mini"
+            "HINDSIGHT_DYNAMIC_BANK_ID": "true"
           },
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,
@@ -89,6 +85,21 @@
             "hindsight-memory@hindsight": true
           }
         }
+      '';
+    };
+
+    # Env file for the hindsight-embed user service (systemd EnvironmentFile=).
+    # API key stays out of /nix/store; rendered to /run/secrets/rendered/ at boot.
+    templates."hindsight-embed.env" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        HINDSIGHT_API_LLM_PROVIDER=openai
+        HINDSIGHT_API_LLM_BASE_URL=https://openrouter.ai/api/v1
+        HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.openrouter_api_key}
+        HINDSIGHT_API_LLM_MODEL=openai/gpt-4o-mini
+        HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
       '';
     };
 

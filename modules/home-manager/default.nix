@@ -152,6 +152,31 @@
           Install.WantedBy = [ "default.target" ];
         };
 
+        # Hindsight embed daemon — perpetually-running service so claude-opus
+        # SessionStart hooks find it already up (zero cold-start latency) and
+        # so the OpenRouter API key lives in EnvironmentFile= rather than the
+        # claude-opus settings.json env block (where it'd leak into every
+        # subprocess Claude Code spawns).
+        # Type=forking: `daemon start` Popens hindsight-api with --daemon, polls
+        # health, then exits — systemd's cgroup heuristic picks up the surviving
+        # api process as the main PID, so Restart=on-failure supervises it.
+        systemd.user.services.hindsight-embed = {
+          Unit = {
+            Description = "Hindsight embed daemon (claude-code profile, 127.0.0.1:9077)";
+          };
+          Service = {
+            Type = "forking";
+            EnvironmentFile = "/run/secrets/rendered/hindsight-embed.env";
+            ExecStart = "/run/current-system/sw/bin/uvx hindsight-embed@latest daemon --profile claude-code start";
+            ExecStop = "/run/current-system/sw/bin/uvx hindsight-embed@latest daemon --profile claude-code stop";
+            Restart = "on-failure";
+            RestartSec = 10;
+            StartLimitBurst = 5;
+            TimeoutStartSec = 60;
+          };
+          Install.WantedBy = [ "default.target" ];
+        };
+
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 

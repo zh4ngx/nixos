@@ -185,6 +185,9 @@
             },
             "nixos": {
               "command": "${pkgs.mcp-nixos}/bin/mcp-nixos"
+            },
+            "zellij": {
+              "command": "/home/andy/dev/zellij-mcp/target/release/zellij-mcp"
             }
           }
         }

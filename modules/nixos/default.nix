@@ -566,6 +566,22 @@
             doCheck = false;
             doInstallCheck = false;
           });
+          lupa = pyPrev.lupa.overridePythonAttrs (old: {
+            # fakeredis 2.33.0 hardcodes `import lupa.lua51`, but nixpkgs sets
+            # LUPA_NO_BUNDLE=true so only luajit ships. Bundle lua51 from the
+            # sdist (the other third-party/lua* dirs are empty in the PyPI
+            # source, so we remove them to stop setup.py from iterating them).
+            env = builtins.removeAttrs (old.env or {}) [ "LUPA_NO_BUNDLE" ];
+            buildInputs = [];
+            postPatch = (old.postPatch or "") + ''
+              for d in third-party/lua52 third-party/lua53 third-party/lua54 \
+                       third-party/lua55 third-party/luajit20 third-party/luajit21; do
+                if [ -d "$d" ] && [ -z "$(ls -A "$d" 2>/dev/null)" ]; then
+                  rmdir "$d"
+                fi
+              done
+            '';
+          });
         };
       };
     })

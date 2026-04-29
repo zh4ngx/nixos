@@ -43,6 +43,9 @@
       openrouter_api_key = {
         owner = "andy";
       };
+      opencode_api_key = {
+        owner = "andy";
+      };
       brave_api_key = {
         owner = "andy";
       };
@@ -213,6 +216,14 @@
       group = "users";
       mode = "0400";
       content = builtins.toJSON {
+        opencode = {
+          type = "api";
+          key = config.sops.placeholder.opencode_api_key;
+        };
+        opencode-go = {
+          type = "api";
+          key = config.sops.placeholder.opencode_api_key;
+        };
         openrouter = {
           type = "api";
           key = config.sops.placeholder.openrouter_api_key;

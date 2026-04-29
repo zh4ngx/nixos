@@ -7,10 +7,15 @@
     settings = {
       permission = "allow";
       autoupdate = false;
-      model = "ollama/minimax-m2.7:cloud";
-      small_model = "local/gemma-4-e4b";
+      model = "opencode-go/deepseek-v4-pro";
+      small_model = "opencode-go/deepseek-v4-flash";
 
       provider = {
+        opencode-go = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "OpenCode Go";
+          options.baseURL = "https://opencode.ai/zen/go/v1";
+        };
         ollama = {
           npm = "@ai-sdk/openai-compatible";
           name = "Ollama Cloud";

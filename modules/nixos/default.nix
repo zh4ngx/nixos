@@ -65,6 +65,11 @@
             "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
             "HINDSIGHT_DYNAMIC_BANK_ID": "true"
           },
+          "permissions": {
+            "deny": [
+              "Bash(nix search:*)"
+            ]
+          },
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,
           "cleanupPeriodDays": 99999,
@@ -135,6 +140,11 @@
             "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1"
+          },
+          "permissions": {
+            "deny": [
+              "Bash(nix search:*)"
+            ]
           },
           "effortLevel": "high",
           "cleanupPeriodDays": 99999,

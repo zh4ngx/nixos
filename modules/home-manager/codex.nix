@@ -16,4 +16,7 @@
       hide_agent_reasoning = false;
     };
   };
+
+  home.file.".codex/AGENTS.md".source =
+    config.lib.file.mkOutOfStoreSymlink "/home/andy/nixos/agents/AGENTS.md";
 }

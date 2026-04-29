@@ -431,6 +431,20 @@
     pkgs.sops
     pkgs.ssh-to-age
     pkgs.uv
+    # Voice (Claude Code /voice command requires SoX's `rec`; alsa-utils for
+    # mic diagnostics).
+    pkgs.sox
+    pkgs.alsa-utils
+    # Common agent / shell tools — keep in PATH so scripts (and humans)
+    # don't pay `nix run nixpkgs#<x> --` ceremony per invocation. Convention
+    # for AGENTS: prefer the Read/Glob harness tools for simple inspection;
+    # reach for these when a shell pipeline is genuinely the right shape
+    # (see vault [[dispatch-strategy]] / [[mainloop-role]] for the priority
+    # order). The auto-compact-nudge hook script already calls jq each turn.
+    pkgs.jq
+    pkgs.fd
+    pkgs.tree
+    pkgs.yq
   ];
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.login.enableGnomeKeyring = true;

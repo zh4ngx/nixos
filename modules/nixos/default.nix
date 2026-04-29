@@ -104,7 +104,7 @@
         HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.openrouter_api_key}
         HINDSIGHT_API_LLM_MODEL=openai/gpt-4o-mini
         HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
-        HINDSIGHT_EMBED_API_DATABASE_URL=postgresql:///hindsight?host=/run/postgresql
+        HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@/hindsight?host=/run/postgresql
       '';
     };
 

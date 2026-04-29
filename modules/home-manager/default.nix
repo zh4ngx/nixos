@@ -79,6 +79,21 @@
           mcp-nixos
           socat
           wl-clipboard
+          # Voice (Claude Code /voice needs SoX's `rec`; alsa-utils for mic
+          # diagnostics + audio plumbing).
+          sox
+          alsa-utils
+          # High-frequency agent / shell tools — keeping in PATH avoids the
+          # ~200-500ms `nix run nixpkgs#<x> --` eval cost per invocation
+          # (auto-compact-nudge hook calls jq every UserPromptSubmit) AND
+          # protects them from `nh clean` GC eviction. Convention for AGENTS:
+          # prefer Read/Glob harness tools for simple inspection; reach for
+          # these shell tools when a pipeline is genuinely the right shape
+          # (see vault [[dispatch-strategy#Tool Selection Priority for Agents]]).
+          jq
+          fd
+          tree
+          yq
           # Bridge: Wyoming STT → Unix socket for voice-inject daemon
           # NOTE: services.wyoming.satellite exists but is a local-mic-to-Wyoming proxy
           # for Home Assistant pipelines. It doesn't output transcriptions to a socket/file.

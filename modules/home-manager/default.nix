@@ -361,6 +361,7 @@
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
+          ".claude-shared/hooks/auto-compact-nudge.sh".source = ./../../files/auto-compact-nudge.sh;
 
           # Claude Code GLM - symlinks to shared resources from ~/.claude-shared
           ".claude-glm/settings.json".source =

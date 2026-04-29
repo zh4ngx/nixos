@@ -81,6 +81,19 @@
               "instruction": "Preserve mathematical formulations, design decisions, code references, file paths, key open questions. Discard tool-result chatter and stale debugging output."
             }]
           },
+          "hooks": {
+            "UserPromptSubmit": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "/home/andy/.claude-shared/hooks/auto-compact-nudge.sh",
+                    "timeout": 8
+                  }
+                ]
+              }
+            ]
+          },
           "enabledPlugins": {
             "hindsight-memory@hindsight": true
           }
@@ -140,6 +153,19 @@
           "statusLine": {
             "type": "command",
             "command": "~/.claude-shared/scripts/statusline.sh"
+          },
+          "hooks": {
+            "UserPromptSubmit": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "/home/andy/.claude-shared/hooks/auto-compact-nudge.sh",
+                    "timeout": 8
+                  }
+                ]
+              }
+            ]
           },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true

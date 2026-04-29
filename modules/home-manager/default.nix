@@ -453,6 +453,7 @@
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
+          ".claude-shared/scripts/statusline.sh".source = ./../../files/statusline.sh;
 
           # Claude Code GLM - symlinks to shared resources from ~/.claude-shared
           ".claude-glm/settings.json".source =

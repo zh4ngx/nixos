@@ -8,6 +8,7 @@
   programs.opencode = {
     enable = true;
     enableMcpIntegration = true;
+    extraPackages = [ pkgs.bun ];
 
     # opencode ships as a Bun standalone (statically-linked, no ELF interp)
     # that dlopen()s libstdc++.so.6 at runtime for its file-watcher native
@@ -27,6 +28,11 @@
     settings = {
       permission = "allow";
       autoupdate = false;
+      plugin = [ "@cortexkit/opencode-magic-context" ];
+      compaction = {
+        auto = false;
+        prune = false;
+      };
       model = "opencode-go/deepseek-v4-pro";
       small_model = "opencode-go/deepseek-v4-flash";
 
@@ -38,14 +44,14 @@
         };
         ollama = {
           npm = "@ai-sdk/openai-compatible";
-          name = "Ollama Cloud";
-          options.baseURL = "https://ollama.com/v1";
+          name = "Local Gemma (llama.cpp)";
+          options.baseURL = "http://localhost:8081/v1";
           models = {
-            "minimax-m2.7:cloud" = {
-              name = "MiniMax M2.7 (Ollama Cloud)";
+            "gemma-4-e4b" = {
+              name = "Gemma 4 E4B IT (Local)";
               limit = {
-                context = 262144;
-                output = 262144;
+                context = 131072;
+                output = 131072;
               };
             };
           };
@@ -83,6 +89,13 @@
                 output = 131072;
               };
             };
+            "google/gemini-3-flash" = {
+              name = "Gemini 3 Flash";
+              limit = {
+                context = 1048576;
+                output = 65536;
+              };
+            };
           };
         };
         local = {
@@ -100,6 +113,35 @@
           };
         };
       };
+    };
+
+    tui = {
+      plugin = [ "@cortexkit/opencode-magic-context" ];
+    };
+  };
+
+  xdg.configFile."opencode/magic-context.jsonc".text = builtins.toJSON {
+    "$schema" = "https://raw.githubusercontent.com/cortexkit/opencode-magic-context/master/assets/magic-context.schema.json";
+    enabled = true;
+    historian = {
+      model = "opencode-go/glm-5";
+    };
+    dreamer = {
+      enabled = true;
+      model = "opencode-go/qwen3.5-plus";
+      schedule = "02:00-06:00";
+      tasks = [
+        "consolidate"
+        "verify"
+        "archive-stale"
+        "improve"
+        "maintain-docs"
+      ];
+    };
+    sidekick = {
+      enabled = true;
+      model = "openrouter/google/gemini-3-flash";
+      timeout_ms = 30000;
     };
   };
 

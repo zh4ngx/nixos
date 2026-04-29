@@ -685,7 +685,7 @@
             cx = ''
               layout {
                   pane command="fish" close_on_exit=true {
-                      args "-c" "codex -c model_reasoning_effort='\"xhigh\"' --dangerously-bypass-approvals-and-sandbox"
+                      args "-c" "codex --dangerously-bypass-approvals-and-sandbox"
                   }
               }
             '';

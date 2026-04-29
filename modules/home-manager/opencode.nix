@@ -124,7 +124,7 @@
     "$schema" = "https://raw.githubusercontent.com/cortexkit/opencode-magic-context/master/assets/magic-context.schema.json";
     enabled = true;
     historian = {
-      model = "opencode-go/glm-5";
+      model = "opencode-go/glm-5.1";
     };
     dreamer = {
       enabled = true;
@@ -140,7 +140,7 @@
     };
     sidekick = {
       enabled = true;
-      model = "openrouter/google/gemini-3-flash";
+      model = "opencode-go/gemini-3-flash";
       timeout_ms = 30000;
     };
   };

@@ -279,6 +279,9 @@
           servers.nixos = {
             command = "mcp-nixos";
           };
+          servers.zellij = {
+            command = "/home/andy/dev/zellij-mcp/target/release/zellij-mcp";
+          };
         };
 
         # Use nix-index and comma

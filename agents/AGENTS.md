@@ -19,7 +19,7 @@ NixOS does NOT ship with standard FHS command sets. Many commands that exist on 
 
 1. **Verify first**: Before running any command (non-obvious ones), check with `command -v <cmd>` or `type <cmd>`. If it returns nothing, the command is not installed.
 2. **Use nix run**: For packages not in base PATH, use `nix run nixpkgs#<package> -- <args>`
-3. **Known to be in PATH**: `git`, `nix`, `sudo`, `command`, `ls`, `cp`, `mv`, `rm`, `cat`, `mkdir`, `chmod`, `curl`, `wget`, `ssh`, `echo`, `date`, `systemctl`, `fish`, `bash`, `sops`, `ssh-to-age`, `rg` (ripgrep), `htop`
+3. **Known to be in PATH**: `git`, `nix`, `sudo`, `command`, `ls`, `cp`, `mv`, `rm`, `cat`, `mkdir`, `chmod`, `curl`, `wget`, `ssh`, `echo`, `date`, `systemctl`, `fish`, `bash`, `sops`, `ssh-to-age`, `rg` (ripgrep), `htop`, `jq`, `aplay`, `arecord`
 4. **Capability discovery stack** (use in order):
    - `command -v <cmd>` — runtime PATH check (always first)
    - Read `flake.nix` / `configuration.nix` — declarative intent
@@ -28,7 +28,6 @@ NixOS does NOT ship with standard FHS command sets. Many commands that exist on 
 
 ### Missing Commands (Common Examples)
 Many standard commands are not in PATH. Use nix-run syntax:
-- `jq` → `nix run nixpkgs#jq --`
 - `find` → use Glob/Grep tools instead, or `nix run nixpkgs#findutils --`
 - `file` → not available
 - `which` → unreliable, prefer `command -v` or check PATH directly

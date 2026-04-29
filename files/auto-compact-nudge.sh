@@ -11,13 +11,11 @@
 # additionalContext system note instructing the model to invoke /compact.
 set -euo pipefail
 
-JQ=(nix run nixpkgs#jq --)
-
 THRESHOLD="${AUTO_COMPACT_NUDGE_THRESHOLD:-400000}"
 
 input=$(cat)
 
-parsed=$("${JQ[@]}" -r '[.session_id // "", .workspace.current_dir // "", .model.model_id // ""] | @tsv' <<<"$input")
+parsed=$(jq -r '[.session_id // "", .workspace.current_dir // "", .model.model_id // ""] | @tsv' <<<"$input")
 IFS=$'\t' read -r session_id current_dir model_id <<<"$parsed"
 
 [[ -z "$session_id" || -z "$current_dir" ]] && exit 0
@@ -36,7 +34,7 @@ jsonl="$agent_dir/projects/$slug/$session_id.jsonl"
 last_usage_line=$(grep -F '"usage":{' "$jsonl" | tail -1)
 [[ -n "$last_usage_line" ]] || exit 0
 
-total=$("${JQ[@]}" -r '
+total=$(jq -r '
   (.message.usage // .usage) as $u
   | (($u.input_tokens // 0)
      + ($u.cache_read_input_tokens // 0)
@@ -47,7 +45,7 @@ total=$("${JQ[@]}" -r '
 
 if (( total > THRESHOLD )); then
   msg="⚠️ AUTO-COMPACT NUDGE: Conversation context has reached ${total} tokens (threshold ${THRESHOLD}). The compact_20260112 trigger doesn't fire under prompt caching, so this is a client-side nudge. You MUST invoke /compact NOW before continuing the user's task to preserve quality. Hindsight will retain pre-compact state automatically."
-  "${JQ[@]}" -n --arg msg "$msg" '{
+  jq -n --arg msg "$msg" '{
     hookSpecificOutput: {
       hookEventName: "UserPromptSubmit",
       additionalContext: $msg

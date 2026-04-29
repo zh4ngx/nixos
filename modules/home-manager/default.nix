@@ -21,6 +21,7 @@
           ./obsidian.nix
           ./opencode.nix
           ./gemini.nix
+          ./codex.nix
         ];
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
@@ -412,6 +413,8 @@
             '';
             # gc: start gemini-cli
             gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo -r latest || gemini --yolo'";
+            # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
+            cx = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cx fish -c 'codex --dangerously-bypass-approvals-and-sandbox'";
             # Title hook - sets window name for tmux to pass through
             fish_title = ''
               if set -q TMUX

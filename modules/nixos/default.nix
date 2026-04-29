@@ -70,6 +70,12 @@
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,
+          "voice": {
+            "enabled": true,
+            "mode": "hold",
+            "autoSubmit": false
+          },
+          "language": "en",
           "statusLine": {
             "type": "command",
             "command": "~/.claude-shared/scripts/statusline.sh"

@@ -388,36 +388,37 @@
             '';
             # claude: bare default instance retired 2026-04-25 (was pre-split GLM-routed; history preserved in ~/.claude-glm/).
             claude = "echo '⚠ bare claude retired — use co (Opus) or cg (GLM)' >&2; return 1";
-            # co: Claude Code with Anthropic Opus (Pro plan)
-            co = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-co fish -c 'claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions'";
-            # cg: Claude Code with Z.AI GLM
-            cg = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cg fish -c 'claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions'";
-            # oc: start opencode (Default: MiniMax M2.7 via Ollama Cloud)
-            oc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-oc fish -c 'opencode -c'";
-            # og: start opencode with Local Gemma 4 E4B (LOCAL TUI)
-            og = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-og fish -c 'opencode -m local/gemma-4-e4b -c'";
-            # qc: start qwen-code (Paid 3.6 Plus CLI)
-            qc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-qc fish -c 'qwencode -c'";
-            # main: MainLoop (Opus 4.7 at ~, vault in scope)
-            main = "tmux new-session -A -D -s main -c ~ fish -c 'claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault'";
-            # mz: MainLoop via zellij (parallel install for evaluation vs tmux `main`)
-            mz = ''
-              if zellij list-sessions -sn --active 2>/dev/null | grep -qx main
-                zellij attach main
-              else
-                zellij delete-session main --force 2>/dev/null
-                pushd ~
-                zellij -n main -s main
-                popd
-              end
+            # __zj: internal helper. Idempotent create-or-attach to a named zellij
+            # session running a layout. $argv[1]=session name, $argv[2]=layout name.
+            # `zellij attach --create $name options --default-layout $layout` is
+            # the 0.44.x idiom that does both jobs: attaches if the session
+            # exists, or creates fresh with $layout otherwise. Layout names
+            # resolve from ~/.config/zellij/layouts/<name>.kdl (materialized by
+            # `programs.zellij.layouts.<name>` below). The launch cwd is
+            # inherited from $PWD; layouts don't pin cwd themselves.
+            __zj = ''
+              zellij attach --create $argv[1] options --default-layout $argv[2]
             '';
+            # co: Claude Code with Anthropic Opus (Pro plan)
+            co = "__zj (basename $PWD | string replace -a . _)-co co";
+            # cg: Claude Code with Z.AI GLM
+            cg = "__zj (basename $PWD | string replace -a . _)-cg cg";
+            # oc: start opencode (Default: MiniMax M2.7 via Ollama Cloud)
+            oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
+            # og: start opencode with Local Gemma 4 E4B (LOCAL TUI)
+            og = "__zj (basename $PWD | string replace -a . _)-og og";
+            # qc: start qwen-code (Paid 3.6 Plus CLI)
+            qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
+            # main: MainLoop (Opus 4.7 at ~, vault in scope)
+            main = "pushd ~; __zj main main; popd";
             # gc: start gemini-cli
-            gc = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-gc fish -c 'gemini --yolo -r latest || gemini --yolo'";
+            gc = "__zj (basename $PWD | string replace -a . _)-gc gc";
             # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
-            cx = "tmux new-session -A -D -s (basename $PWD | string replace -a . _)-cx fish -c 'codex --dangerously-bypass-approvals-and-sandbox'";
-            # Title hook - sets window name for tmux to pass through
+            cx = "__zj (basename $PWD | string replace -a . _)-cx cx";
+            # Title hook - sets window name for tmux/zellij to pass through
             fish_title = ''
               if set -q TMUX
+                or set -q ZELLIJ
                 echo (status current-command)
               else
                 echo (basename $PWD)
@@ -616,8 +617,14 @@
           '';
         };
 
-        # Parallel install with tmux for evaluation — user will compare and decide
-        # whether to migrate AI launchers (co, cg, main, oc, og, qc, gc) later.
+        # Zellij is the canonical multiplexer for AI launchers (migrated from
+        # tmux 2026-04-29). Each fish shortcut (co/cg/oc/og/qc/gc/cx, plus
+        # `main`) attaches to or spawns a zellij session that loads the
+        # corresponding layout below. Layouts are materialized under
+        # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
+        # by name from `__zj` via `zellij --session $name --layout $name`.
+        # Each pane runs `fish -c '<cmd>'` with `close_on_exit=true` so the
+        # session terminates cleanly when the agent CLI exits.
         programs.zellij = {
           enable = true;
           settings = {
@@ -625,13 +632,64 @@
             show_release_notes = false;
             show_startup_tips = false;
           };
-          layouts.main = ''
-            layout {
-                pane command="fish" close_on_exit=true {
-                    args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault"
-                }
-            }
-          '';
+          layouts = {
+            main = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault"
+                  }
+              }
+            '';
+            co = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions"
+                  }
+              }
+            '';
+            cg = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions"
+                  }
+              }
+            '';
+            oc = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "opencode -c"
+                  }
+              }
+            '';
+            og = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "opencode -m local/gemma-4-e4b -c"
+                  }
+              }
+            '';
+            qc = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "qwencode -c"
+                  }
+              }
+            '';
+            gc = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "gemini --yolo -r latest; or gemini --yolo"
+                  }
+              }
+            '';
+            cx = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "codex --dangerously-bypass-approvals-and-sandbox"
+                  }
+              }
+            '';
+          };
         };
 
         programs.gh = {

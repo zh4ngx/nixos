@@ -90,6 +90,10 @@
 
     # Env file for the hindsight-embed user service (systemd EnvironmentFile=).
     # API key stays out of /nix/store; rendered to /run/secrets/rendered/ at boot.
+    # HINDSIGHT_EMBED_API_DATABASE_URL (note the EMBED infix) is read by the
+    # `hindsight-embed daemon start` wrapper; if unset, it falls through to a
+    # pg0:// URL and spawns embedded postgres regardless of HINDSIGHT_API_DATABASE_URL.
+    # We point at the system postgres via Unix socket (peer auth as user `andy`).
     templates."hindsight-embed.env" = {
       owner = "andy";
       group = "users";
@@ -100,6 +104,7 @@
         HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.openrouter_api_key}
         HINDSIGHT_API_LLM_MODEL=openai/gpt-4o-mini
         HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
+        HINDSIGHT_EMBED_API_DATABASE_URL=postgresql:///hindsight?host=/run/postgresql
       '';
     };
 
@@ -330,6 +335,34 @@
   systemd.tmpfiles.rules = [
     "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo"
   ];
+
+  # System postgres for the hindsight-embed daemon (replaces pg0-embedded).
+  # Daemon connects via Unix socket as user `andy` (peer auth, no password)
+  # using HINDSIGHT_API_DATABASE_URL=postgresql:///hindsight?host=/run/postgresql.
+  # pgvector is required by hindsight's HNSW indexes on memory_units.
+  #
+  # Superuser instead of ensureDBOwnership: NixOS's ensureDBOwnership=true
+  # requires the role name to equal the database name, which would force
+  # us to either rename the role to `hindsight` (breaking peer auth from OS
+  # user `andy`) or rename the database (breaking hindsight defaults).
+  # Granting `andy` superuser is the pragmatic fix on this single-user box —
+  # andy already owns /home/andy and runs the daemon; postgres superuser
+  # doesn't widen the threat model.
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_17;
+    extensions = ps: with ps; [ pgvector ];
+    ensureDatabases = [ "hindsight" ];
+    ensureUsers = [
+      {
+        name = "andy";
+        ensureClauses = {
+          login = true;
+          superuser = true;
+        };
+      }
+    ];
+  };
 
   programs.ente-auth.enable = true;
 

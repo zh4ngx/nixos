@@ -15,7 +15,7 @@ THRESHOLD="${AUTO_COMPACT_NUDGE_THRESHOLD:-400000}"
 
 input=$(cat)
 
-parsed=$(jq -r '[.session_id // "", .workspace.current_dir // "", .model.model_id // ""] | @tsv' <<<"$input")
+parsed=$(jq -r '[.session_id // "", (.cwd // .workspace.current_dir // ""), .model.model_id // ""] | @tsv' <<<"$input")
 IFS=$'\t' read -r session_id current_dir model_id <<<"$parsed"
 
 [[ -z "$session_id" || -z "$current_dir" ]] && exit 0

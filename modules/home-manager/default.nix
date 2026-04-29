@@ -411,6 +411,8 @@
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
             # main: MainLoop (Opus 4.7 at ~, vault in scope)
             main = "pushd ~; __zj main main; popd";
+            # mz: MainLoop via Kimi K2.6 (parallel-install for evaluating Kimi as main loop)
+            mz = "pushd ~; __zj mz mz; popd";
             # gc: start gemini-cli
             gc = "__zj (basename $PWD | string replace -a . _)-gc gc";
             # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
@@ -637,6 +639,13 @@
               layout {
                   pane command="fish" close_on_exit=true {
                       args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault"
+                  }
+              }
+            '';
+            mz = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "opencode -m opencode-go/kimi-k2.6 -c; or opencode -m opencode-go/kimi-k2.6"
                   }
               }
             '';

@@ -195,6 +195,9 @@
               "env": {
                 "BRAVE_API_KEY": "${config.sops.placeholder.brave_api_key}"
               }
+            },
+            "nixos": {
+              "command": "${pkgs.mcp-nixos}/bin/mcp-nixos"
             }
           }
         }

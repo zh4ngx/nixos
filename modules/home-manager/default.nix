@@ -393,14 +393,24 @@
             claude = "echo '⚠ bare claude retired — use co (Opus) or cg (GLM)' >&2; return 1";
             # __zj: internal helper. Idempotent create-or-attach to a named zellij
             # session running a layout. $argv[1]=session name, $argv[2]=layout name.
-            # `zellij attach --create $name options --default-layout $layout` is
-            # the 0.44.x idiom that does both jobs: attaches if the session
-            # exists, or creates fresh with $layout otherwise. Layout names
-            # resolve from ~/.config/zellij/layouts/<name>.kdl (materialized by
+            # `zellij attach --create` attaches if the session exists, or creates
+            # fresh with $layout otherwise. Layout names resolve from
+            # ~/.config/zellij/layouts/<name>.kdl (materialized by
             # `programs.zellij.layouts.<name>` below). The launch cwd is
             # inherited from $PWD; layouts don't pin cwd themselves.
+            #
+            # Pre-cleanup: zellij 0.44.x marks ended sessions as
+            # "(EXITED - attach to resurrect)". Resurrecting a fully-exited
+            # session leaves you in an empty pane (zellij spawns a default fish
+            # at $HOME), defeating the layout. Detect EXITED and force-delete
+            # first so `attach --create` recreates with the layout cleanly.
             __zj = ''
-              zellij attach --create $argv[1] options --default-layout $argv[2]
+              set -l name $argv[1]
+              set -l layout $argv[2]
+              if zellij list-sessions -n 2>/dev/null | grep -E "^$name " | grep -q "EXITED"
+                  zellij delete-session $name --force 2>/dev/null
+              end
+              zellij attach --create $name options --default-layout $layout
             '';
             # co: Claude Code with Anthropic Opus (Pro plan)
             co = "__zj (basename $PWD | string replace -a . _)-co co";

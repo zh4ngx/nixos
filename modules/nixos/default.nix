@@ -104,7 +104,7 @@
         HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.openrouter_api_key}
         HINDSIGHT_API_LLM_MODEL=openai/gpt-4o-mini
         HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
-        HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@/hindsight?host=/run/postgresql
+        HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight
       '';
     };
 
@@ -337,17 +337,23 @@
   ];
 
   # System postgres for the hindsight-embed daemon (replaces pg0-embedded).
-  # Daemon connects via Unix socket as user `andy` (peer auth, no password)
-  # using HINDSIGHT_API_DATABASE_URL=postgresql:///hindsight?host=/run/postgresql.
+  # Daemon connects via TCP loopback as user `andy` (trust auth on 127/::1)
+  # using HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight.
   # pgvector is required by hindsight's HNSW indexes on memory_units.
+  #
+  # TCP instead of Unix socket: alembic's configparser interprets `%` in the
+  # URL as interpolation syntax. SQLAlchemy URL-encodes a socket path (e.g.
+  # `?host=/run/postgresql` → `?host=%2Frun%2Fpostgresql`), and configparser
+  # then crashes on the `%2F`. TCP loopback avoids the encoding entirely.
   #
   # Superuser instead of ensureDBOwnership: NixOS's ensureDBOwnership=true
   # requires the role name to equal the database name, which would force
-  # us to either rename the role to `hindsight` (breaking peer auth from OS
-  # user `andy`) or rename the database (breaking hindsight defaults).
-  # Granting `andy` superuser is the pragmatic fix on this single-user box —
-  # andy already owns /home/andy and runs the daemon; postgres superuser
-  # doesn't widen the threat model.
+  # us to either rename the role (breaking peer auth from OS user `andy`)
+  # or rename the database (breaking hindsight defaults). Granting `andy`
+  # superuser is the pragmatic fix on this single-user box.
+  #
+  # trust auth on 127/::1: single-user host, no other postgres clients.
+  # Default `peer` for local Unix socket is preserved for psql convenience.
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
@@ -362,6 +368,11 @@
         };
       }
     ];
+    authentication = pkgs.lib.mkOverride 10 ''
+      local all all peer
+      host  all all 127.0.0.1/32 trust
+      host  all all ::1/128      trust
+    '';
   };
 
   programs.ente-auth.enable = true;

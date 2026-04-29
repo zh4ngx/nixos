@@ -114,9 +114,9 @@
       mode = "0400";
       content = ''
         HINDSIGHT_API_LLM_PROVIDER=openai
-        HINDSIGHT_API_LLM_BASE_URL=https://openrouter.ai/api/v1
-        HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.openrouter_api_key}
-        HINDSIGHT_API_LLM_MODEL=openai/gpt-4o-mini
+        HINDSIGHT_API_LLM_BASE_URL=https://opencode.ai/zen/go/v1
+        HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.opencode_api_key}
+        HINDSIGHT_API_LLM_MODEL=deepseek-v4-flash
         HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
         HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight
       '';

@@ -80,9 +80,86 @@
           socat
           wl-clipboard
           # Voice (Claude Code /voice needs SoX's `rec`; alsa-utils for mic
-          # diagnostics + audio plumbing).
+          # diagnostics + audio plumbing). Note: /voice itself currently fails
+          # because it tries to write to settings.json (sops-rendered, RO).
+          # Pre-configuring /voice's writable fields would fix it but we don't
+          # know which fields it touches; voice-dictate (below) is the
+          # working alternative path.
           sox
           alsa-utils
+
+          # Voice dictation: capture mic via PipeWire, transcribe via local
+          # Wyoming server (`services.wyoming.faster-whisper.servers.stt` on
+          # 127.0.0.1:10300), copy transcript to Wayland clipboard. Push-to-
+          # talk variant: bound to Super+V via dconf below. Bakes the python
+          # wyoming dep into the derivation so first invocation has zero
+          # `nix shell` fetch latency.
+          (pkgs.writeShellScriptBin "voice-dictate" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+            WAV=/tmp/voice-dictate.wav
+            trap 'echo' INT
+            echo "🎙  Recording — speak, then Ctrl+C to stop and transcribe..." >&2
+            ${pkgs.pipewire}/bin/pw-record --rate 16000 --channels 1 --format s16 "$WAV" || true
+            trap - INT
+            if [ ! -s "$WAV" ]; then
+                echo "✗ No audio captured (file empty)." >&2
+                exit 1
+            fi
+            echo "📝 Transcribing..." >&2
+            TRANSCRIPT=$(${pkgs.python3.withPackages (p: [ p.wyoming ])}/bin/python3 - "$WAV" <<'PYEOF'
+            import asyncio
+            import sys
+            import wave
+
+            from wyoming.asr import Transcribe, Transcript
+            from wyoming.audio import AudioChunk, AudioStart, AudioStop
+            from wyoming.event import async_read_event, async_write_event
+
+
+            async def main(wav_path: str) -> str:
+                reader, writer = await asyncio.open_connection("127.0.0.1", 10300)
+                await async_write_event(Transcribe(language="en").event(), writer)
+                await async_write_event(
+                    AudioStart(rate=16000, width=2, channels=1).event(), writer
+                )
+                with wave.open(wav_path, "rb") as wf:
+                    while True:
+                        chunk = wf.readframes(4096)
+                        if not chunk:
+                            break
+                        await async_write_event(
+                            AudioChunk(audio=chunk, rate=16000, width=2, channels=1).event(),
+                            writer,
+                        )
+                await async_write_event(AudioStop().event(), writer)
+
+                text = ""
+                while True:
+                    ev = await async_read_event(reader)
+                    if ev is None:
+                        break
+                    if Transcript.is_type(ev.type):
+                        text = Transcript.from_event(ev).text
+                        break
+                writer.close()
+                await writer.wait_closed()
+                return text
+
+
+            print(asyncio.run(main(sys.argv[1])), end="")
+            PYEOF
+            )
+            if [ -z "$TRANSCRIPT" ]; then
+                echo "✗ Empty transcript (Wyoming returned no text)." >&2
+                exit 1
+            fi
+            printf '%s' "$TRANSCRIPT" | ${pkgs.wl-clipboard}/bin/wl-copy
+            echo "✓ Copied to clipboard:" >&2
+            echo "  $TRANSCRIPT" >&2
+            echo
+            echo "  Paste with Ctrl+Shift+V (terminal) or Ctrl+V (most apps)." >&2
+          '')
           # High-frequency agent / shell tools — keeping in PATH avoids the
           # ~200-500ms `nix run nixpkgs#<x> --` eval cost per invocation
           # (auto-compact-nudge hook calls jq every UserPromptSubmit) AND
@@ -698,6 +775,21 @@
             speed = 0.0;
           };
           "org/gnome/Console".shell = [ "${pkgs.fish}/bin/fish" ];
+
+          # Super+V → voice-dictate in a foot popup. Press, speak, Ctrl+C
+          # to stop. Transcript lands in clipboard; paste with Ctrl+Shift+V.
+          # zellij-aware injection (no clipboard step) is a future polish
+          # via the voice-inject systemd service skeleton.
+          "org/gnome/settings-daemon/plugins/media-keys" = {
+            custom-keybindings = [
+              "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/voice-dictate/"
+            ];
+          };
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/voice-dictate" = {
+            name = "Voice Dictate";
+            command = "${pkgs.foot}/bin/foot --title voice-dictate -e voice-dictate";
+            binding = "<Super>v";
+          };
         };
       };
   };

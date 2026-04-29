@@ -1,8 +1,28 @@
-{ config, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.opencode = {
     enable = true;
     enableMcpIntegration = true;
+
+    # opencode ships as a Bun standalone (statically-linked, no ELF interp)
+    # that dlopen()s libstdc++.so.6 at runtime for its file-watcher native
+    # binding. nix-ld can't help (no dynamic linker to intercept), so we
+    # inject LD_LIBRARY_PATH via a wrapper. Narrow scope: only opencode's
+    # own process tree sees the prefix.
+    package = pkgs.symlinkJoin {
+      name = "opencode-with-libstdcxx";
+      paths = [ pkgs.opencode ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/opencode \
+          --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}
+      '';
+    };
 
     settings = {
       permission = "allow";

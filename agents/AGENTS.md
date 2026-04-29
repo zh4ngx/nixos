@@ -164,6 +164,16 @@ The full canonical version of this rule (with vault cross-links and
 session-history rationale) lives in
 `~/vault/02-areas/agents/user-preferences.md` §"Project-scoped dispatch (default pattern)".
 
+## Zellij Orchestration
+
+When driving zellij programmatically (spawning panes, sending input, reading
+screen state), follow the canonical policy in
+`~/vault/02-areas/agents/zellij-orchestration.md` — covers
+`$ZELLIJ_PANE_ID` for current-pane identification, `new-pane` stdout capture,
+`write-chars` + `write 13` for CR submit, `dump-screen` for reading pane
+content, no `nohup` (zellij sessions already provide persistence), and
+`run_in_background` as the default dispatch pattern over orphaned detach.
+
 ## Rebuilding NixOS
 Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 

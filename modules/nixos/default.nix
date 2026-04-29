@@ -375,6 +375,28 @@
     '';
   };
 
+  # Idempotent reapply of the `vector` extension into the hindsight DB on
+  # every boot. ensureDatabases creates `hindsight` from template1 but does
+  # not run CREATE EXTENSION; hindsight's alembic migrations assume the
+  # extension is pre-loaded, so we install it before any client connects.
+  # IF NOT EXISTS makes this a no-op when already present, so it covers
+  # both fresh-cluster init and existing-cluster (self-heals if dropped).
+  systemd.services.hindsight-pg-extensions = {
+    description = "Ensure pgvector extension exists in hindsight database";
+    after = [ "postgresql.service" ];
+    requires = [ "postgresql.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "postgres";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${config.services.postgresql.package}/bin/psql -d hindsight \
+        -c "CREATE EXTENSION IF NOT EXISTS vector"
+    '';
+  };
+
   programs.ente-auth.enable = true;
 
   environment.systemPackages = [

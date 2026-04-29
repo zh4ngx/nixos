@@ -63,8 +63,7 @@
             "ANTHROPIC_BETA": "compact-2026-01-12",
             "CLAUDE_CODE_EFFORT_LEVEL": "max",
             "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
-            "HINDSIGHT_DYNAMIC_BANK_ID": "true",
-            "AUTO_COMPACT_NUDGE_THRESHOLD": "120000"
+            "HINDSIGHT_DYNAMIC_BANK_ID": "true"
           },
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,
@@ -87,19 +86,6 @@
               "trigger": {"type": "input_tokens", "value": 400000},
               "instruction": "Preserve mathematical formulations, design decisions, code references, file paths, key open questions. Discard tool-result chatter and stale debugging output."
             }]
-          },
-          "hooks": {
-            "UserPromptSubmit": [
-              {
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "/home/andy/.claude-shared/hooks/auto-compact-nudge.sh",
-                    "timeout": 8
-                  }
-                ]
-              }
-            ]
           },
           "enabledPlugins": {
             "hindsight-memory@hindsight": true
@@ -148,8 +134,7 @@
             "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
             "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-            "DISABLE_ERROR_REPORTING": "1",
-            "AUTO_COMPACT_NUDGE_THRESHOLD": "120000"
+            "DISABLE_ERROR_REPORTING": "1"
           },
           "effortLevel": "high",
           "cleanupPeriodDays": 99999,
@@ -161,19 +146,6 @@
           "statusLine": {
             "type": "command",
             "command": "~/.claude-shared/scripts/statusline.sh"
-          },
-          "hooks": {
-            "UserPromptSubmit": [
-              {
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "/home/andy/.claude-shared/hooks/auto-compact-nudge.sh",
-                    "timeout": 8
-                  }
-                ]
-              }
-            ]
           },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true

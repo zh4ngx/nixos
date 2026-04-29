@@ -162,10 +162,10 @@
           '')
           # High-frequency agent / shell tools — keeping in PATH avoids the
           # ~200-500ms `nix run nixpkgs#<x> --` eval cost per invocation
-          # (auto-compact-nudge hook calls jq every UserPromptSubmit) AND
-          # protects them from `nh clean` GC eviction. Convention for AGENTS:
-          # prefer Read/Glob harness tools for simple inspection; reach for
-          # these shell tools when a pipeline is genuinely the right shape
+          # (statusline.sh calls jq on every render) AND protects them from
+          # `nh clean` GC eviction. Convention for AGENTS: prefer Read/Glob
+          # harness tools for simple inspection; reach for these shell tools
+          # when a pipeline is genuinely the right shape
           # (see vault [[dispatch-strategy#Tool Selection Priority for Agents]]).
           jq
           fd
@@ -453,7 +453,6 @@
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
-          ".claude-shared/hooks/auto-compact-nudge.sh".source = ./../../files/auto-compact-nudge.sh;
 
           # Claude Code GLM - symlinks to shared resources from ~/.claude-shared
           ".claude-glm/settings.json".source =

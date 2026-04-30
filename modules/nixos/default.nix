@@ -311,9 +311,7 @@
     dates = "daily";
     persistent = true;
     operation = "switch";
-    flags = [
-      "--refresh"
-    ];
+    upgrade = false;
   };
 
   systemd.services.nixos-upgrade = {

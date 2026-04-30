@@ -315,17 +315,18 @@
   };
 
   systemd.services.nixos-upgrade = {
-    # Ensures the service waits/retries if the network isn't ready
+    # Give the network stack time to settle after boot, then retry transient fetch failures.
+    preStart = ''
+      ${pkgs.coreutils}/bin/sleep 120
+    '';
     serviceConfig = {
       Restart = "on-failure";
-      RestartSec = "30s"; # Wait 30 seconds before retrying
+      RestartSec = "2min";
     };
     unitConfig = {
-      StartLimitIntervalSec = 300; # Allow retries for up to 5 minutes
-      StartLimitBurst = 5; # Maximum 5 retries
+      StartLimitIntervalSec = 1800;
+      StartLimitBurst = 10;
     };
-    # Optional: Explicitly check for internet before starting the main command
-    preStart = "${pkgs.iputils}/bin/ping -c 1 8.8.8.8";
   };
 
   # Enable the COSMIC login manager

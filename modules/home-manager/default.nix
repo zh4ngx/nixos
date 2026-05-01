@@ -200,11 +200,6 @@
             #!/usr/bin/env bash
             set -euo pipefail
 
-            if [ ! -f "$PWD/.mcp.json" ]; then
-              echo "claude-opus-huddle-current needs a project .mcp.json with a huddle server." >&2
-              exit 1
-            fi
-
             exec claude-opus --dangerously-load-development-channels server:huddle \
               --dangerously-skip-permissions "$@"
           '')
@@ -505,6 +500,12 @@
 
         # Agent config files - ~/.claude-shared is the canonical shared home
         home.file = {
+          # Non-secret global MCP servers. Secret-bearing MCP config stays in
+          # /run/secrets/rendered/claude-mcp.json and is passed via wrappers.
+          ".mcp.json".text = builtins.toJSON {
+            mcpServers.huddle.command = "huddle-mcp";
+          };
+
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;

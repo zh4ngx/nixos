@@ -218,9 +218,11 @@
             #!/usr/bin/env bash
             set -euo pipefail
 
+            ${pkgs.systemd}/bin/systemctl --user start codex-app-server.service
             export CODEX_HOME="''${XDG_CONFIG_HOME:-$HOME/.config}/codex"
 
             args=(
+              --remote ws://127.0.0.1:4107
               --no-alt-screen
               -C "$PWD"
               -c 'model="gpt-5.5"'

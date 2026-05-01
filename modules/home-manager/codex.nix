@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   programs.codex = {
     enable = true;
@@ -36,4 +36,24 @@
 
   home.file.".config/codex/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "/home/andy/nixos/agents/AGENTS.md";
+
+  # Structured-injection substrate for Codex project agents. `cx` connects its
+  # TUI to this loopback app-server, so orchestrators can use the Codex
+  # app-server JSON-RPC protocol instead of zellij keystrokes for sessions
+  # launched through the remote-backed path.
+  systemd.user.services.codex-app-server = {
+    Unit = {
+      Description = "Codex app-server for remote agent sessions";
+      After = [ "network.target" ];
+    };
+
+    Service = {
+      Environment = "CODEX_HOME=${config.xdg.configHome}/codex";
+      ExecStart = "${lib.getExe config.programs.codex.package} app-server --listen ws://127.0.0.1:4107";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+
+    Install.WantedBy = [ "default.target" ];
+  };
 }

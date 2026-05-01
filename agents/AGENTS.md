@@ -88,7 +88,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - `og` - OpenCode, local Gemma 4 E4B (session: `{dir}-og`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `gc` - Gemini CLI (session: `{dir}-gc`)
-- `cx` - Codex CLI, GPT-5.5 xhigh (session: `{dir}-cx`)
+- `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.5 xhigh, session: `{dir}-cx`)
 - `agents` - list zellij-backed agent sessions
 
 There is no special `main` launcher. Main-loop identity is operational:
@@ -141,6 +141,14 @@ falling back to a fresh session. `DISABLE_TELEMETRY=1` prevents Claude Code
 feature-flag evaluation and caused `Channels are not currently available` on
 Opus; keep that variable out of the Opus settings when testing channels. Claude
 TUIs that were not launched with channel flags remain keystroke-only.
+
+Codex interactive project agents should be launched through `cx`, not raw
+`codex`, when future programmatic injection matters. `cx` starts the user
+service `codex-app-server` on `127.0.0.1:4107`, then attaches the TUI with
+`--remote ws://127.0.0.1:4107`. External orchestrators can use the Codex
+app-server JSON-RPC protocol (`thread/start`, `thread/resume`, `turn/start`,
+etc.) against that service. Raw Codex TUIs that were not launched with
+`--remote` remain keystroke-only.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own

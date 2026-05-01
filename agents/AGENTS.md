@@ -148,7 +148,9 @@ service `codex-app-server` on `127.0.0.1:4107`, then attaches the TUI with
 `--remote ws://127.0.0.1:4107`. External orchestrators can use the Codex
 app-server JSON-RPC protocol (`thread/start`, `thread/resume`, `turn/start`,
 etc.) against that service. Raw Codex TUIs that were not launched with
-`--remote` remain keystroke-only.
+`--remote` remain keystroke-only. Exact Codex JSON-RPC request shapes are in
+`~/nixos/agents/codex-app-server-messaging.md`; use that guide instead of
+guessing from OpenCode payloads.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own

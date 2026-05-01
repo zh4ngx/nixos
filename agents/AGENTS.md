@@ -73,7 +73,8 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `cg`, `main`, `gc`, `oc`, `og`, `qc`) run with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
+All AI CLI launchers (`co`, `cg`, `gc`, `oc`, `og`, `qc`, `cx`) run inside zellij
+with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
 - **Three Strikes**: If a command fails 3x, STOP and report. Do not loop.
@@ -82,11 +83,17 @@ All AI CLI launchers (`co`, `cg`, `main`, `gc`, `oc`, `og`, `qc`) run with auto-
 ### Fish Functions
 - `co` - Claude Opus, per-project (session: `{dir}-co`)
 - `cg` - Claude GLM, per-project (session: `{dir}-cg`)
-- `main` - MainLoop Opus with vault scope (session: `main`)
-- `oc` - OpenCode, MiniMax M2.7 (session: `{dir}-oc`)
+- `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `og` - OpenCode, local Gemma 4 E4B (session: `{dir}-og`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `gc` - Gemini CLI (session: `{dir}-gc`)
+- `cx` - Codex CLI, GPT-5.5 xhigh (session: `{dir}-cx`)
+- `agents` - list zellij-backed agent sessions
+
+There is no special `main` launcher. Main-loop identity is operational:
+`cwd + harness`. Examples: `cd ~; oc` → `andy-oc`, `cd ~; cx` →
+`andy-cx`, `cd ~/nixos; co` → `nixos-co`. Run agents from the project root
+they own instead of adding unrelated roots to scope.
 
 ## Project Boundaries (Dispatch)
 
@@ -114,6 +121,16 @@ cd ~/<repo> && stdbuf -oL -eL claude-opus -p "..." \
 
 For other agents, use their headless / non-interactive mode (consult agent docs
 for exact flags). The principle is constant.
+
+For OpenCode-specific launch substrates (headless push-back, zellij pane
+dispatch, and metastack), use the canonical vault note:
+`~/vault/02-areas/agents/dispatch-strategy.md` §"Dispatch Substrate".
+
+OpenCode interactive project agents should be launched through `oc`, not raw
+`opencode`, when future programmatic injection matters. `oc` attaches the TUI
+to the user service `opencode-serve` on `127.0.0.1:4096`; external
+orchestrators can then use the OpenCode HTTP API for serve-backed sessions.
+Already-running raw OpenCode TUIs remain keystroke-only.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own
@@ -217,6 +234,19 @@ Use short descriptive names:
 - `docs/api-reference` — ok, this one actually means something
 
 If a project has its own CONTRIBUTING.md or branch convention, follow that instead. This rule is the default override.
+
+## Agent Commit Attribution
+For GPT-5.5 agent work in git commits, use:
+
+```text
+Co-Authored-By: GPT-5.5 <noreply@openai.com>
+```
+
+Do not use `Signed-off-by` for agent attribution. DCO `Signed-off-by` is for
+legal/process attestation; `Co-Authored-By` records authorship attribution.
+
+When work is done by multiple agents, each agent gets its own
+`Co-Authored-By` line.
 
 ## Branch Cleanup After Merge
 

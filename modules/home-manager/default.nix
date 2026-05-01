@@ -445,14 +445,12 @@
             og = "__zj (basename $PWD | string replace -a . _)-og og";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
-            # main: MainLoop (Opus 4.7 at ~, vault in scope)
-            main = "pushd ~; __zj main main; popd";
-            # mz: MainLoop via Kimi K2.6 (parallel-install for evaluating Kimi as main loop)
-            mz = "pushd ~; __zj mz mz; popd";
             # gc: start gemini-cli
             gc = "__zj (basename $PWD | string replace -a . _)-gc gc";
             # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
             cx = "__zj (basename $PWD | string replace -a . _)-cx cx";
+            # agents: list zellij-backed agent sessions
+            agents = "zellij list-sessions -n";
             # Title hook - sets window name for tmux/zellij to pass through
             fish_title = ''
               if set -q TMUX
@@ -656,9 +654,9 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Each fish shortcut (co/cg/oc/og/qc/gc/cx, plus
-        # `main`) attaches to or spawns a zellij session that loads the
-        # corresponding layout below. Layouts are materialized under
+        # tmux 2026-04-29). Fish shortcuts for co/cg/oc/og/qc/gc/cx attach to
+        # or spawn a zellij session that loads the corresponding layout below.
+        # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
         # by name from `__zj` via `zellij --session $name --layout $name`.
         # Each pane runs `fish -c '<cmd>'` with `close_on_exit=true` so the
@@ -671,20 +669,6 @@
             show_startup_tips = false;
           };
           layouts = {
-            main = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "claude-opus --continue --dangerously-skip-permissions --add-dir ~/vault; or claude-opus --dangerously-skip-permissions --add-dir ~/vault"
-                  }
-              }
-            '';
-            mz = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "opencode -m opencode-go/kimi-k2.6 -c; or opencode -m opencode-go/kimi-k2.6"
-                  }
-              }
-            '';
             co = ''
               layout {
                   pane command="fish" close_on_exit=true {

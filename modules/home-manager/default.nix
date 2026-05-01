@@ -199,6 +199,13 @@
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
             exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
           '')
+          (pkgs.writeShellScriptBin "opencode-attach-current" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            ${pkgs.systemd}/bin/systemctl --user start opencode-serve.service
+            exec opencode attach http://127.0.0.1:4096 --dir "$PWD" -c "$@"
+          '')
         ];
 
         # Voice dictation: inject STT transcriptions into tmux agent sessions
@@ -679,7 +686,7 @@
             oc = ''
               layout {
                   pane command="fish" close_on_exit=true {
-                      args "-c" "opencode -c"
+                      args "-c" "opencode-attach-current"
                   }
               }
             '';

@@ -148,4 +148,20 @@
   # Auth credentials from sops template
   xdg.dataFile."opencode/auth.json".source =
     config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/opencode-auth.json";
+
+  # Structured-injection substrate for OpenCode project agents. Normal TUI
+  # launchers attach to this server, so external orchestrators can address the
+  # same sessions through the OpenCode HTTP API instead of zellij keystrokes.
+  systemd.user.services.opencode-serve = {
+    Unit = {
+      Description = "OpenCode API server for attachable agent sessions";
+      After = [ "network.target" ];
+    };
+
+    Service = {
+      ExecStart = "${lib.getExe' config.programs.opencode.package "opencode"} serve --hostname 127.0.0.1 --port 4096";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+  };
 }

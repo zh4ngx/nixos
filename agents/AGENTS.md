@@ -132,6 +132,13 @@ to the user service `opencode-serve` on `127.0.0.1:4096`; external
 orchestrators can then use the OpenCode HTTP API for serve-backed sessions.
 Already-running raw OpenCode TUIs remain keystroke-only.
 
+Claude Code channels are the right structured injection path in principle, but
+they are not wired into `co` by default yet. `DISABLE_TELEMETRY=1` prevents
+Claude Code feature-flag evaluation and caused `Channels are not currently
+available` on Opus; keep that variable out of the Opus settings if testing
+channels. Until a channel bridge is packaged and explicitly launched, running
+Claude TUIs remain keystroke-only.
+
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own
 schemes). Project-scoped traces enable agent `--continue` semantics and keep

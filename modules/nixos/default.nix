@@ -60,7 +60,6 @@
         {
           "env": {
             "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-            "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1",
             "ANTHROPIC_BETA": "compact-2026-01-12",

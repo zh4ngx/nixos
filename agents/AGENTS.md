@@ -103,6 +103,9 @@ Code, Gemini CLI, or any other AI agent operating across this user's project
 roots. Examples below use Claude CLI flags as one concrete instance; substitute
 the equivalent headless mode for other agents.
 
+When dispatching Codex / GPT-5.5 agents, always request `xhigh` reasoning
+effort. Do not rely on inherited defaults for Codex dispatches.
+
 **Project-scoped work uses project-scoped agents.** When work in one root
 (e.g. `~/nixos`) would spill into another (`~/vault`, `~/dev/<repo>`),
 dispatch to a separate headless agent for that project rather than reaching

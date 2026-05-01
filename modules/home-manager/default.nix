@@ -695,7 +695,7 @@
             coh = ''
               layout {
                   pane command="fish" close_on_exit=true {
-                      args "-c" "claude-opus-huddle-current"
+                      args "-c" "claude-opus-huddle-current --continue; or claude-opus-huddle-current"
                   }
               }
             '';

@@ -134,13 +134,13 @@ orchestrators can then use the OpenCode HTTP API for serve-backed sessions.
 Already-running raw OpenCode TUIs remain keystroke-only.
 
 Claude Code channels are the right structured injection path in principle, but
-they are opt-in via `coh`, not the default `co` launcher. `coh` requires a
-project `.mcp.json` with a `huddle` MCP server and launches Claude with
-`--dangerously-load-development-channels server:huddle`. `DISABLE_TELEMETRY=1`
-prevents Claude Code feature-flag evaluation and caused `Channels are not
-currently available` on Opus; keep that variable out of the Opus settings when
-testing channels. Claude TUIs that were not launched with channel flags remain
-keystroke-only.
+they are opt-in via `coh`, not the default `co` launcher. `coh` launches Claude
+with `--dangerously-load-development-channels server:huddle`, uses the
+HM-managed global `~/.mcp.json` Huddle server, and tries `--continue` before
+falling back to a fresh session. `DISABLE_TELEMETRY=1` prevents Claude Code
+feature-flag evaluation and caused `Channels are not currently available` on
+Opus; keep that variable out of the Opus settings when testing channels. Claude
+TUIs that were not launched with channel flags remain keystroke-only.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own

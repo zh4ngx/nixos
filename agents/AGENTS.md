@@ -73,7 +73,7 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `cg`, `gc`, `oc`, `og`, `qc`, `cx`) run inside zellij
+All AI CLI launchers (`co`, `coh`, `cg`, `gc`, `oc`, `og`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
@@ -82,6 +82,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 ### Fish Functions
 - `co` - Claude Opus, per-project (session: `{dir}-co`)
+- `coh` - Claude Opus with Huddle channel bridge, per-project (session: `{dir}-coh`)
 - `cg` - Claude GLM, per-project (session: `{dir}-cg`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `og` - OpenCode, local Gemma 4 E4B (session: `{dir}-og`)
@@ -133,11 +134,13 @@ orchestrators can then use the OpenCode HTTP API for serve-backed sessions.
 Already-running raw OpenCode TUIs remain keystroke-only.
 
 Claude Code channels are the right structured injection path in principle, but
-they are not wired into `co` by default yet. `DISABLE_TELEMETRY=1` prevents
-Claude Code feature-flag evaluation and caused `Channels are not currently
-available` on Opus; keep that variable out of the Opus settings if testing
-channels. Until a channel bridge is packaged and explicitly launched, running
-Claude TUIs remain keystroke-only.
+they are opt-in via `coh`, not the default `co` launcher. `coh` requires a
+project `.mcp.json` with a `huddle` MCP server and launches Claude with
+`--dangerously-load-development-channels server:huddle`. `DISABLE_TELEMETRY=1`
+prevents Claude Code feature-flag evaluation and caused `Channels are not
+currently available` on Opus; keep that variable out of the Opus settings when
+testing channels. Claude TUIs that were not launched with channel flags remain
+keystroke-only.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own

@@ -68,6 +68,7 @@
           # '')
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
           inputs.claude-code.packages.x86_64-linux.claude-code
+          (pkgs.callPackage ../../packages/huddle { })
           beeper
           tea # Codeberg CLI
           gnomeExtensions.appindicator
@@ -194,6 +195,18 @@
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
             exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
+          '')
+          (pkgs.writeShellScriptBin "claude-opus-huddle-current" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            if [ ! -f "$PWD/.mcp.json" ]; then
+              echo "claude-opus-huddle-current needs a project .mcp.json with a huddle server." >&2
+              exit 1
+            fi
+
+            exec claude-opus --dangerously-load-development-channels server:huddle \
+              --dangerously-skip-permissions "$@"
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
@@ -437,6 +450,8 @@
             '';
             # co: Claude Code with Anthropic Opus (Pro plan)
             co = "__zj (basename $PWD | string replace -a . _)-co co";
+            # coh: Claude Code Opus with Huddle channel bridge enabled
+            coh = "__zj (basename $PWD | string replace -a . _)-coh coh";
             # cg: Claude Code with Z.AI GLM
             cg = "__zj (basename $PWD | string replace -a . _)-cg cg";
             # oc: start opencode (Default: MiniMax M2.7 via Ollama Cloud)
@@ -654,7 +669,7 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Fish shortcuts for co/cg/oc/og/qc/gc/cx attach to
+        # tmux 2026-04-29). Fish shortcuts for co/coh/cg/oc/og/qc/gc/cx attach to
         # or spawn a zellij session that loads the corresponding layout below.
         # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
@@ -673,6 +688,13 @@
               layout {
                   pane command="fish" close_on_exit=true {
                       args "-c" "claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions"
+                  }
+              }
+            '';
+            coh = ''
+              layout {
+                  pane command="fish" close_on_exit=true {
+                      args "-c" "claude-opus-huddle-current"
                   }
               }
             '';

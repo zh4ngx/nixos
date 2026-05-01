@@ -3,6 +3,9 @@
     "nixos": {
       "command": "mcp-nixos",
       "args": []
+    },
+    "huddle": {
+      "command": "huddle-mcp"
     }
   }
 }

@@ -291,6 +291,10 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+  programs.niri = {
+    enable = true;
+    useNautilus = true;
+  };
 
   programs.nh = {
     enable = true;
@@ -468,6 +472,13 @@
     # };
   };
 
+  # Desktop dictation output fallbacks use uinput-backed virtual keyboard
+  # injection so they work on GNOME Wayland as well as wlroots compositors.
+  # Do not grant the broader input group unless VoxType's evdev hotkey mode is
+  # enabled later; current config uses compositor shortcuts instead.
+  hardware.uinput.enable = true;
+  programs.ydotool.enable = true;
+
   services.zenohd.enable = true;
 
   services.tailscale = {
@@ -515,6 +526,8 @@
       "wheel"
       "abdusers"
       "kvm"
+      "uinput"
+      "ydotool"
     ];
   };
 

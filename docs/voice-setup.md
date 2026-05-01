@@ -1,75 +1,67 @@
-# Voice-to-Code Setup
+# Voice STT Setup
 
-Dictate from Android phone over Tailscale → NixOS host transcribes with Whisper → text injected into active Claude Code tmux session.
+## Desktop Dictation
 
-## Architecture
+Primary desktop dictation is VoxType:
 
 ```
-Android phone ──(audio over Tailnet)──→ Wyoming STT (0.0.0.0:10300, firewall: tailscale0 only)
-                                             │
-                                        STT bridge (TODO: Python Wyoming protocol parser)
-                                             │
-                                        $XDG_RUNTIME_DIR/voice-stt.sock
-                                             │
-                                        voice-inject systemd user service
-                                             │
-                                        tmux send-keys → attached agent session
+Super+V -> voxtype record toggle -> whisper.cpp Vulkan -> paste at cursor
 ```
 
-## NixOS Side
+Configured by:
 
-Configured across `modules/nixos/default.nix` and `modules/home-manager/default.nix`:
+- `modules/home-manager/voxtype.nix`: local Home Manager module, user service, Waybar module, GNOME binding, niri snippet, post-process hook wrapper
+- `modules/home-manager/default.nix`: VoxType model/settings
+- `modules/nixos/default.nix`: niri package, `uinput`, and `ydotoold`
 
-- **Wyoming Faster Whisper** on `tcp://0.0.0.0:10300` (firewall restricts to `tailscale0` interface)
-- Model: `turbo` (faster than large-v3), English, CPU mode
-- **voice-inject** systemd user service (starts at login, auto-detects attached tmux session)
-- STT bridge placeholder (needs Python Wyoming protocol implementation)
+Current behavior:
 
-### How targeting works
+- `voxtype` runs as a systemd user service.
+- Super+V toggles recording in GNOME.
+- `~/.config/niri/voxtype.kdl` contains the niri binds; include it from the real niri config when niri becomes the active compositor config.
+- Transcripts paste at the focused cursor. VoxType paste mode uses `wl-copy` plus `wtype` on wlroots/niri and falls back through ydotool on GNOME.
+- Waybar can show recording state through `voxtype status --follow --format json`.
+- Raw transcripts are written to `$XDG_RUNTIME_DIR/voxtype/last-transcript`.
 
-The voice-inject service re-evaluates the tmux target on every transcription:
-1. Finds the session with an attached client (`session_attached == 1`)
-2. Falls back to the first `*-co` / `*-cg` / `*-dev` session if nothing is attached
-3. Injects text via `tmux send-keys`; appends Enter on wake phrases ("ship it", "send it", "execute", "do it")
+### Post-Processing Hook
 
-### Manual testing
+Create an executable hook at:
 
 ```bash
-# Create a test socket in user runtime dir
-socat UNIX-LISTEN:$XDG_RUNTIME_DIR/voice-stt.sock,fork -
-
-# In another terminal, inject test text
-echo "hello from voice" | socat - UNIX-CONNECT:$XDG_RUNTIME_DIR/voice-stt.sock
+~/.config/voxtype/hooks/post-process
 ```
 
-### Tailscale endpoint
+The hook receives transcribed text on stdin and must print the text VoxType
+should paste on stdout. This is the extension point for command routing,
+metastack integration, or local text cleanup beyond VoxType's built-in
+replacement table.
 
-Use the host's MagicDNS name (not hardcoded IP): `<hostname>:10300`
-The firewall only accepts connections on the `tailscale0` interface.
+## Legacy Wyoming Fallback
 
-## Android Side
+The older Wyoming Faster Whisper service is still configured on
+`tcp://0.0.0.0:10300`, restricted to `tailscale0`.
 
-### Recommended Apps
+The `voice-dictate` command remains as a manual fallback:
 
-| App | Notes |
-|-----|-------|
-| **Futo Voice Input** | Open source, can target custom STT endpoints, works system-wide |
-| **Home Assistant Voice** | Uses Wyoming protocol natively, designed for this |
+```
+voice-dictate
+```
 
-### Configuration
+It records from PipeWire, sends audio to the local Wyoming service, and copies
+the transcript to the Wayland clipboard. It does not inject into agents.
 
-Point the app's STT server to your Tailscale hostname and port:
-- Host: your machine's Tailscale MagicDNS name
-- Port: `10300`
-- Protocol: Wyoming (TCP)
-
-The app must be on the same Tailnet. Install Tailscale on the phone from the Play Store or F-Droid.
+The removed tmux-era `voice-inject` socket service is no longer part of the
+configuration. If Android-over-Tailnet dictation becomes active again, the
+missing piece is a real Wyoming protocol bridge or a separate metastack routing
+integration.
 
 ## Status
 
-- [x] Wyoming STT service configured (firewall-restricted to tailscale0)
-- [x] voice-inject systemd user service (persistent, auto-targeting)
-- [x] Socket read via socat (not fish stdin redirection)
-- [ ] Wyoming protocol bridge implementation (Python recommended)
-- [ ] ROCm GPU acceleration (module only supports cpu/cuda/auto)
-- [ ] Android app tested with real audio
+- [x] VoxType Vulkan desktop dictation prototype
+- [x] GNOME Super+V binding
+- [x] Waybar status module config
+- [x] Post-processing hook wrapper
+- [x] Wyoming fallback service retained
+- [ ] niri config include wired into the real niri config
+- [ ] Live microphone/GPU transcription test after rebuild
+- [ ] Android/Tailnet dictation bridge, if still desired

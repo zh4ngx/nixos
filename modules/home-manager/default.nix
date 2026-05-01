@@ -22,6 +22,7 @@
           ./opencode.nix
           ./gemini.nix
           ./codex.nix
+          ./voxtype.nix
         ];
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
@@ -79,7 +80,6 @@
           radeontop
           ugs
           mcp-nixos
-          socat
           wl-clipboard
           # Voice (Claude Code /voice needs SoX's `rec`; alsa-utils for mic
           # diagnostics + audio plumbing). Note: /voice itself currently fails
@@ -90,12 +90,10 @@
           sox
           alsa-utils
 
-          # Voice dictation: capture mic via PipeWire, transcribe via local
-          # Wyoming server (`services.wyoming.faster-whisper.servers.stt` on
-          # 127.0.0.1:10300), copy transcript to Wayland clipboard. Push-to-
-          # talk variant: bound to Super+V via dconf below. Bakes the python
-          # wyoming dep into the derivation so first invocation has zero
-          # `nix shell` fetch latency.
+          # Legacy voice dictation fallback: capture mic via PipeWire,
+          # transcribe via local Wyoming server, and copy transcript to the
+          # Wayland clipboard. Desktop hotkeys use VoxType now; this script is
+          # kept as a manual diagnostic/fallback path.
           (pkgs.writeShellScriptBin "voice-dictate" ''
             #!/usr/bin/env bash
             set -euo pipefail
@@ -173,14 +171,6 @@
           fd
           tree
           yq
-          # Bridge: Wyoming STT → Unix socket for voice-inject daemon
-          # NOTE: services.wyoming.satellite exists but is a local-mic-to-Wyoming proxy
-          # for Home Assistant pipelines. It doesn't output transcriptions to a socket/file.
-          # A custom Python Wyoming protocol bridge is still needed to:
-          #   1. Accept audio from Android app over Tailscale
-          #   2. Forward to Wyoming STT server
-          #   3. Parse Transcript events from the response
-          #   4. Write transcript text to $XDG_RUNTIME_DIR/voice-stt.sock
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
@@ -233,50 +223,6 @@
             codex resume --last "''${args[@]}" || exec codex "''${args[@]}"
           '')
         ];
-
-        # Voice dictation: inject STT transcriptions into tmux agent sessions
-        # Connects to $XDG_RUNTIME_DIR/voice-stt.sock (written by Wyoming STT bridge)
-        # Re-evaluates attached tmux session per transcription, injects via send-keys
-        systemd.user.services.voice-inject = {
-          Unit.Description = "Inject STT transcriptions into tmux agent sessions";
-          Service = {
-            ExecStart = "${pkgs.writeShellScript "voice-inject-daemon" ''
-              #!/usr/bin/env bash
-              set -euo pipefail
-
-              SOCKET="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/voice-stt.sock"
-
-              # Wait for socket to exist (bridge may not be running yet)
-              while [ ! -S "$SOCKET" ]; do
-                sleep 2
-              done
-
-              ${pkgs.socat}/bin/socat - UNIX-CONNECT:"$SOCKET" | while read -r line; do
-                [ -z "$line" ] && continue
-
-                # Target the tmux session with an attached client (re-evaluated per transcription)
-                session=$(${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}:#{session_attached}' 2>/dev/null \
-                  | grep ':1$' | head -1 | cut -d: -f1) || true
-
-                # Fall back to first agent session if nothing is attached
-                if [ -z "$session" ]; then
-                  session=$(${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' 2>/dev/null \
-                    | grep -E '(co|cg|dev)$' | head -1) || continue
-                fi
-
-                ${pkgs.tmux}/bin/tmux send-keys -t "$session" -- "$line"
-
-                # Wake phrases trigger Enter (case-insensitive)
-                if [[ "''${line,,}" =~ (ship it|send it|execute|do it)$ ]]; then
-                  ${pkgs.tmux}/bin/tmux send-keys -t "$session" Enter
-                fi
-              done
-            ''}";
-            Restart = "on-failure";
-            RestartSec = "5s";
-          };
-          Install.WantedBy = [ "default.target" ];
-        };
 
         # Hindsight embed daemon — perpetually-running service so claude-opus
         # SessionStart hooks find it already up (zero cold-start latency) and
@@ -852,27 +798,67 @@
           };
         };
 
+        programs.voxtype = {
+          enable = true;
+          model.name = "large-v3-turbo";
+          settings = {
+            state_file = "auto";
+            hotkey = {
+              enabled = false;
+            };
+            audio = {
+              sample_rate = 16000;
+              max_duration_secs = 90;
+              feedback = {
+                enabled = true;
+                theme = "subtle";
+                volume = 0.45;
+              };
+            };
+            whisper = {
+              mode = "local";
+              language = "en";
+              initial_prompt = "NixOS, Home Manager, flakes, sops, zellij, OpenCode, Codex, Claude, metastack, TypeScript, Rust.";
+              gpu_isolation = true;
+              context_window_optimization = false;
+            };
+            output = {
+              mode = "paste";
+              paste_keys = "ctrl+v";
+              restore_clipboard = true;
+              restore_clipboard_delay_ms = 300;
+              auto_submit = false;
+              post_process = {
+                command = "voxtype-post-process";
+                timeout_ms = 5000;
+              };
+              notification = {
+                on_recording_start = true;
+                on_recording_stop = true;
+                on_transcription = false;
+              };
+            };
+            text = {
+              spoken_punctuation = true;
+              replacements = {
+                "nix os" = "NixOS";
+                "home manager" = "Home Manager";
+                "open code" = "OpenCode";
+                "zed leege" = "zellij";
+                "sellij" = "zellij";
+                "meta stack" = "metastack";
+              };
+            };
+            status.icon_theme = "minimal";
+          };
+        };
+
         dconf.settings = {
           "org/gnome/desktop/peripherals/mouse" = {
             accel-profile = "flat";
             speed = 0.0;
           };
           "org/gnome/Console".shell = [ "${pkgs.fish}/bin/fish" ];
-
-          # Super+V → voice-dictate in a foot popup. Press, speak, Ctrl+C
-          # to stop. Transcript lands in clipboard; paste with Ctrl+Shift+V.
-          # zellij-aware injection (no clipboard step) is a future polish
-          # via the voice-inject systemd service skeleton.
-          "org/gnome/settings-daemon/plugins/media-keys" = {
-            custom-keybindings = [
-              "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/voice-dictate/"
-            ];
-          };
-          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/voice-dictate" = {
-            name = "Voice Dictate";
-            command = "${pkgs.foot}/bin/foot --title voice-dictate -e voice-dictate";
-            binding = "<Super>v";
-          };
         };
       };
   };

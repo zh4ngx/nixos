@@ -206,6 +206,22 @@
             ${pkgs.systemd}/bin/systemctl --user start opencode-serve.service
             exec opencode attach http://127.0.0.1:4096 --dir "$PWD" -c "$@"
           '')
+          (pkgs.writeShellScriptBin "codex-continue-current" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            export CODEX_HOME="''${XDG_CONFIG_HOME:-$HOME/.config}/codex"
+
+            args=(
+              --no-alt-screen
+              -C "$PWD"
+              -c 'model="gpt-5.5"'
+              -c 'model_reasoning_effort="xhigh"'
+              -c "projects.$PWD.trust_level=\"trusted\""
+            )
+
+            codex resume --last "''${args[@]}" || exec codex "''${args[@]}"
+          '')
         ];
 
         # Voice dictation: inject STT transcriptions into tmux agent sessions
@@ -714,7 +730,7 @@
             cx = ''
               layout {
                   pane command="fish" close_on_exit=true {
-                      args "-c" "codex --dangerously-bypass-approvals-and-sandbox"
+                      args "-c" "codex-continue-current"
                   }
               }
             '';

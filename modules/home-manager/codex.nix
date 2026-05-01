@@ -12,11 +12,28 @@
       # Prefer OAuth (ChatGPT Pro plan) over API key fallback.
       preferred_auth_method = "chatgpt";
 
+      model = "gpt-5.5";
+      model_reasoning_effort = "xhigh";
+      sandbox_mode = "danger-full-access";
+      approval_policy = "never";
+
+      tui.status_line = [
+        "model-with-reasoning"
+        "git-branch"
+        "task-progress"
+        "context-remaining"
+        "context-used"
+        "context-window-size"
+        "five-hour-limit"
+        "weekly-limit"
+        "current-dir"
+      ];
+
       # No telemetry.
       hide_agent_reasoning = false;
     };
   };
 
-  home.file.".codex/AGENTS.md".source =
+  home.file.".config/codex/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "/home/andy/nixos/agents/AGENTS.md";
 }

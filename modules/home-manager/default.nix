@@ -621,6 +621,7 @@
             theme = "nord";
             show_release_notes = false;
             show_startup_tips = false;
+            support_kitty_keyboard_protocol = false;
           };
           layouts =
             let
@@ -805,8 +806,8 @@
                 timeout_ms = 5000;
               };
               notification = {
-                on_recording_start = true;
-                on_recording_stop = true;
+                on_recording_start = false;
+                on_recording_stop = false;
                 on_transcription = false;
               };
             };

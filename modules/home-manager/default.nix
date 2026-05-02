@@ -461,11 +461,20 @@
                 sandbox_policy:
                   type: dangerFullAccess
 
+              claude_huddle:
+                type: claude
+                channel: huddle
+                command: huddle
+
             agents:
               andy-oc:
                 backend: opencode
                 cwd: /home/andy
                 session_id: ses_21f36d7d6ffeKfoebcrQovH0pZ
+
+              andy-coh:
+                backend: claude_huddle
+                member: andy
 
               andy-cx:
                 backend: codex
@@ -474,6 +483,7 @@
               nixos-cx:
                 backend: codex
                 cwd: /home/andy/nixos
+                thread_id: 019de261-020b-7011-9e58-ed9f1dbdd41e
 
               metastack-cx:
                 backend: codex

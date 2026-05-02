@@ -5,7 +5,7 @@
 Primary desktop dictation is VoxType:
 
 ```
-Super+V -> voxtype record toggle -> whisper.cpp Vulkan -> paste at cursor
+Super+V -> voxtype record toggle -> whisper.cpp Vulkan -> type at cursor
 ```
 
 Configured by:
@@ -28,7 +28,8 @@ Current behavior:
   `onnx-cuda` variant if Parakeet should satisfy the GPU requirement.
 - Super+V toggles recording in GNOME.
 - `~/.config/niri/voxtype.kdl` contains the niri binds; include it from the real niri config when niri becomes the active compositor config.
-- Transcripts paste at the focused cursor. VoxType paste mode uses `wl-copy` plus `wtype` on wlroots/niri and falls back through ydotool on GNOME.
+- Transcripts type at the focused cursor through `ydotool`. This avoids GNOME
+  Wayland's unreliable `wl-copy` + paste-keystroke path.
 - Waybar can show recording state through `voxtype status --follow --format json`.
 - Raw transcripts are written to `$XDG_RUNTIME_DIR/voxtype/last-transcript`.
 
@@ -41,7 +42,7 @@ Create an executable hook at:
 ```
 
 The hook receives transcribed text on stdin and must print the text VoxType
-should paste on stdout. This is the extension point for command routing,
+should type on stdout. This is the extension point for command routing,
 metastack integration, or local text cleanup beyond VoxType's built-in
 replacement table.
 

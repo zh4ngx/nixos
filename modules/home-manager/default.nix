@@ -803,12 +803,10 @@
               context_window_optimization = false;
             };
             output = {
-              mode = "paste";
+              mode = "type";
               driver_order = [ "ydotool" ];
-              paste_keys = "ctrl+v";
-              fallback_to_clipboard = true;
-              restore_clipboard = true;
-              restore_clipboard_delay_ms = 300;
+              fallback_to_clipboard = false;
+              pre_type_delay_ms = 100;
               auto_submit = false;
               post_process = {
                 command = "voxtype-post-process";

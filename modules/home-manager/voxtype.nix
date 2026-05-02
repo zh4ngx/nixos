@@ -287,6 +287,9 @@ in
     };
 
     dconf.settings = {
+      "org/gnome/shell/keybindings" = {
+        toggle-message-tray = [ "<Super>m" ];
+      };
       "org/gnome/settings-daemon/plugins/media-keys" = {
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/voxtype-toggle/"

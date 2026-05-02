@@ -465,6 +465,7 @@
               andy-oc:
                 backend: opencode
                 cwd: /home/andy
+                session_id: ses_21f36d7d6ffeKfoebcrQovH0pZ
 
               andy-cx:
                 backend: codex

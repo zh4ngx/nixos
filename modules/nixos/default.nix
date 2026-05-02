@@ -37,9 +37,6 @@
       sutro_group_chat_id = {
         owner = "andy";
       };
-      ollama_api_key = {
-        owner = "andy";
-      };
       openrouter_api_key = {
         owner = "andy";
       };
@@ -227,10 +224,6 @@
         openrouter = {
           type = "api";
           key = config.sops.placeholder.openrouter_api_key;
-        };
-        ollama = {
-          type = "api";
-          key = config.sops.placeholder.ollama_api_key;
         };
       };
     };

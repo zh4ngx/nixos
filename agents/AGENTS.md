@@ -73,7 +73,7 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `coh`, `cg`, `gc`, `oc`, `og`, `qc`, `cx`) run inside zellij
+All AI CLI launchers (`co`, `coh`, `cg`, `gc`, `oc`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
@@ -85,7 +85,6 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - `coh` - Claude Opus with Huddle channel bridge, per-project (session: `{dir}-coh`)
 - `cg` - Claude GLM, per-project (session: `{dir}-cg`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
-- `og` - OpenCode, local Gemma 4 E4B (session: `{dir}-og`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `gc` - Gemini CLI (session: `{dir}-gc`)
 - `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.5 xhigh, session: `{dir}-cx`)

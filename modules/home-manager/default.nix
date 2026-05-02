@@ -397,10 +397,8 @@
             coh = "__zj (basename $PWD | string replace -a . _)-coh coh";
             # cg: Claude Code with Z.AI GLM
             cg = "__zj (basename $PWD | string replace -a . _)-cg cg";
-            # oc: start opencode (Default: MiniMax M2.7 via Ollama Cloud)
+            # oc: start opencode attached to the persistent OpenCode server
             oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
-            # og: start opencode with Local Gemma 4 E4B (LOCAL TUI)
-            og = "__zj (basename $PWD | string replace -a . _)-og og";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
             # gc: start gemini-cli
@@ -618,7 +616,7 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Fish shortcuts for co/coh/cg/oc/og/qc/gc/cx attach to
+        # tmux 2026-04-29). Fish shortcuts for co/coh/cg/oc/qc/gc/cx attach to
         # or spawn a zellij session that loads the corresponding layout below.
         # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
@@ -653,7 +651,6 @@
               coh = agentLayout "claude-opus-huddle-current --continue; or claude-opus-huddle-current";
               cg = agentLayout "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions";
               oc = agentLayout "opencode-attach-current";
-              og = agentLayout "opencode -m local/gemma-4-e4b -c";
               qc = agentLayout "qwencode -c";
               gc = agentLayout "gemini --yolo -r latest; or gemini --yolo";
               cx = agentLayout "codex-continue-current";
@@ -776,25 +773,6 @@
               vscode-json-languageserver.binary.path = "vscode-json-languageserver";
               yaml-language-server.binary.path = "yaml-language-server";
             };
-            language_models = {
-              ollama = {
-                api_url = "http://127.0.0.1:11434";
-                low_speed_timeout_in_seconds = 60;
-              };
-            };
-            assistant = {
-              version = "2";
-              selected_model = {
-                provider = "ollama";
-                model = "qwen2.5-coder:32b";
-              };
-            };
-            inline_assist = {
-              selected_model = {
-                provider = "ollama";
-                model = "qwen2.5-coder:14b";
-              };
-            };
           };
         };
 
@@ -807,6 +785,7 @@
               enabled = false;
             };
             audio = {
+              device = "default";
               sample_rate = 16000;
               max_duration_secs = 90;
               feedback = {
@@ -819,6 +798,7 @@
               mode = "local";
               language = "en";
               initial_prompt = "NixOS, Home Manager, flakes, sops, zellij, OpenCode, Codex, Claude, metastack, TypeScript, Rust.";
+              gpu_device = 1;
               gpu_isolation = true;
               context_window_optimization = false;
             };

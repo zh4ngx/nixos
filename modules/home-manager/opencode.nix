@@ -42,20 +42,6 @@
           name = "OpenCode Go";
           options.baseURL = "https://opencode.ai/zen/go/v1";
         };
-        ollama = {
-          npm = "@ai-sdk/openai-compatible";
-          name = "Local Gemma (llama.cpp)";
-          options.baseURL = "http://localhost:8081/v1";
-          models = {
-            "gemma-4-e4b" = {
-              name = "Gemma 4 E4B IT (Local)";
-              limit = {
-                context = 131072;
-                output = 131072;
-              };
-            };
-          };
-        };
         openrouter = {
           npm = "@ai-sdk/openai-compatible";
           name = "OpenRouter";
@@ -94,20 +80,6 @@
               limit = {
                 context = 1048576;
                 output = 65536;
-              };
-            };
-          };
-        };
-        local = {
-          npm = "@ai-sdk/openai-compatible";
-          name = "Local (llama.cpp)";
-          options.baseURL = "http://localhost:8081/v1";
-          models = {
-            "gemma-4-e4b" = {
-              name = "Gemma 4 E4B IT (Local)";
-              limit = {
-                context = 131072;
-                output = 131072;
               };
             };
           };

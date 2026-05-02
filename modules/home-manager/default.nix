@@ -672,6 +672,7 @@
             show_release_notes = false;
             show_startup_tips = false;
             support_kitty_keyboard_protocol = false;
+            scroll_buffer_size = 50000;
           };
           layouts =
             let

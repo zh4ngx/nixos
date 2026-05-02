@@ -686,64 +686,32 @@
             show_release_notes = false;
             show_startup_tips = false;
           };
-          layouts = {
-            co = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions"
-                  }
-              }
-            '';
-            coh = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "claude-opus-huddle-current --continue; or claude-opus-huddle-current"
-                  }
-              }
-            '';
-            cg = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions"
-                  }
-              }
-            '';
-            oc = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "opencode-attach-current"
-                  }
-              }
-            '';
-            og = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "opencode -m local/gemma-4-e4b -c"
-                  }
-              }
-            '';
-            qc = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "qwencode -c"
-                  }
-              }
-            '';
-            gc = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "gemini --yolo -r latest; or gemini --yolo"
-                  }
-              }
-            '';
-            cx = ''
-              layout {
-                  pane command="fish" close_on_exit=true {
-                      args "-c" "codex-continue-current"
-                  }
-              }
-            '';
-          };
+          layouts =
+            let
+              agentLayout = command: ''
+                layout {
+                    pane size=1 borderless=true {
+                        plugin location="tab-bar"
+                    }
+                    pane command="fish" close_on_exit=true {
+                        args "-c" "${command}"
+                    }
+                    pane size=1 borderless=true {
+                        plugin location="status-bar"
+                    }
+                }
+              '';
+            in
+            {
+              co = agentLayout "claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions";
+              coh = agentLayout "claude-opus-huddle-current --continue; or claude-opus-huddle-current";
+              cg = agentLayout "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions";
+              oc = agentLayout "opencode-attach-current";
+              og = agentLayout "opencode -m local/gemma-4-e4b -c";
+              qc = agentLayout "qwencode -c";
+              gc = agentLayout "gemini --yolo -r latest; or gemini --yolo";
+              cx = agentLayout "codex-continue-current";
+            };
         };
 
         programs.gh = {

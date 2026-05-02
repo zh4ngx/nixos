@@ -18,6 +18,7 @@
       {
         imports = [
           inputs.nix-index-database.homeModules.nix-index
+          inputs.metastack.homeModules.default
           ./obsidian.nix
           ./opencode.nix
           ./gemini.nix
@@ -32,6 +33,69 @@
         };
 
         xdg.enable = true;
+
+        programs.metastack = {
+          enable = true;
+          routingConfig = {
+            version = 2;
+
+            backends = {
+              opencode = {
+                type = "opencode";
+                base_url = "http://127.0.0.1:4096";
+              };
+
+              codex = {
+                type = "codex";
+                url = "ws://127.0.0.1:4107";
+                model = "gpt-5.5";
+                effort = "xhigh";
+                approval_policy = "never";
+                sandbox_policy.type = "dangerFullAccess";
+              };
+
+              claude_huddle = {
+                type = "claude";
+                channel = "huddle";
+                command = "huddle";
+              };
+            };
+
+            agents = {
+              "andy-oc" = {
+                backend = "opencode";
+                cwd = "/home/andy";
+                session_id = "ses_21f36d7d6ffeKfoebcrQovH0pZ";
+              };
+
+              "andy-coh" = {
+                backend = "claude_huddle";
+                member = "andy";
+              };
+
+              "andy-cx" = {
+                backend = "codex";
+                cwd = "/home/andy";
+              };
+
+              "nixos-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/nixos";
+                thread_id = "019de261-020b-7011-9e58-ed9f1dbdd41e";
+              };
+
+              "metastack-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/dev/metastack";
+              };
+
+              "vault-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/vault";
+              };
+            };
+          };
+        };
 
         # All XDG user dirs → ~/inbox (single triage zone). See vault/01-projects/xdg-inbox-refactor.md.
         xdg.userDirs = {
@@ -69,7 +133,6 @@
           # '')
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
           inputs.claude-code.packages.x86_64-linux.claude-code
-          inputs.metastack.packages.${pkgs.stdenv.hostPlatform.system}.default
           (pkgs.callPackage ../../packages/huddle { })
           beeper
           tea # Codeberg CLI
@@ -444,55 +507,6 @@
           ".mcp.json".text = builtins.toJSON {
             mcpServers.huddle.command = "huddle-mcp";
           };
-          ".config/metastack/routing.yaml".text = ''
-            version: 2
-
-            backends:
-              opencode:
-                type: opencode
-                base_url: http://127.0.0.1:4096
-
-              codex:
-                type: codex
-                url: ws://127.0.0.1:4107
-                model: gpt-5.5
-                effort: xhigh
-                approval_policy: never
-                sandbox_policy:
-                  type: dangerFullAccess
-
-              claude_huddle:
-                type: claude
-                channel: huddle
-                command: huddle
-
-            agents:
-              andy-oc:
-                backend: opencode
-                cwd: /home/andy
-                session_id: ses_21f36d7d6ffeKfoebcrQovH0pZ
-
-              andy-coh:
-                backend: claude_huddle
-                member: andy
-
-              andy-cx:
-                backend: codex
-                cwd: /home/andy
-
-              nixos-cx:
-                backend: codex
-                cwd: /home/andy/nixos
-                thread_id: 019de261-020b-7011-9e58-ed9f1dbdd41e
-
-              metastack-cx:
-                backend: codex
-                cwd: /home/andy/dev/metastack
-
-              vault-cx:
-                backend: codex
-                cwd: /home/andy/vault
-          '';
 
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;

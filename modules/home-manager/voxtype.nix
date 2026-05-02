@@ -263,7 +263,7 @@ in
           "PATH=${servicePath}"
           "YDOTOOL_SOCKET=/run/ydotoold/socket"
         ];
-        ExecStart = "${lib.getExe cfg.package} daemon";
+        ExecStart = "${lib.getExe cfg.package} --config ${configFile} daemon";
         Restart = "on-failure";
         RestartSec = "5s";
       };

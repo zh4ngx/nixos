@@ -130,10 +130,11 @@ dispatch, and metastack), use the canonical vault note:
 `~/vault/02-areas/agents/dispatch-strategy.md` §"Dispatch Substrate".
 
 MetaStack structured send is available as a declarative user package. Use the
-HM-managed routing file instead of ad hoc `/tmp` route YAML:
+HM-managed routing file instead of ad hoc `/tmp` route YAML. The default
+routing path is `~/.config/metastack/routing.yaml`, so this is normally enough:
 
 ```bash
-metastack send ~/.config/metastack/routing.yaml <target> "<message>"
+metastack send <target> "<message>"
 ```
 
 Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,

@@ -140,6 +140,10 @@ metastack send <target> "<message>"
 Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
 `metastack-cx`, and `vault-cx`.
 
+MetaStack flake governance: NixOS consumes semver tags when available, or an
+explicit reviewed rev. Do not track floating `main`; branch promotion and tag
+cutting happen in the MetaStack project before NixOS updates its input.
+
 OpenCode interactive project agents should be launched through `oc`, not raw
 `opencode`, when future programmatic injection matters. `oc` attaches the TUI
 to the user service `opencode-serve` on `127.0.0.1:4096`; external

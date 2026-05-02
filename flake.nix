@@ -15,8 +15,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix";
+    # MetaStack updates are governance-sensitive: consume semver tags when
+    # available, or explicit reviewed revs. Do not point this at floating main.
     metastack = {
-      url = "github:zh4ngx/metastack";
+      url = "github:zh4ngx/metastack/4b5dc4b537d1ebf553dc9cffd68f356a0b37f012";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

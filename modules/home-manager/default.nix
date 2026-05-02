@@ -81,14 +81,6 @@
           ugs
           mcp-nixos
           wl-clipboard
-          # Voice (Claude Code /voice needs SoX's `rec`; alsa-utils for mic
-          # diagnostics + audio plumbing). Note: /voice itself currently fails
-          # because it tries to write to settings.json (sops-rendered, RO).
-          # Pre-configuring /voice's writable fields would fix it but we don't
-          # know which fields it touches; voice-dictate (below) is the
-          # working alternative path.
-          sox
-          alsa-utils
 
           # Legacy voice dictation fallback: capture mic via PipeWire,
           # transcribe via local Wyoming server, and copy transcript to the

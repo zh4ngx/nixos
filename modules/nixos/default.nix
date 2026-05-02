@@ -63,8 +63,6 @@
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1",
             "ANTHROPIC_BETA": "compact-2026-01-12",
-            "CLAUDE_CODE_EFFORT_LEVEL": "max",
-            "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
             "HINDSIGHT_DYNAMIC_BANK_ID": "true"
           },
           "permissions": {

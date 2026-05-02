@@ -129,6 +129,16 @@ For OpenCode-specific launch substrates (headless push-back, zellij pane
 dispatch, and metastack), use the canonical vault note:
 `~/vault/02-areas/agents/dispatch-strategy.md` §"Dispatch Substrate".
 
+MetaStack structured send is available as a declarative user package. Use the
+HM-managed routing file instead of ad hoc `/tmp` route YAML:
+
+```bash
+metastack send ~/.config/metastack/routing.yaml <target> "<message>"
+```
+
+Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
+`metastack-cx`, and `vault-cx`.
+
 OpenCode interactive project agents should be launched through `oc`, not raw
 `opencode`, when future programmatic injection matters. `oc` attaches the TUI
 to the user service `opencode-serve` on `127.0.0.1:4096`; external

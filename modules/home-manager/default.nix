@@ -444,6 +444,44 @@
           ".mcp.json".text = builtins.toJSON {
             mcpServers.huddle.command = "huddle-mcp";
           };
+          ".config/metastack/routing.yaml".text = ''
+            version: 2
+
+            backends:
+              opencode:
+                type: opencode
+                base_url: http://127.0.0.1:4096
+
+              codex:
+                type: codex
+                url: ws://127.0.0.1:4107
+                model: gpt-5.5
+                effort: xhigh
+                approval_policy: never
+                sandbox_policy:
+                  type: dangerFullAccess
+
+            agents:
+              andy-oc:
+                backend: opencode
+                cwd: /home/andy
+
+              andy-cx:
+                backend: codex
+                cwd: /home/andy
+
+              nixos-cx:
+                backend: codex
+                cwd: /home/andy/nixos
+
+              metastack-cx:
+                backend: codex
+                cwd: /home/andy/dev/metastack
+
+              vault-cx:
+                backend: codex
+                cwd: /home/andy/vault
+          '';
 
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;

@@ -15,6 +15,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix";
+    metastack = {
+      url = "github:zh4ngx/metastack";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

@@ -69,6 +69,7 @@
           # '')
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
           inputs.claude-code.packages.x86_64-linux.claude-code
+          inputs.metastack.packages.${pkgs.stdenv.hostPlatform.system}.default
           (pkgs.callPackage ../../packages/huddle { })
           beeper
           tea # Codeberg CLI

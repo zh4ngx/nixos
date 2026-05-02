@@ -140,6 +140,19 @@ metastack send <target> "<message>"
 Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
 `metastack-cx`, and `vault-cx`.
 
+For parent/upstream communication, prefer `metastack send <parent-target>
+"<message>"` when the HM-managed routing config has that target. On this host,
+the parent OpenCode target is `andy-oc`, so upstream reports should use:
+
+```bash
+metastack send andy-oc "<message>"
+```
+
+Use raw backend APIs (OpenCode `prompt_async`, Codex app-server JSON-RPC, etc.)
+only as an explicitly documented fallback or debug path. Do not use zellij
+keystroke messaging for parent/upstream communication unless no structured
+route exists.
+
 MetaStack flake governance: NixOS consumes semver tags when available, or an
 explicit reviewed rev. Do not track floating `main`; branch promotion and tag
 cutting happen in the MetaStack project before NixOS updates its input.

@@ -261,6 +261,7 @@ in
         Type = "simple";
         Environment = [
           "PATH=${servicePath}"
+          "YDOTOOL_SOCKET=/run/ydotoold/socket"
         ];
         ExecStart = "${lib.getExe cfg.package} daemon";
         Restart = "on-failure";

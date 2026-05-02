@@ -470,7 +470,13 @@
   # Do not grant the broader input group unless VoxType's evdev hotkey mode is
   # enabled later; current config uses compositor shortcuts instead.
   hardware.uinput.enable = true;
-  programs.ydotool.enable = true;
+  programs.ydotool = {
+    enable = true;
+    # ydotoold exposes a group-gated Unix socket. Use the existing primary
+    # desktop-user group so the running user manager can use it without a
+    # logout after enabling VoxType.
+    group = "users";
+  };
 
   services.zenohd.enable = true;
 
@@ -520,7 +526,6 @@
       "abdusers"
       "kvm"
       "uinput"
-      "ydotool"
     ];
   };
 

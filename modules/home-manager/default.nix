@@ -804,7 +804,9 @@
             };
             output = {
               mode = "paste";
+              driver_order = [ "ydotool" ];
               paste_keys = "ctrl+v";
+              fallback_to_clipboard = true;
               restore_clipboard = true;
               restore_clipboard_delay_ms = 300;
               auto_submit = false;

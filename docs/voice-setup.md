@@ -21,11 +21,13 @@ Current behavior:
   the declaratively fetched `large-v3-turbo` model.
 - Whisper is pinned to Vulkan GPU index `1`, which `vulkaninfo --summary`
   reports as the RX 6900 XT on MS-7E51. The integrated Granite Ridge GPU is
-  index `0`.
+  index `0`. Live transcription was also observed in `amdgpu_top`: the
+  VoxType transcription worker allocated VRAM on the RX 6900 XT render node.
 - Parakeet TDT v3 int8 is wired into the local Home Manager module as an
   alternate model path, but nixpkgs only packages the CPU ONNX VoxType build.
   Use it for an English dictation comparison, or package VoxType's upstream
-  `onnx-cuda` variant if Parakeet should satisfy the GPU requirement.
+  ONNX GPU variant for ROCm if Parakeet should satisfy the GPU requirement on
+  this AMD host.
 - Super+V toggles recording in GNOME.
 - `~/.config/niri/voxtype.kdl` contains the niri binds; include it from the real niri config when niri becomes the active compositor config.
 - Transcripts type at the focused cursor through `ydotool`. This avoids GNOME
@@ -73,6 +75,6 @@ integration.
 - [x] Waybar status module config
 - [x] Post-processing hook wrapper
 - [x] Wyoming fallback service retained
+- [x] Live microphone/GPU transcription test after rebuild
 - [ ] niri config include wired into the real niri config
-- [ ] Live microphone/GPU transcription test after rebuild
 - [ ] Android/Tailnet dictation bridge, if still desired

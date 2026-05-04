@@ -62,8 +62,7 @@
             "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1",
-            "ANTHROPIC_BETA": "compact-2026-01-12",
-            "HINDSIGHT_DYNAMIC_BANK_ID": "true"
+            "ANTHROPIC_BETA": "compact-2026-01-12"
           },
           "permissions": {
             "deny": [
@@ -86,34 +85,8 @@
               "trigger": {"type": "input_tokens", "value": 400000},
               "instruction": "Preserve mathematical formulations, design decisions, code references, file paths, key open questions. Discard tool-result chatter and stale debugging output."
             }]
-          },
-          "enabledPlugins": {
-            "hindsight-memory@hindsight": true
           }
         }
-      '';
-    };
-
-    # Env file for the hindsight-embed user service (systemd EnvironmentFile=).
-    # Hindsight uses Vertex AI through existing Google ADC credentials at
-    # ~/.config/gcloud/application_default_credentials.json; no Gemini API key
-    # or OpenCode Go quota is involved.
-    # HINDSIGHT_API_DATABASE_URL is read by the direct hindsight-api service.
-    # Keep the EMBED variant too so ad-hoc hindsight-embed CLI calls use the
-    # same system Postgres instead of falling through to embedded pg0.
-    # We point at the system postgres via Unix socket (peer auth as user `andy`).
-    templates."hindsight-embed.env" = {
-      owner = "andy";
-      group = "users";
-      mode = "0400";
-      content = ''
-        HINDSIGHT_API_LLM_PROVIDER=vertexai
-        HINDSIGHT_API_LLM_MODEL=google/gemini-3-flash-preview
-        HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=capped-gemini
-        HINDSIGHT_API_LLM_VERTEXAI_REGION=global
-        HINDSIGHT_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight
-        HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
-        HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight
       '';
     };
 
@@ -347,90 +320,6 @@
   #     wayland.enable = true;
   #   };
   # };
-
-  programs.nix-ld = {
-    enable = true;
-    # Extra libs needed by hindsight-embed's bundled PostgreSQL 18.1 binaries
-    # (initdb, postgres, psql — pg0-embedded shells out to psql to create
-    # the hindsight role + database during first init). The default nix-ld
-    # set covers libssl, libcrypto, libzstd, libz. The bundled binary expects
-    # libxml2's legacy soname (libxml2.so.2) — current nixpkgs libxml2 uses
-    # libxml2.so.16, so we explicitly pull libxml2_13 which still ships .so.2.
-    libraries = with pkgs; [
-      krb5 # libgssapi_krb5.so.2
-      lz4 # liblz4.so.1
-      libxml2_13 # libxml2.so.2 (legacy soname)
-      readline # libreadline.so.8 (psql)
-    ];
-  };
-
-  # hindsight-embed's bundled PostgreSQL was built with
-  # --with-system-tzdata=/usr/share/zoneinfo (hardcoded). NixOS doesn't
-  # populate /usr, so symlink that path to the system zoneinfo.
-  systemd.tmpfiles.rules = [
-    "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo"
-  ];
-
-  # System postgres for the hindsight-embed daemon (replaces pg0-embedded).
-  # Daemon connects via TCP loopback as user `andy` (trust auth on 127/::1)
-  # using HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight.
-  # pgvector is required by hindsight's HNSW indexes on memory_units.
-  #
-  # TCP instead of Unix socket: alembic's configparser interprets `%` in the
-  # URL as interpolation syntax. SQLAlchemy URL-encodes a socket path (e.g.
-  # `?host=/run/postgresql` → `?host=%2Frun%2Fpostgresql`), and configparser
-  # then crashes on the `%2F`. TCP loopback avoids the encoding entirely.
-  #
-  # Superuser instead of ensureDBOwnership: NixOS's ensureDBOwnership=true
-  # requires the role name to equal the database name, which would force
-  # us to either rename the role (breaking peer auth from OS user `andy`)
-  # or rename the database (breaking hindsight defaults). Granting `andy`
-  # superuser is the pragmatic fix on this single-user box.
-  #
-  # trust auth on 127/::1: single-user host, no other postgres clients.
-  # Default `peer` for local Unix socket is preserved for psql convenience.
-  services.postgresql = {
-    enable = true;
-    package = pkgs.postgresql_17;
-    extensions = ps: with ps; [ pgvector ];
-    ensureDatabases = [ "hindsight" ];
-    ensureUsers = [
-      {
-        name = "andy";
-        ensureClauses = {
-          login = true;
-          superuser = true;
-        };
-      }
-    ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      local all all peer
-      host  all all 127.0.0.1/32 trust
-      host  all all ::1/128      trust
-    '';
-  };
-
-  # Idempotent reapply of the `vector` extension into the hindsight DB on
-  # every boot. ensureDatabases creates `hindsight` from template1 but does
-  # not run CREATE EXTENSION; hindsight's alembic migrations assume the
-  # extension is pre-loaded, so we install it before any client connects.
-  # IF NOT EXISTS makes this a no-op when already present, so it covers
-  # both fresh-cluster init and existing-cluster (self-heals if dropped).
-  systemd.services.hindsight-pg-extensions = {
-    description = "Ensure pgvector extension exists in hindsight database";
-    after = [ "postgresql.service" ];
-    requires = [ "postgresql.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      User = "postgres";
-      RemainAfterExit = true;
-    };
-    script = ''
-      ${config.services.postgresql.package}/bin/psql -d hindsight \
-        -c "CREATE EXTENSION IF NOT EXISTS vector"
-    '';
-  };
 
   programs.ente-auth.enable = true;
 

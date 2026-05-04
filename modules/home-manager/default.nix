@@ -281,28 +281,6 @@
           '')
         ];
 
-        # Hindsight API daemon — perpetually-running service so agent hooks find
-        # it already up (zero cold-start latency). Run the API directly instead
-        # of through a named hindsight-embed profile; profiles are mutable user
-        # state and can override the sops-rendered provider/env.
-        # Type=simple: systemd owns the foreground API process directly; no
-        # hindsight profile lockfiles or daemon double-forking are involved.
-        systemd.user.services.hindsight-embed = {
-          Unit = {
-            Description = "Hindsight API daemon (127.0.0.1:9077)";
-          };
-          Service = {
-            Type = "simple";
-            EnvironmentFile = "/run/secrets/rendered/hindsight-embed.env";
-            ExecStart = "/run/current-system/sw/bin/uvx hindsight-api@latest --host 127.0.0.1 --port 9077";
-            Restart = "on-failure";
-            RestartSec = 10;
-            StartLimitBurst = 5;
-            TimeoutStartSec = 60;
-          };
-          Install.WantedBy = [ "default.target" ];
-        };
-
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 

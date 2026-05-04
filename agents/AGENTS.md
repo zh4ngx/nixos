@@ -98,10 +98,10 @@ they own instead of adding unrelated roots to scope.
 ## Tooling Discipline
 
 Prefer canonical paths over ad hoc invocations. When the team owns an
-abstraction (`metastack send`, `vault-cx` for vault writes, Huddle MCP tools,
-Hindsight retain), default to that path. Reach for the lower-level primitive
-only when the abstraction is broken, missing a feature, or you are explicitly
-debugging the abstraction itself; document the exception when you do.
+abstraction (`metastack send`, `vault-cx` for vault writes, Huddle MCP tools),
+default to that path. Reach for the lower-level primitive only when the
+abstraction is broken, missing a feature, or you are explicitly debugging the
+abstraction itself; document the exception when you do.
 
 Examples:
 - Use `metastack send <target> "<message>"` for routed agent communication
@@ -110,8 +110,6 @@ Examples:
   from the NixOS or MetaStack project agent.
 - Use Huddle MCP/channel tools for Claude channel messaging instead of
   keystroke injection when the session is channel-enabled.
-- Use Hindsight retain for durable agent lessons instead of scattering
-  one-off memory notes in arbitrary files.
 
 ## Project Boundaries (Dispatch)
 

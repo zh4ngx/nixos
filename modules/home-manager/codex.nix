@@ -1,15 +1,6 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   codexHome = "${config.xdg.configHome}/codex";
-  hindsightCodexScripts = "${config.home.homeDirectory}/.claude-shared/plugins/marketplaces/hindsight/hindsight-integrations/codex/scripts";
-  hindsightHookCommand =
-    script:
-    ''CODEX_HOME="${codexHome}" HINDSIGHT_CODEX_HOME="${codexHome}" HINDSIGHT_API_URL="http://127.0.0.1:9077" ${lib.getExe pkgs.python3} "${hindsightCodexScripts}/${script}"'';
 in
 {
   programs.codex = {
@@ -28,8 +19,6 @@ in
       model_reasoning_effort = "xhigh";
       sandbox_mode = "danger-full-access";
       approval_policy = "never";
-
-      features.codex_hooks = true;
 
       tui.status_line = [
         "model-with-reasoning"
@@ -50,43 +39,6 @@ in
 
   home.file.".config/codex/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "/home/andy/nixos/agents/AGENTS.md";
-  home.file.".config/codex/hooks.json".text = builtins.toJSON {
-    hooks = {
-      SessionStart = [
-        {
-          hooks = [
-            {
-              type = "command";
-              command = hindsightHookCommand "session_start.py";
-              timeout = 5;
-            }
-          ];
-        }
-      ];
-      UserPromptSubmit = [
-        {
-          hooks = [
-            {
-              type = "command";
-              command = hindsightHookCommand "recall.py";
-              timeout = 12;
-            }
-          ];
-        }
-      ];
-      Stop = [
-        {
-          hooks = [
-            {
-              type = "command";
-              command = hindsightHookCommand "retain.py";
-              timeout = 30;
-            }
-          ];
-        }
-      ];
-    };
-  };
 
   # Structured-injection substrate for Codex project agents. `cx` connects its
   # TUI to this loopback app-server, so orchestrators can use the Codex

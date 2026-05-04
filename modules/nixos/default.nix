@@ -43,6 +43,9 @@
       opencode_api_key = {
         owner = "andy";
       };
+      ollama_api_key = {
+        owner = "andy";
+      };
       brave_api_key = {
         owner = "andy";
       };
@@ -92,20 +95,23 @@
     };
 
     # Env file for the hindsight-embed user service (systemd EnvironmentFile=).
-    # API key stays out of /nix/store; rendered to /run/secrets/rendered/ at boot.
-    # HINDSIGHT_EMBED_API_DATABASE_URL (note the EMBED infix) is read by the
-    # `hindsight-embed daemon start` wrapper; if unset, it falls through to a
-    # pg0:// URL and spawns embedded postgres regardless of HINDSIGHT_API_DATABASE_URL.
+    # Hindsight uses Vertex AI through existing Google ADC credentials at
+    # ~/.config/gcloud/application_default_credentials.json; no Gemini API key
+    # or OpenCode Go quota is involved.
+    # HINDSIGHT_API_DATABASE_URL is read by the direct hindsight-api service.
+    # Keep the EMBED variant too so ad-hoc hindsight-embed CLI calls use the
+    # same system Postgres instead of falling through to embedded pg0.
     # We point at the system postgres via Unix socket (peer auth as user `andy`).
     templates."hindsight-embed.env" = {
       owner = "andy";
       group = "users";
       mode = "0400";
       content = ''
-        HINDSIGHT_API_LLM_PROVIDER=openai
-        HINDSIGHT_API_LLM_BASE_URL=https://opencode.ai/zen/go/v1
-        HINDSIGHT_API_LLM_API_KEY=${config.sops.placeholder.opencode_api_key}
-        HINDSIGHT_API_LLM_MODEL=deepseek-v4-flash
+        HINDSIGHT_API_LLM_PROVIDER=vertexai
+        HINDSIGHT_API_LLM_MODEL=google/gemini-3-flash-preview
+        HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=capped-gemini
+        HINDSIGHT_API_LLM_VERTEXAI_REGION=global
+        HINDSIGHT_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight
         HINDSIGHT_EMBED_DAEMON_IDLE_TIMEOUT=0
         HINDSIGHT_EMBED_API_DATABASE_URL=postgresql://andy@127.0.0.1/hindsight
       '';
@@ -219,6 +225,10 @@
         zai-coding = {
           type = "api";
           key = config.sops.placeholder.glm_token;
+        };
+        ollama-cloud = {
+          type = "api";
+          key = config.sops.placeholder.ollama_api_key;
         };
         openrouter = {
           type = "api";

@@ -145,6 +145,7 @@
           ugs
           mcp-nixos
           wl-clipboard
+          ollama
 
           # Legacy voice dictation fallback: capture mic via PipeWire,
           # transcribe via local Wyoming server, and copy transcript to the
@@ -280,23 +281,20 @@
           '')
         ];
 
-        # Hindsight embed daemon — perpetually-running service so claude-opus
-        # SessionStart hooks find it already up (zero cold-start latency) and
-        # so the OpenRouter API key lives in EnvironmentFile= rather than the
-        # claude-opus settings.json env block (where it'd leak into every
-        # subprocess Claude Code spawns).
-        # Type=forking: `daemon start` Popens hindsight-api with --daemon, polls
-        # health, then exits — systemd's cgroup heuristic picks up the surviving
-        # api process as the main PID, so Restart=on-failure supervises it.
+        # Hindsight API daemon — perpetually-running service so agent hooks find
+        # it already up (zero cold-start latency). Run the API directly instead
+        # of through a named hindsight-embed profile; profiles are mutable user
+        # state and can override the sops-rendered provider/env.
+        # Type=simple: systemd owns the foreground API process directly; no
+        # hindsight profile lockfiles or daemon double-forking are involved.
         systemd.user.services.hindsight-embed = {
           Unit = {
-            Description = "Hindsight embed daemon (claude-code profile, 127.0.0.1:9077)";
+            Description = "Hindsight API daemon (127.0.0.1:9077)";
           };
           Service = {
-            Type = "forking";
+            Type = "simple";
             EnvironmentFile = "/run/secrets/rendered/hindsight-embed.env";
-            ExecStart = "/run/current-system/sw/bin/uvx hindsight-embed@latest daemon --profile claude-code start";
-            ExecStop = "/run/current-system/sw/bin/uvx hindsight-embed@latest daemon --profile claude-code stop";
+            ExecStart = "/run/current-system/sw/bin/uvx hindsight-api@latest --host 127.0.0.1 --port 9077";
             Restart = "on-failure";
             RestartSec = 10;
             StartLimitBurst = 5;

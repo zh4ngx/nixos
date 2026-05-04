@@ -5,9 +5,7 @@
   ...
 }:
 let
-  # TODO: replace with the selected ollama-cloud free-tier model once
-  # andy-cx finishes the Dreamer model research.
-  magicContextDreamerModel = "opencode-go/qwen3.5-plus";
+  magicContextDreamerModel = "ollama-cloud/mistral-large-3:675b";
 in
 {
   programs.opencode = {
@@ -65,6 +63,48 @@ in
             temperature = true;
             tool_call = true;
             interleaved.field = "reasoning_content";
+          };
+        };
+        ollama-cloud = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "Ollama Cloud";
+          # OpenCode's OpenAI-compatible adapter uses Ollama Cloud's /v1
+          # surface; Ollama's native API lives under /api.
+          options.baseURL = "https://ollama.com/v1";
+          models = {
+            "mistral-large-3:675b" = {
+              name = "Mistral Large 3 675B";
+              limit = {
+                context = 262144;
+                output = 262144;
+              };
+              attachment = true;
+              reasoning = false;
+              temperature = true;
+              tool_call = true;
+              modalities = {
+                input = [
+                  "text"
+                  "image"
+                ];
+                output = [ "text" ];
+              };
+            };
+            "qwen3-coder:480b" = {
+              name = "Qwen3 Coder 480B";
+              limit = {
+                context = 262144;
+                output = 65536;
+              };
+              attachment = false;
+              reasoning = false;
+              temperature = true;
+              tool_call = true;
+              modalities = {
+                input = [ "text" ];
+                output = [ "text" ];
+              };
+            };
           };
         };
         openrouter = {

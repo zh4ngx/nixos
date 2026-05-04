@@ -216,6 +216,10 @@
           type = "api";
           key = config.sops.placeholder.opencode_api_key;
         };
+        zai-coding = {
+          type = "api";
+          key = config.sops.placeholder.glm_token;
+        };
         openrouter = {
           type = "api";
           key = config.sops.placeholder.openrouter_api_key;

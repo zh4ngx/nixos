@@ -4,6 +4,11 @@
   lib,
   ...
 }:
+let
+  # TODO: replace with the selected ollama-cloud free-tier model once
+  # andy-cx finishes the Dreamer model research.
+  magicContextDreamerModel = "opencode-go/qwen3.5-plus";
+in
 {
   programs.opencode = {
     enable = true;
@@ -29,6 +34,8 @@
       permission = "allow";
       autoupdate = false;
       plugin = [ "@cortexkit/opencode-magic-context" ];
+      # Magic Context manages context state itself; keep native OpenCode
+      # compaction disabled so both systems do not fight over history.
       compaction = {
         auto = false;
         prune = false;
@@ -41,6 +48,24 @@
           npm = "@ai-sdk/openai-compatible";
           name = "OpenCode Go";
           options.baseURL = "https://opencode.ai/zen/go/v1";
+        };
+        zai-coding = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "Z.AI Coding Plan";
+          # GLM Coding Plan endpoint. If Andy's glm_token is not Coding
+          # Plan-enabled, switch this one line to https://api.z.ai/api/paas/v4.
+          options.baseURL = "https://api.z.ai/api/coding/paas/v4";
+          models."glm-5.1" = {
+            name = "GLM-5.1";
+            limit = {
+              context = 202752;
+              output = 32768;
+            };
+            reasoning = true;
+            temperature = true;
+            tool_call = true;
+            interleaved.field = "reasoning_content";
+          };
         };
         openrouter = {
           npm = "@ai-sdk/openai-compatible";
@@ -96,11 +121,11 @@
     "$schema" = "https://raw.githubusercontent.com/cortexkit/opencode-magic-context/master/assets/magic-context.schema.json";
     enabled = true;
     historian = {
-      model = "opencode-go/glm-5.1";
+      model = "zai-coding/glm-5.1";
     };
     dreamer = {
       enabled = true;
-      model = "opencode-go/qwen3.5-plus";
+      model = magicContextDreamerModel;
       schedule = "02:00-06:00";
       tasks = [
         "consolidate"
@@ -112,7 +137,7 @@
     };
     sidekick = {
       enabled = true;
-      model = "opencode-go/gemini-3-flash";
+      model = "zai-coding/glm-5.1";
       timeout_ms = 30000;
     };
   };

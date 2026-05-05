@@ -93,6 +93,11 @@
                 backend = "codex";
                 cwd = "/home/andy/vault";
               };
+
+              "sutro-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/sutro";
+              };
             };
           };
         };

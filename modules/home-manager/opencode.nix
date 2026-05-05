@@ -172,7 +172,6 @@ in
         "verify"
         "archive-stale"
         "improve"
-        "maintain-docs"
       ];
     };
     sidekick = {

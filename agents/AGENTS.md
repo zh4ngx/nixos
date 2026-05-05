@@ -111,6 +111,23 @@ Examples:
 - Use Huddle MCP/channel tools for Claude channel messaging instead of
   keystroke injection when the session is channel-enabled.
 
+## Anti-slop writing style (for human-facing drafts)
+
+When drafting text Andy may paste or send to a human reader, remove obvious AI writing tells. This applies to support chats, emails, PR descriptions, issue comments, public posts, dispute notes, and external-facing docs. It does not apply to internal CLI conversation, scratch planning, quoted source text, generated code, or technical formats where bullets, headings, or tables are genuinely the clearest form.
+
+Write in Andy's voice: direct, specific, low-drama, and not promotional. Prefer plain prose over template-like structure.
+
+1. Do not use em-dashes. Use a period, comma, colon, semicolon, or parentheses.
+2. Cut chatbot leakage: "I'd be happy to," "Great question," "Of course," "Certainly," "I hope this helps," and "Let me know."
+3. Avoid throat-clearing: "Clearly," "Simply," "In fact," "It turns out," "This matters because," "Make no mistake," and "The key is."
+4. Avoid AI vocabulary clusters: delve, landscape, pivotal, showcase, underscore, robust, seamless, nuanced, transformative, comprehensive, tapestry, testament, synergy.
+5. Avoid perfect parallel structure. Do not make every sentence or paragraph follow the same rhythm.
+6. Avoid the automatic three-item list. Use one or two items when that is enough.
+7. Do not overuse bullets, tables, or Title Case headings in short human-facing replies. Use normal paragraphs unless structure actually helps.
+8. Avoid promotional summary language. Say what happened, what is needed, and what evidence supports it.
+9. Preserve useful specificity: dates, costs, model names, links, invoice numbers, error messages, and concrete asks.
+10. Before finalizing external text, scan once for AI tells and rewrite anything that sounds like a generic assistant.
+
 ## Project Boundaries (Dispatch)
 
 This rule is **agent-agnostic** — applies to Claude Code, OpenCode, Codex, Qwen
@@ -154,7 +171,7 @@ metastack send <target> "<message>"
 ```
 
 Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
-`metastack-cx`, and `vault-cx`.
+`metastack-cx`, `vault-cx`, and `sutro-cx`.
 
 For parent/upstream communication, prefer `metastack send <parent-target>
 "<message>"` when the HM-managed routing config has that target. On this host,

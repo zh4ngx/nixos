@@ -123,16 +123,16 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1777755992,
-        "narHash": "sha256-PPi5UqA/mgP7+ZmXNq3CVFvpnXr+p87NQWiaM7Bunec=",
+        "lastModified": 1777957939,
+        "narHash": "sha256-JOeDPfTbcJQ5kODHnrDv4GgH9ei2yAzRB1hR0v+nUKQ=",
         "owner": "zh4ngx",
         "repo": "metastack",
-        "rev": "159d0537de447aaa3bc5068b42f5548d07c84815",
+        "rev": "e62a16139401955dbe0f8632c9bfe5ff091470be",
         "type": "github"
       },
       "original": {
         "owner": "zh4ngx",
-        "ref": "v0.10.2",
+        "ref": "v0.10.3",
         "repo": "metastack",
         "type": "github"
       }

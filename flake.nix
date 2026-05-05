@@ -18,7 +18,7 @@
     # MetaStack updates are governance-sensitive: consume semver tags when
     # available, or explicit reviewed revs. Do not point this at floating main.
     metastack = {
-      url = "github:zh4ngx/metastack/v0.10.2";
+      url = "github:zh4ngx/metastack/v0.10.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

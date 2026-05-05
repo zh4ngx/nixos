@@ -61,6 +61,11 @@
               };
             };
 
+            aliases = {
+              main = "andy-cx";
+              observer = "andy-coh";
+            };
+
             agents = {
               "andy-oc" = {
                 backend = "opencode";

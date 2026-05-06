@@ -103,6 +103,16 @@
                 backend = "codex";
                 cwd = "/home/andy/sutro";
               };
+
+              "hinton-problems-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/sutro/hinton-problems";
+              };
+
+              "sutro-problems-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/sutro/sutro-problems";
+              };
             };
           };
         };
@@ -765,7 +775,7 @@
             userSettings = {
               "files.associations" = {
                 "*.agda" = "agda";
-                "*.lagda.md" = "agda";
+                "*.lagda.md" = "lagda-markdown";
               };
             };
           };

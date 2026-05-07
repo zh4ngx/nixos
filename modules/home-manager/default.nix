@@ -852,7 +852,7 @@
               mode = "local";
               language = "en";
               initial_prompt = "NixOS, Home Manager, flakes, sops, zellij, OpenCode, Codex, Claude, metastack, TypeScript, Rust.";
-              gpu_device = 1;
+              gpu_device = 0;
               gpu_isolation = true;
               context_window_optimization = false;
             };

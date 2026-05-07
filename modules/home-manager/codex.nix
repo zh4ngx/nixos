@@ -34,6 +34,8 @@ in
 
       # No telemetry.
       hide_agent_reasoning = false;
+
+      projects."/home/andy".trust_level = "trusted";
     };
   };
 

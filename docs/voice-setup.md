@@ -19,10 +19,9 @@ Current behavior:
 - `voxtype` runs as a systemd user service.
 - The active engine is `whisper` via the nixpkgs `voxtype-vulkan` build, using
   the declaratively fetched `large-v3-turbo` model.
-- Whisper is pinned to Vulkan GPU index `1`, which `vulkaninfo --summary`
+- Whisper is pinned to Vulkan GPU index `0`, which `vulkaninfo --summary`
   reports as the RX 6900 XT on MS-7E51. The integrated Granite Ridge GPU is
-  index `0`. Live transcription was also observed in `amdgpu_top`: the
-  VoxType transcription worker allocated VRAM on the RX 6900 XT render node.
+  index `1`.
 - Parakeet TDT v3 int8 is wired into the local Home Manager module as an
   alternate model path, but nixpkgs only packages the CPU ONNX VoxType build.
   Use it for an English dictation comparison, or package VoxType's upstream

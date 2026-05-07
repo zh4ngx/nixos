@@ -28,10 +28,6 @@
 
         home.stateVersion = "26.05"; # Please read the comment before changing.
 
-        home.sessionVariables = {
-          EDITOR = "zeditor --wait";
-        };
-
         xdg.enable = true;
 
         programs.metastack = {
@@ -783,7 +779,7 @@
 
         programs.zed-editor = {
           enable = true;
-          #defaultEditor = true;
+          defaultEditor = true;
           mutableUserKeymaps = false;
           mutableUserSettings = false;
           mutableUserTasks = false;

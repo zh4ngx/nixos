@@ -95,6 +95,11 @@
                 cwd = "/home/andy/vault";
               };
 
+              "clade-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/clade";
+              };
+
               "sutro-cx" = {
                 backend = "codex";
                 cwd = "/home/andy/sutro";

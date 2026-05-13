@@ -100,6 +100,11 @@
                 cwd = "/home/andy/clade";
               };
 
+              "office-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/office";
+              };
+
               "sutro-cx" = {
                 backend = "codex";
                 cwd = "/home/andy/sutro";

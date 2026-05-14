@@ -274,7 +274,7 @@
   programs.nh = {
     enable = true;
     clean = {
-      enable = true;
+      enable = false;
       dates = "daily";
       extraArgs = "--keep-since 3d --keep 3 --optimise";
     };
@@ -282,7 +282,7 @@
   };
 
   system.autoUpgrade = {
-    enable = true;
+    enable = false;
     flake = "github:zh4ngx/nixos";
     dates = "daily";
     persistent = true;

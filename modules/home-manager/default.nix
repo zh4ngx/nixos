@@ -635,6 +635,27 @@
           ];
         };
 
+        programs.jujutsu = {
+          enable = true;
+          settings = {
+            user = {
+              name = "Andy Zhang";
+              email = "zh4ng@noreply.codeberg.org";
+            };
+            ui = {
+              "default-command" = "log";
+            };
+            signing = {
+              behavior = "drop";
+              backend = "ssh";
+              key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFuNWn908WgSYeMZgkCKf8IYVLhpz4tbz5865ewIixxN";
+            };
+            git = {
+              "sign-on-push" = true;
+            };
+          };
+        };
+
         # Try out htop, bottom, and btop
         programs.htop.enable = true;
         programs.bottom.enable = true;

@@ -460,10 +460,8 @@
             oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
-            # agc: start Antigravity CLI
-            agc = "__zj (basename $PWD | string replace -a . _)-agc agc";
-            # gc: start gemini-cli
-            gc = "__zj (basename $PWD | string replace -a . _)-gc gc";
+            # ag: start Antigravity CLI
+            ag = "__zj (basename $PWD | string replace -a . _)-ag ag";
             # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
             cx = "__zj (basename $PWD | string replace -a . _)-cx cx";
             # agents: list zellij-backed agent sessions
@@ -698,7 +696,7 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Fish shortcuts for co/coh/cg/oc/qc/gc/cx attach to
+        # tmux 2026-04-29). Fish shortcuts for co/coh/cg/oc/qc/ag/cx attach to
         # or spawn a zellij session that loads the corresponding layout below.
         # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
@@ -736,8 +734,7 @@
               cg = agentLayout "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions";
               oc = agentLayout "opencode-attach-current";
               qc = agentLayout "qwencode -c";
-              agc = agentLayout "agy --continue --dangerously-skip-permissions; or agy --dangerously-skip-permissions";
-              gc = agentLayout "gemini --yolo -r latest; or gemini --yolo";
+              ag = agentLayout "env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";
               cx = agentLayout "codex-continue-current";
             };
         };

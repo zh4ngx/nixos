@@ -73,7 +73,7 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `coh`, `cg`, `gc`, `agc`, `oc`, `qc`, `cx`) run inside zellij
+All AI CLI launchers (`co`, `coh`, `cg`, `ag`, `oc`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
@@ -86,8 +86,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - `cg` - Claude GLM, per-project (session: `{dir}-cg`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
-- `gc` - Gemini CLI (session: `{dir}-gc`)
-- `agc` - Antigravity CLI (session: `{dir}-agc`)
+- `ag` - Antigravity CLI (session: `{dir}-ag`)
 - `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.5 xhigh, session: `{dir}-cx`)
 - `agents` - list zellij-backed agent sessions
 
@@ -254,7 +253,7 @@ slug. Use only for cross-project research / synthesis where the trace
 genuinely belongs in the parent.
 
 **Interactive attach by default.** Don't default to spawning interactive
-`co`/`cg`/`oc`/`gc`/`agc`/`qc` instances. Reserve for tasks that genuinely need
+`co`/`cg`/`oc`/`ag`/`qc` instances. Reserve for tasks that genuinely need
 real-time human steering — and ask the user first.
 
 **`cd` in parent-agent shell tool calls without a subshell.** Use

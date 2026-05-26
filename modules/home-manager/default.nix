@@ -158,6 +158,7 @@
           #   echo "Hello, ${config.home.username}!"
           # '')
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
+          (pkgs.callPackage ../../packages/agy-cli { })
           inputs.claude-code.packages.x86_64-linux.claude-code
           (pkgs.callPackage ../../packages/huddle { })
           beeper
@@ -459,6 +460,8 @@
             oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
+            # agc: start Antigravity CLI
+            agc = "__zj (basename $PWD | string replace -a . _)-agc agc";
             # gc: start gemini-cli
             gc = "__zj (basename $PWD | string replace -a . _)-gc gc";
             # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
@@ -733,6 +736,7 @@
               cg = agentLayout "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions";
               oc = agentLayout "opencode-attach-current";
               qc = agentLayout "qwencode -c";
+              agc = agentLayout "agy --continue --dangerously-skip-permissions; or agy --dangerously-skip-permissions";
               gc = agentLayout "gemini --yolo -r latest; or gemini --yolo";
               cx = agentLayout "codex-continue-current";
             };

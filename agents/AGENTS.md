@@ -106,18 +106,18 @@ they own instead of adding unrelated roots to scope.
 ## Tooling Discipline
 
 Prefer canonical paths over ad hoc invocations. When the team owns an
-abstraction (`metastack send`, `vault-cx` for vault writes, Huddle MCP tools),
+abstraction (`clade-inbox`, `vault-cx` for vault writes, `metastack send`),
 default to that path. Reach for the lower-level primitive only when the
 abstraction is broken, missing a feature, or you are explicitly debugging the
 abstraction itself; document the exception when you do.
 
 Examples:
-- Use `metastack send <target> "<message>"` for routed agent communication
-  rather than raw backend APIs or zellij keystrokes.
+- Use `clade-inbox` for agent wakeup and inbox coordination instead of
+  MetaStack, raw backend APIs, or zellij keystrokes.
+- Use `metastack send <target> "<message>"` only for explicit manual one-shot
+  routes, debugging, or temporary escape when CLADE inbox is unavailable.
 - Dispatch vault writes to `vault-cx` instead of editing `~/vault` directly
   from the NixOS or MetaStack project agent.
-- Use Huddle MCP/channel tools for Claude channel messaging instead of
-  keystroke injection when the session is channel-enabled.
 
 ## Universal Agent Skills
 
@@ -142,13 +142,38 @@ Native paths currently managed by Home Manager:
 - Gemini CLI: `~/.gemini/skills/clade-inbox`
 - Antigravity CLI: `~/.gemini/antigravity-cli/skills/clade-inbox`
 
+Long-lived agents must treat CLADE inbox as their normal wake path. On
+start/restart:
+
+1. Determine your agent id. Prefer `$CLADE_AGENT_ID`, which NixOS launchers set
+   from `cwd + harness` (`nixos-cx`, `andy-oc`, `clade-cx`, etc.). If it is
+   missing, use the target id from the task or derive the same `basename($PWD)-<harness>`
+   shape manually.
+2. Start a tracked background await using the agent harness's normal background
+   command facility:
+
+   ```bash
+   clade-inbox-await "$CLADE_AGENT_ID"
+   ```
+
+3. When await returns, read the pending batch, process every message, reply with
+   CLADE inbox when a reply is needed, then start a new tracked await:
+
+   ```bash
+   clade-inbox-read "$CLADE_AGENT_ID"
+   clade-inbox --actor "$CLADE_AGENT_ID" inbox send --from "$CLADE_AGENT_ID" --to "$SENDER_AGENT_ID" --body "..."
+   ```
+
+Keep the await model-visible and tracked. Do not create hidden detached shell
+loops, systemd sidecars, or launcher-side readers that mark messages read before
+the agent has processed them.
+
 Claude/Huddle is retired. For Claude coordination that used to rely on `coh`
 or Huddle channels, start plain `co` and use `clade-inbox` instead:
 
 ```bash
-CLADE=/home/andy/clade/skills/clade-inbox/scripts/clade-inbox
-"$CLADE" --actor "$AGENT_ID" inbox await --agent "$AGENT_ID" --json
-"$CLADE" --actor "$AGENT_ID" inbox read --agent "$AGENT_ID" --json
+clade-inbox-await "$CLADE_AGENT_ID"
+clade-inbox-read "$CLADE_AGENT_ID"
 ```
 
 ## Anti-slop writing style (for human-facing drafts)
@@ -202,9 +227,11 @@ For OpenCode-specific launch substrates (headless push-back, zellij pane
 dispatch, and metastack), use the canonical vault note:
 `~/vault/02-areas/agents/dispatch-strategy.md` §"Dispatch Substrate".
 
-MetaStack structured send is available as a declarative user package. Use the
-HM-managed routing file instead of ad hoc `/tmp` route YAML. The default
-routing path is `~/.config/metastack/routing.yaml`, so this is normally enough:
+CLADE inbox is the default wake path for long-lived agent coordination.
+MetaStack structured send remains available as a declarative user package for
+explicit manual one-shot routes, debugging, and temporary escape. Use the
+HM-managed routing file instead of ad hoc `/tmp` route YAML. The default routing
+path is `~/.config/metastack/routing.yaml`, so this is normally enough:
 
 ```bash
 metastack send <target> "<message>"
@@ -215,12 +242,14 @@ Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
 `sutro-cx`, `hinton-problems-cx`, and `sutro-problems-cx`.
 Role aliases include `main` -> `andy-cx`.
 
-For parent/upstream communication, prefer `metastack send <parent-target>
-"<message>"` when the HM-managed routing config has that target. On this host,
-the parent OpenCode target is `andy-oc`, so upstream reports should use:
+For parent/upstream communication, prefer replying through CLADE inbox when the
+work arrived through CLADE inbox. Use `metastack send <parent-target>
+"<message>"` only when Andy explicitly asks for a manual route or the inbox path
+is unavailable. On this host, the parent target is usually `main`/`andy-cx`, so
+the fallback is:
 
 ```bash
-metastack send andy-oc "<message>"
+metastack send main "<message>"
 ```
 
 Use raw backend APIs (OpenCode `prompt_async`, Codex app-server JSON-RPC, etc.)

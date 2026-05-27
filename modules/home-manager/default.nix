@@ -250,6 +250,76 @@
           fd
           tree
           yq
+          (pkgs.writeShellScriptBin "clade-agent-id" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            kind="''${1:-}"
+            if [ -z "$kind" ]; then
+              echo "usage: clade-agent-id <harness>" >&2
+              exit 64
+            fi
+
+            base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
+            printf '%s-%s\n' "$base" "$kind"
+          '')
+          (pkgs.writeShellScriptBin "clade-agent-env" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            kind="''${1:-}"
+            if [ -z "$kind" ]; then
+              echo "usage: clade-agent-env <harness> <command> [args...]" >&2
+              exit 64
+            fi
+            shift
+            if [ "$#" -eq 0 ]; then
+              echo "usage: clade-agent-env <harness> <command> [args...]" >&2
+              exit 64
+            fi
+
+            if [ -z "''${CLADE_AGENT_ID:-}" ]; then
+              base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
+              export CLADE_AGENT_ID="$base-$kind"
+            fi
+            export CLADE_INBOX="/home/andy/clade/skills/clade-inbox/scripts/clade-inbox"
+
+            exec "$@"
+          '')
+          (pkgs.writeShellScriptBin "clade-inbox" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox "$@"
+          '')
+          (pkgs.writeShellScriptBin "clade-inbox-await" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            agent_id="''${1:-''${CLADE_AGENT_ID:-}}"
+            if [ -z "$agent_id" ]; then
+              echo "usage: clade-inbox-await [agent-id]" >&2
+              echo "or set CLADE_AGENT_ID" >&2
+              exit 64
+            fi
+
+            exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox \
+              --actor "$agent_id" inbox await --agent "$agent_id" --json
+          '')
+          (pkgs.writeShellScriptBin "clade-inbox-read" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            agent_id="''${1:-''${CLADE_AGENT_ID:-}}"
+            if [ -z "$agent_id" ]; then
+              echo "usage: clade-inbox-read [agent-id]" >&2
+              echo "or set CLADE_AGENT_ID" >&2
+              exit 64
+            fi
+
+            exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox \
+              --actor "$agent_id" inbox read --agent "$agent_id" --json
+          '')
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
@@ -715,12 +785,12 @@
               '';
             in
             {
-              co = agentLayout "claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions";
-              cg = agentLayout "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions";
-              oc = agentLayout "opencode-attach-current";
-              qc = agentLayout "qwencode -c";
-              ag = agentLayout "env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";
-              cx = agentLayout "codex-continue-current";
+              co = agentLayout "clade-agent-env co claude-opus --continue --dangerously-skip-permissions; or clade-agent-env co claude-opus --dangerously-skip-permissions";
+              cg = agentLayout "clade-agent-env cg claude-glm --continue --dangerously-skip-permissions; or clade-agent-env cg claude-glm --dangerously-skip-permissions";
+              oc = agentLayout "clade-agent-env oc opencode-attach-current";
+              qc = agentLayout "clade-agent-env qc qwencode -c";
+              ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";
+              cx = agentLayout "clade-agent-env cx codex-continue-current";
             };
         };
 

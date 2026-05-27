@@ -43,6 +43,15 @@ NEVER run imperative installers:
 - `npm install -g`, `pip install`, `apt install`, `curl | bash`
 - If a tool is missing, add to flake.nix or use `nix shell nixpkgs#tool --`
 
+## New Code Projects
+When starting a new code project or prototype, create a Nix flake with a
+`devShell` from the start. Do not rely on ad hoc `nix shell` commands as the
+project's only setup record.
+
+For shared, public, or non-personal projects, still include the flake, but also
+provide conventional setup docs for non-Nix users: README instructions,
+toolchain versions, and normal language lock/config files where appropriate.
+
 ## Home Manager Best Practices
 - **Prefer `programs.*` modules** over raw `home.packages` when a HM module exists (e.g. `programs.opencode`, `programs.tmux`, `programs.fish`)
 - **Wrap binaries** with `writeShellScriptBin` when you need runtime env var injection (e.g. secrets from `/run/secrets/`)

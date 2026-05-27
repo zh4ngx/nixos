@@ -120,6 +120,29 @@ Examples:
 - Use Huddle MCP/channel tools for Claude channel messaging instead of
   keystroke injection when the session is channel-enabled.
 
+## Universal Agent Skills
+
+Agent skills are exposed declaratively from their owning project. Do not copy
+skills into per-tool config imperatively; ask `nixos-cx` to add a Home
+Manager symlink from the canonical source.
+
+Current shared skill:
+
+- `clade-inbox`: canonical source `/home/andy/clade/skills/clade-inbox`.
+  Use `$clade-inbox` or `/clade-inbox` where the harness supports native skill
+  invocation. When no native skill loader is available, use the wrapper
+  directly: `/home/andy/clade/skills/clade-inbox/scripts/clade-inbox`.
+
+Native paths currently managed by Home Manager:
+
+- Codex: `~/.config/codex/skills/clade-inbox`
+- Claude Opus/GLM: `~/.claude-shared/skills/clade-inbox`, reached through
+  each launcher-specific `skills` directory
+- OpenCode: `~/.config/opencode/skills/clade-inbox`
+- Qwen Code: `~/.qwen/skills/clade-inbox`
+- Gemini CLI: `~/.gemini/skills/clade-inbox`
+- Antigravity CLI: `~/.gemini/antigravity-cli/skills/clade-inbox`
+
 ## Anti-slop writing style (for human-facing drafts)
 
 When drafting text Andy may paste or send to a human reader, remove obvious AI writing tells. This applies to support chats, emails, PR descriptions, issue comments, public posts, dispute notes, and external-facing docs. It does not apply to internal CLI conversation, scratch planning, quoted source text, generated code, or technical formats where bullets, headings, or tables are genuinely the clearest form.

@@ -171,7 +171,7 @@ metastack send <target> "<message>"
 ```
 
 Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
-`metastack-cx`, `vault-cx`, `clade-cx`, `office-cx`,
+`metastack-cx`, `home-manager-cx`, `vault-cx`, `clade-cx`, `office-cx`,
 `sutro-cx`, `hinton-problems-cx`, and `sutro-problems-cx`.
 Role aliases include `main` -> `andy-cx` and `observer` -> `andy-coh`.
 

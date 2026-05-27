@@ -90,6 +90,11 @@
                 cwd = "/home/andy/dev/metastack";
               };
 
+              "home-manager-cx" = {
+                backend = "codex";
+                cwd = "/home/andy/dev/home-manager";
+              };
+
               "vault-cx" = {
                 backend = "codex";
                 cwd = "/home/andy/vault";

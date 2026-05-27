@@ -19,7 +19,7 @@ NixOS does NOT ship with standard FHS command sets. Many commands that exist on 
 
 1. **Verify first**: Before running any command (non-obvious ones), check with `command -v <cmd>` or `type <cmd>`. If it returns nothing, the command is not installed.
 2. **Use nix run**: For packages not in base PATH, use `nix run nixpkgs#<package> -- <args>`
-3. **Known to be in PATH**: `git`, `nix`, `sudo`, `command`, `ls`, `cp`, `mv`, `rm`, `cat`, `mkdir`, `chmod`, `curl`, `wget`, `ssh`, `echo`, `date`, `systemctl`, `fish`, `bash`, `sops`, `ssh-to-age`, `rg` (ripgrep), `htop`, `jq`, `metastack`
+3. **Known to be in PATH**: `git`, `nix`, `sudo`, `command`, `ls`, `cp`, `mv`, `rm`, `cat`, `mkdir`, `chmod`, `curl`, `wget`, `ssh`, `echo`, `date`, `systemctl`, `fish`, `bash`, `sops`, `ssh-to-age`, `rg` (ripgrep), `htop`, `jq`
 4. **Capability discovery stack** (use in order):
    - `command -v <cmd>` — runtime PATH check (always first)
    - Read `flake.nix` / `configuration.nix` — declarative intent
@@ -106,7 +106,7 @@ they own instead of adding unrelated roots to scope.
 ## Tooling Discipline
 
 Prefer canonical paths over ad hoc invocations. When the team owns an
-abstraction (`clade-inbox`, `vault-cx` for vault writes, `metastack send`),
+abstraction (`clade-inbox`, `vault-cx` for vault writes),
 default to that path. Reach for the lower-level primitive only when the
 abstraction is broken, missing a feature, or you are explicitly debugging the
 abstraction itself; document the exception when you do.
@@ -114,10 +114,11 @@ abstraction itself; document the exception when you do.
 Examples:
 - Use `clade-inbox` for agent wakeup and inbox coordination instead of
   MetaStack, raw backend APIs, or zellij keystrokes.
-- Use `metastack send <target> "<message>"` only for explicit manual one-shot
-  routes, debugging, or temporary escape when CLADE inbox is unavailable.
 - Dispatch vault writes to `vault-cx` instead of editing `~/vault` directly
-  from the NixOS or MetaStack project agent.
+  from the NixOS or other project agent.
+- Treat MetaStack as a legacy/debug transport. Do not use it for normal
+  upstream, peer, or wakeup communication unless Andy explicitly asks for that
+  fallback or you are debugging MetaStack itself.
 
 ## Universal Agent Skills
 
@@ -170,8 +171,11 @@ Keep the await model-visible and tracked. Do not create hidden detached shell
 loops, systemd sidecars, or launcher-side readers that mark messages read before
 the agent has processed them.
 
-Claude/Huddle is retired. For Claude coordination that used to rely on `coh`
-or Huddle channels, start plain `co` and use `clade-inbox` instead:
+Use only CLADE inbox `await`, `read`, and `send` for this coordination path.
+Do not use CLADE `claim`, `ack`, `answer`, worker, or daemon semantics.
+
+Claude/Huddle is retired. Do not use `coh` or Huddle channels. For Claude
+coordination, start plain `co` and use `clade-inbox`:
 
 ```bash
 clade-inbox-await "$CLADE_AGENT_ID"
@@ -225,64 +229,24 @@ cd ~/<repo> && stdbuf -oL -eL claude-opus -p "..." \
 For other agents, use their headless / non-interactive mode (consult agent docs
 for exact flags). The principle is constant.
 
-For OpenCode-specific launch substrates (headless push-back, zellij pane
-dispatch, and metastack), use the canonical vault note:
-`~/vault/02-areas/agents/dispatch-strategy.md` §"Dispatch Substrate".
+CLADE inbox is the default wake path for long-lived agent coordination. For
+parent/upstream communication, reply to the sender from the inbox message. For
+peer work, send an inbox message to the target agent id and include the task,
+subject, body, and artifacts needed to continue.
 
-CLADE inbox is the default wake path for long-lived agent coordination.
-MetaStack structured send remains available as a declarative user package for
-explicit manual one-shot routes, debugging, and temporary escape. Use the
-HM-managed routing file instead of ad hoc `/tmp` route YAML. The default routing
-path is `~/.config/metastack/routing.yaml`, so this is normally enough:
-
-```bash
-metastack send <target> "<message>"
-```
-
-Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
-`metastack-cx`, `home-manager-cx`, `vault-cx`, `clade-cx`, `office-cx`,
-`sutro-cx`, `hinton-problems-cx`, and `sutro-problems-cx`.
-Role aliases include `main` -> `andy-cx`.
-
-For parent/upstream communication, prefer replying through CLADE inbox when the
-work arrived through CLADE inbox. Use `metastack send <parent-target>
-"<message>"` only when Andy explicitly asks for a manual route or the inbox path
-is unavailable. On this host, the parent target is usually `main`/`andy-cx`, so
-the fallback is:
-
-```bash
-metastack send main "<message>"
-```
-
-Use raw backend APIs (OpenCode `prompt_async`, Codex app-server JSON-RPC, etc.)
-only as an explicitly documented fallback or debug path. Do not use zellij
-keystroke messaging for parent/upstream communication unless no structured
-route exists.
+Do not use MetaStack, OpenCode `prompt_async`, Codex app-server JSON-RPC, raw
+backend APIs, or zellij keystroke messaging as normal agent coordination paths.
+Those are debugging/fallback primitives only, and the exception should be
+explicit in the task or report.
 
 MetaStack flake governance: NixOS consumes semver tags when available, or an
 explicit reviewed rev. Do not track floating `main`; branch promotion and tag
 cutting happen in the MetaStack project before NixOS updates its input.
 
-OpenCode interactive project agents should be launched through `oc`, not raw
-`opencode`, when future programmatic injection matters. `oc` attaches the TUI
-to the user service `opencode-serve` on `127.0.0.1:4096`; external
-orchestrators can then use the OpenCode HTTP API for serve-backed sessions.
-Already-running raw OpenCode TUIs remain keystroke-only.
-
-Claude Code Huddle/channel routing was retired after `clade-inbox` became the
-preferred Claude coordination path. Plain `co` remains the Claude Opus
-launcher. Use `/clade-inbox` or the wrapper path from the Universal Agent
-Skills section for inbox-style coordination.
-
-Codex interactive project agents should be launched through `cx`, not raw
-`codex`, when future programmatic injection matters. `cx` starts the user
-service `codex-app-server` on `127.0.0.1:4107`, then attaches the TUI with
-`--remote ws://127.0.0.1:4107`. External orchestrators can use the Codex
-app-server JSON-RPC protocol (`thread/start`, `thread/resume`, `turn/start`,
-etc.) against that service. Raw Codex TUIs that were not launched with
-`--remote` remain keystroke-only. Exact Codex JSON-RPC request shapes are in
-`~/nixos/agents/codex-app-server-messaging.md`; use that guide instead of
-guessing from OpenCode payloads.
+Interactive project agents should use the standard launchers (`co`, `cg`, `oc`,
+`qc`, `ag`, `cx`) from the project root so project-scoped history, skill paths,
+and `CLADE_AGENT_ID` are set consistently. Do not launch raw CLIs for persistent
+agent sessions unless you are explicitly debugging the launcher itself.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
 `~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own

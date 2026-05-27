@@ -147,10 +147,12 @@ sops-rendered template.
 
 Prefer the canonical abstraction first:
 
-- MetaStack route: `programs.metastack.routingConfig`
+- CLADE inbox skill exposure: `modules/home-manager/default.nix`
 - Agent launcher or zellij layout: `modules/home-manager/default.nix`
 - Agent policy: `agents/AGENTS.md`
 - Cross-project writes: dispatch to the owning project agent
+- MetaStack route: `programs.metastack.routingConfig` only for legacy/debug
+  fallback, not normal coordination
 
 **New MCP server**
 

@@ -38,7 +38,7 @@ in
         auto = false;
         prune = false;
       };
-      model = "opencode-go/deepseek-v4-pro";
+      model = "opencode-go/qwen3.7-max";
       small_model = "opencode-go/deepseek-v4-flash";
 
       provider = {

@@ -148,7 +148,9 @@ start/restart:
 1. Determine your agent id. Prefer `$CLADE_AGENT_ID`, which NixOS launchers set
    from `cwd + harness` (`nixos-cx`, `andy-oc`, `clade-cx`, etc.). If it is
    missing, use the target id from the task or derive the same `basename($PWD)-<harness>`
-   shape manually.
+   shape manually. In Codex remote sessions, the `clade-inbox-await` and
+   `clade-inbox-read` helpers infer `basename($PWD)-cx` from the Codex tool
+   environment when `$CLADE_AGENT_ID` is absent.
 2. Start a tracked background await using the agent harness's normal background
    command facility:
 

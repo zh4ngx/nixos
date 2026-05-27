@@ -297,6 +297,10 @@
             set -euo pipefail
 
             agent_id="''${1:-''${CLADE_AGENT_ID:-}}"
+            if [ -z "$agent_id" ] && { [ -n "''${CODEX_THREAD_ID:-}" ] || [ -n "''${CODEX_HOME:-}" ]; }; then
+              base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
+              agent_id="$base-cx"
+            fi
             if [ -z "$agent_id" ]; then
               echo "usage: clade-inbox-await [agent-id]" >&2
               echo "or set CLADE_AGENT_ID" >&2
@@ -311,6 +315,10 @@
             set -euo pipefail
 
             agent_id="''${1:-''${CLADE_AGENT_ID:-}}"
+            if [ -z "$agent_id" ] && { [ -n "''${CODEX_THREAD_ID:-}" ] || [ -n "''${CODEX_HOME:-}" ]; }; then
+              base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
+              agent_id="$base-cx"
+            fi
             if [ -z "$agent_id" ]; then
               echo "usage: clade-inbox-read [agent-id]" >&2
               echo "or set CLADE_AGENT_ID" >&2

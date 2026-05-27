@@ -42,6 +42,9 @@ in
   home.file.".config/codex/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "/home/andy/nixos/agents/AGENTS.md";
 
+  home.file.".config/codex/skills/clade-inbox".source =
+    config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
+
   # Structured-injection substrate for Codex project agents. `cx` connects its
   # TUI to this loopback app-server, so orchestrators can use the Codex
   # app-server JSON-RPC protocol instead of zellij keystrokes for sessions

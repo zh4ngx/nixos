@@ -152,24 +152,34 @@ start/restart:
    shape manually. In Codex remote sessions, the `clade-inbox-await` and
    `clade-inbox-read` helpers infer `basename($PWD)-cx` from the Codex tool
    environment when `$CLADE_AGENT_ID` is absent.
-2. Start a tracked background await using the agent harness's normal background
-   command facility:
+2. Read the startup backlog first. This catches messages that arrived while the
+   agent was offline:
+
+   ```bash
+   clade-inbox-read "$CLADE_AGENT_ID"
+   ```
+
+3. Process every returned message and reply with CLADE inbox when a reply is
+   needed.
+4. After startup processing, start a tracked background await using the agent
+   harness's normal background command facility:
 
    ```bash
    clade-inbox-await "$CLADE_AGENT_ID"
    ```
 
-3. When await returns, read the pending batch, process every message, reply with
-   CLADE inbox when a reply is needed, then start a new tracked await:
+When await returns, read the pending batch, process every message, reply with
+CLADE inbox when a reply is needed, then start a new tracked await:
 
-   ```bash
-   clade-inbox-read "$CLADE_AGENT_ID"
-   clade-inbox --actor "$CLADE_AGENT_ID" inbox send --from "$CLADE_AGENT_ID" --to "$SENDER_AGENT_ID" --body "..."
-   ```
+```bash
+clade-inbox-read "$CLADE_AGENT_ID"
+clade-inbox --actor "$CLADE_AGENT_ID" inbox send --from "$CLADE_AGENT_ID" --to "$SENDER_AGENT_ID" --body "..."
+clade-inbox-await "$CLADE_AGENT_ID"
+```
 
-Keep the await model-visible and tracked. Do not create hidden detached shell
-loops, systemd sidecars, or launcher-side readers that mark messages read before
-the agent has processed them.
+Keep the await model-visible and tracked after startup processing. Do not create
+hidden detached shell loops, systemd sidecars, or launcher-side readers that mark
+messages read before the agent has processed them.
 
 Use only CLADE inbox `await`, `read`, and `send` for this coordination path.
 Do not use CLADE `claim`, `ack`, `answer`, worker, or daemon semantics.
@@ -178,8 +188,8 @@ Claude/Huddle is retired. Do not use `coh` or Huddle channels. For Claude
 coordination, start plain `co` and use `clade-inbox`:
 
 ```bash
-clade-inbox-await "$CLADE_AGENT_ID"
 clade-inbox-read "$CLADE_AGENT_ID"
+clade-inbox-await "$CLADE_AGENT_ID"
 ```
 
 ## Anti-slop writing style (for human-facing drafts)

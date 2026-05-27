@@ -49,7 +49,10 @@ in
   systemd.user.services.codex-app-server = {
     Unit = {
       Description = "Codex app-server for remote agent sessions";
-      After = [ "network.target" ];
+      After = [
+        "graphical-session.target"
+        "network.target"
+      ];
     };
 
     Service = {
@@ -59,6 +62,6 @@ in
       RestartSec = "5s";
     };
 
-    Install.WantedBy = [ "default.target" ];
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 }

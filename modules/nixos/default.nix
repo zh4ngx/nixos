@@ -282,7 +282,7 @@
   };
 
   system.autoUpgrade = {
-    enable = false;
+    enable = true;
     flake = "github:zh4ngx/nixos";
     dates = "daily";
     persistent = true;

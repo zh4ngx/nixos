@@ -52,17 +52,10 @@
                 approval_policy = "never";
                 sandbox_policy.type = "dangerFullAccess";
               };
-
-              claude_huddle = {
-                type = "claude";
-                channel = "huddle";
-                command = "huddle";
-              };
             };
 
             aliases = {
               main = "andy-cx";
-              observer = "andy-coh";
             };
 
             agents = {
@@ -70,11 +63,6 @@
                 backend = "opencode";
                 cwd = "/home/andy";
                 session_id = "ses_21f36d7d6ffeKfoebcrQovH0pZ";
-              };
-
-              "andy-coh" = {
-                backend = "claude_huddle";
-                member = "andy";
               };
 
               "andy-cx" = {
@@ -168,7 +156,6 @@
           inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-no-fhs
           (pkgs.callPackage ../../packages/agy-cli { })
           inputs.claude-code.packages.x86_64-linux.claude-code
-          (pkgs.callPackage ../../packages/huddle { })
           beeper
           tea # Codeberg CLI
           gnomeExtensions.appindicator
@@ -277,13 +264,6 @@
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
             exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
-          '')
-          (pkgs.writeShellScriptBin "claude-opus-huddle-current" ''
-            #!/usr/bin/env bash
-            set -euo pipefail
-
-            exec claude-opus --dangerously-load-development-channels server:huddle \
-              --dangerously-skip-permissions "$@"
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
@@ -460,8 +440,6 @@
             '';
             # co: Claude Code with Anthropic Opus (Pro plan)
             co = "__zj (basename $PWD | string replace -a . _)-co co";
-            # coh: Claude Code Opus with Huddle channel bridge enabled
-            coh = "__zj (basename $PWD | string replace -a . _)-coh coh";
             # cg: Claude Code with Z.AI GLM
             cg = "__zj (basename $PWD | string replace -a . _)-cg cg";
             # oc: start opencode attached to the persistent OpenCode server
@@ -513,12 +491,6 @@
 
         # Agent config files - ~/.claude-shared is the canonical shared home
         home.file = {
-          # Non-secret global MCP servers. Secret-bearing MCP config stays in
-          # /run/secrets/rendered/claude-mcp.json and is passed via wrappers.
-          ".mcp.json".text = builtins.toJSON {
-            mcpServers.huddle.command = "huddle-mcp";
-          };
-
           # Canonical shared resources in ~/.claude-shared
           ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
           ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
@@ -710,7 +682,7 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Fish shortcuts for co/coh/cg/oc/qc/ag/cx attach to
+        # tmux 2026-04-29). Fish shortcuts for co/cg/oc/qc/ag/cx attach to
         # or spawn a zellij session that loads the corresponding layout below.
         # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
@@ -744,7 +716,6 @@
             in
             {
               co = agentLayout "claude-opus --continue --dangerously-skip-permissions; or claude-opus --dangerously-skip-permissions";
-              coh = agentLayout "claude-opus-huddle-current --continue; or claude-opus-huddle-current";
               cg = agentLayout "claude-glm --continue --dangerously-skip-permissions; or claude-glm --dangerously-skip-permissions";
               oc = agentLayout "opencode-attach-current";
               qc = agentLayout "qwencode -c";

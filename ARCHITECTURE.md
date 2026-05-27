@@ -53,7 +53,7 @@ configuration.
 - Location: `packages/`
 - Owns local derivations that are not consumed directly from nixpkgs or flake
   inputs
-- Current local package: `packages/huddle`
+- No active local package derivations at the moment
 
 ## Rebuild Flow
 

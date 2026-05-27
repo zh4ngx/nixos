@@ -42,10 +42,6 @@ nixos/
 |           |-- amd-6900xt.nix
 |           |-- logitech.nix
 |           `-- razer.nix
-|-- packages/
-|   `-- huddle/
-|       |-- default.nix
-|       `-- package-lock.json
 `-- secrets/
     |-- secrets.yaml
     `-- tea-config.yml.tpl
@@ -73,7 +69,8 @@ Manager modules.
 **`packages/`**
 
 Local package derivations. Use this when a needed tool is not already consumed
-cleanly from nixpkgs or a flake input.
+cleanly from nixpkgs or a flake input. There are no active local package
+derivations at the moment.
 
 **`secrets/`**
 

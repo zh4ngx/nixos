@@ -82,7 +82,7 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `coh`, `cg`, `ag`, `oc`, `qc`, `cx`) run inside zellij
+All AI CLI launchers (`co`, `cg`, `ag`, `oc`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
@@ -91,7 +91,6 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 ### Fish Functions
 - `co` - Claude Opus, per-project (session: `{dir}-co`)
-- `coh` - Claude Opus with Huddle channel bridge, per-project (session: `{dir}-coh`)
 - `cg` - Claude GLM, per-project (session: `{dir}-cg`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
@@ -142,6 +141,15 @@ Native paths currently managed by Home Manager:
 - Qwen Code: `~/.qwen/skills/clade-inbox`
 - Gemini CLI: `~/.gemini/skills/clade-inbox`
 - Antigravity CLI: `~/.gemini/antigravity-cli/skills/clade-inbox`
+
+Claude/Huddle is retired. For Claude coordination that used to rely on `coh`
+or Huddle channels, start plain `co` and use `clade-inbox` instead:
+
+```bash
+CLADE=/home/andy/clade/skills/clade-inbox/scripts/clade-inbox
+"$CLADE" --actor "$AGENT_ID" inbox await --agent "$AGENT_ID" --json
+"$CLADE" --actor "$AGENT_ID" inbox read --agent "$AGENT_ID" --json
+```
 
 ## Anti-slop writing style (for human-facing drafts)
 
@@ -205,7 +213,7 @@ metastack send <target> "<message>"
 Current local targets include `andy-oc`, `andy-cx`, `nixos-cx`,
 `metastack-cx`, `home-manager-cx`, `vault-cx`, `clade-cx`, `office-cx`,
 `sutro-cx`, `hinton-problems-cx`, and `sutro-problems-cx`.
-Role aliases include `main` -> `andy-cx` and `observer` -> `andy-coh`.
+Role aliases include `main` -> `andy-cx`.
 
 For parent/upstream communication, prefer `metastack send <parent-target>
 "<message>"` when the HM-managed routing config has that target. On this host,
@@ -230,14 +238,10 @@ to the user service `opencode-serve` on `127.0.0.1:4096`; external
 orchestrators can then use the OpenCode HTTP API for serve-backed sessions.
 Already-running raw OpenCode TUIs remain keystroke-only.
 
-Claude Code channels are the right structured injection path in principle, but
-they are opt-in via `coh`, not the default `co` launcher. `coh` launches Claude
-with `--dangerously-load-development-channels server:huddle`, uses the
-HM-managed global `~/.mcp.json` Huddle server, and tries `--continue` before
-falling back to a fresh session. `DISABLE_TELEMETRY=1` prevents Claude Code
-feature-flag evaluation and caused `Channels are not currently available` on
-Opus; keep that variable out of the Opus settings when testing channels. Claude
-TUIs that were not launched with channel flags remain keystroke-only.
+Claude Code Huddle/channel routing was retired after `clade-inbox` became the
+preferred Claude coordination path. Plain `co` remains the Claude Opus
+launcher. Use `/clade-inbox` or the wrapper path from the Universal Agent
+Skills section for inbox-style coordination.
 
 Codex interactive project agents should be launched through `cx`, not raw
 `codex`, when future programmatic injection matters. `cx` starts the user

@@ -59,7 +59,7 @@
       content = ''
         {
           "env": {
-            "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+            "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1",
             "ANTHROPIC_BETA": "compact-2026-01-12"
@@ -72,7 +72,6 @@
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,
           "cleanupPeriodDays": 99999,
-          "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,
           "language": "en",
           "statusLine": {
@@ -107,7 +106,6 @@
             "ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES": "effort",
             "ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES": "effort",
             "ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES": "effort",
-            "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
             "DISABLE_TELEMETRY": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
             "DISABLE_ERROR_REPORTING": "1"
@@ -119,7 +117,6 @@
           },
           "effortLevel": "high",
           "cleanupPeriodDays": 99999,
-          "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,
           "attribution": {
             "commit": "Co-Authored-By: GLM 5.1 <noreply@z.ai>"

@@ -62,7 +62,7 @@ toolchain versions, and normal language lock/config files where appropriate.
   4. **`programs.fish.functions`** function setting `set -x VAR …` before launching — fish-only, per-invocation
   5. **`home.sessionVariables`** — **last resort**, exports to *every* user process. Only legitimate for truly user-global vars (`EDITOR`, `BROWSER`)
   
-  Don't reach for `home.sessionVariables` because it's easy — narrow scope means less surprise downstream. Concrete example: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` belongs in the sops template that renders `~/.claude-*/settings.json`'s `env` block (option 1), not in `home.sessionVariables` (option 5).
+  Don't reach for `home.sessionVariables` because it's easy — narrow scope means less surprise downstream. Concrete example: Claude privacy flags such as `DISABLE_TELEMETRY` belong in the sops template that renders `~/.claude-*/settings.json`'s `env` block (option 1), not in `home.sessionVariables` (option 5).
 - **Never manipulate files at runtime in wrappers** (`ln -sf`, `cp`, `cat >`) — use sops templates, `home.file`, or CLI flags instead
 - **Never use activation scripts to replace HM-managed symlinks with writable copies.** If a program needs to write to its config, preconfigure all required fields in the HM settings module so it never needs to write. If a setting truly can't be preconfigured declaratively, document that limitation rather than working around it with activation scripts.
 

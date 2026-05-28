@@ -177,6 +177,11 @@ clade-inbox --actor "$CLADE_AGENT_ID" inbox send --from "$CLADE_AGENT_ID" --to "
 clade-inbox-await "$CLADE_AGENT_ID"
 ```
 
+Treat `clade-inbox-await` as one-shot: when it returns, no live await remains.
+After read/process/reply, start a new tracked await before idling. Inbox
+closeout should include Work Completed, Artifacts/Commits when applicable, and
+Loop Closure with the active await handle.
+
 Keep the await model-visible and tracked after startup processing. Do not create
 hidden detached shell loops, systemd sidecars, or launcher-side readers that mark
 messages read before the agent has processed them.

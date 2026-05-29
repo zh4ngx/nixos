@@ -24,8 +24,8 @@
     "beeper-nixpkgs": {
       "flake": false,
       "locked": {
-        "lastModified": 1780041578,
-        "narHash": "sha256-GXQomMJAi1NUrYOdcGBlUvJ8rJT0m1XeA+NZ2SkVGkQ=",
+        "lastModified": 1780043231,
+        "narHash": "sha256-hG/lcfhFK3vhyyeZZio3tVR3yl1snee5ltHQNz/9vqk=",
         "path": "/home/andy/dev/nixpkgs",
         "type": "path"
       },

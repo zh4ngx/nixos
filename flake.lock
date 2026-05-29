@@ -21,6 +21,19 @@
         "type": "github"
       }
     },
+    "beeper-nixpkgs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780041578,
+        "narHash": "sha256-GXQomMJAi1NUrYOdcGBlUvJ8rJT0m1XeA+NZ2SkVGkQ=",
+        "path": "/home/andy/dev/nixpkgs",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/andy/dev/nixpkgs",
+        "type": "path"
+      }
+    },
     "claude-code": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -223,6 +236,7 @@
     "root": {
       "inputs": {
         "antigravity-nix": "antigravity-nix",
+        "beeper-nixpkgs": "beeper-nixpkgs",
         "claude-code": "claude-code",
         "home-manager": "home-manager",
         "metastack": "metastack",

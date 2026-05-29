@@ -24,14 +24,18 @@
     "beeper-nixpkgs": {
       "flake": false,
       "locked": {
-        "lastModified": 1780044664,
-        "narHash": "sha256-oRRJe/aFEllqawlDZuKtOjczi9UOdwwG5C5/ua01nkk=",
-        "path": "/home/andy/dev/nixpkgs",
-        "type": "path"
+        "lastModified": 1780044586,
+        "narHash": "sha256-nlavnPCH0a5abphx/5LkFkPHEjOJcRkR9OEm75Izruc=",
+        "owner": "zh4ngx",
+        "repo": "nixpkgs",
+        "rev": "1a9fcefa3df96ab15135ed50fd552982653cde8c",
+        "type": "github"
       },
       "original": {
-        "path": "/home/andy/dev/nixpkgs",
-        "type": "path"
+        "owner": "zh4ngx",
+        "repo": "nixpkgs",
+        "rev": "1a9fcefa3df96ab15135ed50fd552982653cde8c",
+        "type": "github"
       }
     },
     "claude-code": {

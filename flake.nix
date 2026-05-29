@@ -15,10 +15,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix";
-    # Temporary local dogfood override for pkgs.beeper. Remove after the
+    # Temporary dogfood override for pkgs.beeper. Remove after the
     # beeper-postextract-hardening nixpkgs PR lands upstream.
     beeper-nixpkgs = {
-      url = "path:/home/andy/dev/nixpkgs";
+      url = "github:zh4ngx/nixpkgs/1a9fcefa3df96ab15135ed50fd552982653cde8c";
       flake = false;
     };
     # MetaStack updates are governance-sensitive: consume semver tags when

@@ -77,7 +77,8 @@
           "language": "en",
           "statusLine": {
             "type": "command",
-            "command": "~/.claude-shared/scripts/statusline.sh"
+            "command": "~/.claude-shared/scripts/statusline.sh",
+            "refreshInterval": 30
           },
           "context_management": {
             "edits": [{
@@ -124,7 +125,8 @@
           },
           "statusLine": {
             "type": "command",
-            "command": "~/.claude-shared/scripts/statusline.sh"
+            "command": "~/.claude-shared/scripts/statusline.sh",
+            "refreshInterval": 30
           },
           "enabledPlugins": {
             "ralph-loop@claude-plugins-official": true

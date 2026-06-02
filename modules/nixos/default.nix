@@ -445,6 +445,10 @@
   nixpkgs.config = {
     android_sdk.accept_license = true;
     allowUnfree = true;
+    permittedInsecurePackages = [
+      # bitwarden-desktop 2026.5.0 uses electron_39 in current nixpkgs.
+      "electron-39.8.10"
+    ];
   };
 
   # Disable flaky tests for python packages where upstream test brittleness
@@ -462,10 +466,10 @@
       # removed after the PR lands.
       beeper =
         let
-          version = "4.2.876";
+          version = "4.2.892";
           src = final.fetchurl {
             url = "https://beeper-desktop.download.beeper.com/builds/Beeper-${version}-x86_64.AppImage";
-            hash = "sha256-8DD+OE+qbSFhuUyPwnajQ5QqDEI+N5rWaJ3GFWRT7ww=";
+            hash = "sha256-kTX0VrfJb7UnQ6JVfRIgjLlIsDgzDVgTnx7twlYMf9k=";
           };
           appimageTools = final.appimageTools // {
             extract = args: final.appimageTools.extract (args // { inherit version src; });

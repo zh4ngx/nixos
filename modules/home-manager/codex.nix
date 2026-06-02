@@ -36,6 +36,10 @@ in
       hide_agent_reasoning = false;
 
       projects."/home/andy".trust_level = "trusted";
+
+      features = {
+        image_generation = false;
+      };
     };
   };
 

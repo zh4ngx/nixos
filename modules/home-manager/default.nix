@@ -614,6 +614,10 @@
           # tea CLI config from sops-nix template
           ".config/tea/config.yml".source =
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/tea-config.yml";
+
+          # Modal CLI credentials from sops-nix template
+          ".modal.toml".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/modal.toml";
         };
 
         programs.mcfly = {

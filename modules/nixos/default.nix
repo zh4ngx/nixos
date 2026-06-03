@@ -49,6 +49,12 @@
       brave_api_key = {
         owner = "andy";
       };
+      modal_token_id = {
+        owner = "andy";
+      };
+      modal_token_secret = {
+        owner = "andy";
+      };
     };
 
     # Generate Claude Code settings.json for Opus instance (Anthropic direct, OAuth)
@@ -208,6 +214,19 @@
           key = config.sops.placeholder.openrouter_api_key;
         };
       };
+    };
+
+    # Modal CLI credentials. Modal reads ~/.modal.toml natively; Home Manager
+    # links that path to this rendered sops template.
+    templates."modal.toml" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        [default]
+        token_id = "${config.sops.placeholder.modal_token_id}"
+        token_secret = "${config.sops.placeholder.modal_token_secret}"
+      '';
     };
   };
 

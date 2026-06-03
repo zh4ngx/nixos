@@ -52,6 +52,30 @@ For shared, public, or non-personal projects, still include the flake, but also
 provide conventional setup docs for non-Nix users: README instructions,
 toolchain versions, and normal language lock/config files where appropriate.
 
+## Rust Project Flakes
+
+For Rust projects, do not add raw `pkgs.rustc`, `pkgs.cargo`, or
+`pkgs.rustfmt` to a devShell as the default pattern. That gives agents an
+unpinned distro compiler and often diverges from the project toolchain.
+
+Use a pinned Rust toolchain from `rust-toolchain.toml` or an explicit flake
+input:
+
+- Prefer `oxalica/rust-overlay` when you need the usual rustup-shaped
+  toolchain interface, e.g. `rust-bin.fromRustupToolchainFile
+  ./rust-toolchain.toml`.
+- Use `nix-community/fenix` when the project already uses Fenix or needs its
+  nightly/component surface.
+- Include components through the pinned toolchain (`rustc`, `cargo`,
+  `rustfmt`, `clippy`, `rust-src`, `rust-analyzer`) rather than mixing
+  unrelated nixpkgs Rust packages into the shell.
+- For Nix builds, use `crane`, `naersk`, or the project's established build
+  helper with the same pinned toolchain. Do not let devShell and package builds
+  silently use different Rust versions.
+
+Only use `pkgs.rustc`/`pkgs.cargo` for throwaway one-command experiments or
+when maintaining a package that intentionally tracks nixpkgs' Rust compiler.
+
 ## Home Manager Best Practices
 - **Prefer `programs.*` modules** over raw `home.packages` when a HM module exists (e.g. `programs.opencode`, `programs.tmux`, `programs.fish`)
 - **Wrap binaries** with `writeShellScriptBin` when you need runtime env var injection (e.g. secrets from `/run/secrets/`)

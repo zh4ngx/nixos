@@ -16,6 +16,12 @@
     users.andy =
       { config, lib, ... }:
       let
+        beeperReadonlyMcpPython = pkgs.python313.withPackages (
+          pythonPackages: with pythonPackages; [
+            fastmcp
+            httpx
+          ]
+        );
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
       in
       {
@@ -216,6 +222,19 @@
             exec ${pkgs.playwright-mcp}/bin/playwright-mcp \
               --cdp-endpoint "http://127.0.0.1:$port" \
               "$@"
+          '')
+          (pkgs.writeShellScriptBin "beeper-readonly-mcp" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            export BEEPER_DESKTOP_BASE_URL="''${BEEPER_DESKTOP_BASE_URL:-http://127.0.0.1:23373}"
+            export BEEPER_ACCESS_TOKEN_FILE="''${BEEPER_ACCESS_TOKEN_FILE:-/run/secrets/beeper_desktop_api_token}"
+            export BEEPER_READONLY=1
+            export FASTMCP_LOG_LEVEL=ERROR
+            export FASTMCP_SHOW_SERVER_BANNER=false
+            export FASTMCP_ENABLE_RICH_LOGGING=false
+
+            exec ${beeperReadonlyMcpPython}/bin/python ${../../files/beeper-readonly-mcp.py} "$@"
           '')
 
           # Legacy voice dictation fallback: capture mic via PipeWire,

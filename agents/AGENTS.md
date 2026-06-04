@@ -239,6 +239,14 @@ Do not book, buy, transfer, apply, change settings, submit forms, check out,
 send messages, or make account changes through browser MCP unless Andy
 explicitly confirms that exact action in the visible browser session.
 
+Claude browser sessions may also expose `beeper-readonly`, a local read-only
+MCP wrapper around Beeper Desktop API. Andy must start Beeper Desktop and
+approve/provide the Desktop API token. Use it only to search or fetch existing
+trip-relevant chats/messages. Do not send, draft, react, mark read/unread,
+archive, mute, delete, or change Beeper state. Do not dump raw message bodies,
+contacts, PII, screenshots, or logs into a repo; extract only the trip facts
+needed for the active task.
+
 ## Anti-slop writing style (for human-facing drafts)
 
 When drafting text Andy may paste or send to a human reader, remove obvious AI writing tells. This applies to support chats, emails, PR descriptions, issue comments, public posts, dispute notes, and external-facing docs. It does not apply to internal CLI conversation, scratch planning, quoted source text, generated code, or technical formats where bullets, headings, or tables are genuinely the clearest form.

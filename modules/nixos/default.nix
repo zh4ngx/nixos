@@ -194,6 +194,14 @@
             },
             "playwright": {
               "command": "/etc/profiles/per-user/andy/bin/agent-chrome-playwright-mcp"
+            },
+            "beeper-readonly": {
+              "command": "/etc/profiles/per-user/andy/bin/beeper-readonly-mcp",
+              "env": {
+                "BEEPER_DESKTOP_BASE_URL": "http://127.0.0.1:23373",
+                "BEEPER_ACCESS_TOKEN_FILE": "/run/secrets/beeper_desktop_api_token",
+                "BEEPER_READONLY": "1"
+              }
             }
           }
         }

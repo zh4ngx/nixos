@@ -135,14 +135,23 @@ default to that path. Reach for the lower-level primitive only when the
 abstraction is broken, missing a feature, or you are explicitly debugging the
 abstraction itself; document the exception when you do.
 
+Agent messaging is all-to-all. Any agent may message any other agent directly:
+Andy-facing agents, project specialists, observers, and peer specialists do not
+need to route through a parent, child, or main-loop agent. Project ownership
+still controls who edits which files; it does not restrict who can send a
+message or task.
+
 Examples:
-- Use `clade-inbox` for agent wakeup and inbox coordination instead of
-  MetaStack, raw backend APIs, or zellij keystrokes.
+- Use `clade-inbox-send <target-agent-id> "<message>"` for direct wakeup and
+  inbox coordination between any two agents.
+- Use `metastack send <target> "<message>"` for direct sends to any configured
+  MetaStack target when that target is the better live transport. The
+  `~/.config/metastack/routing.yaml` target map is flat; there is no hierarchy
+  gate.
 - Dispatch vault writes to `vault-cx` instead of editing `~/vault` directly
   from the NixOS or other project agent.
-- Treat MetaStack as a legacy/debug transport. Do not use it for normal
-  upstream, peer, or wakeup communication unless Andy explicitly asks for that
-  fallback or you are debugging MetaStack itself.
+- Use raw backend APIs or zellij keystrokes only when the canonical transport is
+  broken, missing a feature, or you are debugging the transport itself.
 
 ## Universal Agent Skills
 
@@ -197,7 +206,7 @@ CLADE inbox when a reply is needed, then start a new tracked await:
 
 ```bash
 clade-inbox-read "$CLADE_AGENT_ID"
-clade-inbox --actor "$CLADE_AGENT_ID" inbox send --from "$CLADE_AGENT_ID" --to "$SENDER_AGENT_ID" --body "..."
+clade-inbox-send "$SENDER_AGENT_ID" "..."
 clade-inbox-await "$CLADE_AGENT_ID"
 ```
 
@@ -294,15 +303,25 @@ cd ~/<repo> && stdbuf -oL -eL claude-opus -p "..." \
 For other agents, use their headless / non-interactive mode (consult agent docs
 for exact flags). The principle is constant.
 
-CLADE inbox is the default wake path for long-lived agent coordination. For
-parent/upstream communication, reply to the sender from the inbox message. For
-peer work, send an inbox message to the target agent id and include the task,
-subject, body, and artifacts needed to continue.
+CLADE inbox is the default wake path for long-lived agent coordination. Direct
+all-to-all messaging is permitted: reply to the sender from the inbox message,
+or send an inbox message to any target agent id and include the task, subject,
+body, and artifacts needed to continue. Do not require a parent/main-loop
+round trip unless Andy explicitly asks for that routing.
 
-Do not use MetaStack, OpenCode `prompt_async`, Codex app-server JSON-RPC, raw
-backend APIs, or zellij keystroke messaging as normal agent coordination paths.
-Those are debugging/fallback primitives only, and the exception should be
-explicit in the task or report.
+MetaStack is also a normal direct transport for targets in the flat
+`~/.config/metastack/routing.yaml` map:
+
+```bash
+metastack send <target-agent-id> "<message>"
+```
+
+Both CLADE inbox and MetaStack are all-to-all. Pick the transport that best
+matches the target's live surface and the task's durability needs. Do not use
+OpenCode `prompt_async`, Codex app-server JSON-RPC, raw backend APIs, zellij
+keystroke messaging, or hidden side channels as normal agent coordination
+paths; those are debugging/fallback primitives only, and the exception should
+be explicit in the task or report.
 
 MetaStack flake governance: NixOS consumes semver tags when available, or an
 explicit reviewed rev. Do not track floating `main`; branch promotion and tag

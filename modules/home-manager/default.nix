@@ -396,6 +396,39 @@
             exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox \
               --actor "$agent_id" inbox read --agent "$agent_id" --json
           '')
+          (pkgs.writeShellScriptBin "clade-inbox-send" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            if [ "$#" -lt 2 ]; then
+              echo "usage: clade-inbox-send <target-agent-id> <message> [extra clade inbox send args...]" >&2
+              echo "or set CLADE_AGENT_ID for the sender" >&2
+              exit 64
+            fi
+
+            target="$1"
+            shift
+            body="$1"
+            shift
+
+            agent_id="''${CLADE_AGENT_ID:-}"
+            if [ -z "$agent_id" ] && { [ -n "''${CODEX_THREAD_ID:-}" ] || [ -n "''${CODEX_HOME:-}" ]; }; then
+              base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
+              agent_id="$base-cx"
+            fi
+            if [ -z "$agent_id" ]; then
+              echo "set CLADE_AGENT_ID or run from a Codex project session where it can be inferred" >&2
+              exit 64
+            fi
+
+            exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox \
+              --actor "$agent_id" inbox send \
+              --from "$agent_id" \
+              --to "$target" \
+              --body "$body" \
+              --json \
+              "$@"
+          '')
           (pkgs.writeShellScriptBin "qwencode" ''
             #!/usr/bin/env bash
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)

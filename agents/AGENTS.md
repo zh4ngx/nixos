@@ -114,7 +114,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - **Destructive Warning**: Print "DESTRUCTIVE ACTION" before rm/mv/nix-collect-garbage.
 
 ### Fish Functions
-- `co` - Claude Opus, per-project (session: `{dir}-co`)
+- `co` - Claude Opus with supervised Agent Chrome / Playwright MCP, per-project (session: `{dir}-co`)
 - `cg` - Claude GLM, per-project (session: `{dir}-cg`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
@@ -220,6 +220,24 @@ coordination, start plain `co` and use `clade-inbox`:
 clade-inbox-read "$CLADE_AGENT_ID"
 clade-inbox-await "$CLADE_AGENT_ID"
 ```
+
+## Agent Chrome / Browser MCP
+
+Browser MCP is an explicitly supervised path, not a normal agent default.
+Start it only when Andy asks for browser-backed research:
+
+1. Run `agent-chrome` to open the dedicated agent Chrome profile. Andy handles
+   browser login and 2FA in that visible window.
+2. Start Claude with `co`. It attaches Playwright MCP to the running agent
+   Chrome profile and includes Claude's permission-skip flag by default. Normal
+   `cx`, `oc`, `ag`, and `qc` sessions do not get browser MCP.
+3. Use one browser-capable agent at a time. Close the agent Chrome window after
+   collection.
+
+Financial and travel accounts are read-only by operating policy in phase one.
+Do not book, buy, transfer, apply, change settings, submit forms, check out,
+send messages, or make account changes through browser MCP unless Andy
+explicitly confirms that exact action in the visible browser session.
 
 ## Anti-slop writing style (for human-facing drafts)
 

@@ -167,6 +167,56 @@
           mcp-nixos
           wl-clipboard
           ollama
+          (pkgs.writeShellScriptBin "agent-chrome" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            profile_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/agent-chrome/travel-research"
+            ${pkgs.coreutils}/bin/install -d -m 700 "$profile_dir"
+
+            echo "Launching agent Chrome profile at $profile_dir" >&2
+            echo "Remote debugging: 127.0.0.1, random port recorded in DevToolsActivePort" >&2
+
+            exec ${pkgs.google-chrome}/bin/google-chrome-stable \
+              --user-data-dir="$profile_dir" \
+              --remote-debugging-address=127.0.0.1 \
+              --remote-debugging-port=0 \
+              --no-first-run \
+              --no-default-browser-check \
+              --new-window \
+              "$@"
+          '')
+          (pkgs.writeShellScriptBin "agent-chrome-playwright-mcp" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            profile_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/agent-chrome/travel-research"
+            port_file="$profile_dir/DevToolsActivePort"
+
+            if [ ! -r "$port_file" ]; then
+              echo "agent-chrome is not running, or $port_file is not readable." >&2
+              echo "Start agent-chrome first, then start the Claude browser session." >&2
+              exit 1
+            fi
+
+            port="$(${pkgs.coreutils}/bin/head -n 1 "$port_file")"
+            case "$port" in
+              ""|*[!0-9]*)
+                echo "Invalid DevTools port in $port_file: $port" >&2
+                exit 1
+                ;;
+            esac
+
+            if ! ${pkgs.curl}/bin/curl --fail --silent --max-time 1 "http://127.0.0.1:$port/json/version" >/dev/null; then
+              echo "agent-chrome DevTools endpoint is not reachable on 127.0.0.1:$port." >&2
+              echo "Close stale agent Chrome windows and start agent-chrome again." >&2
+              exit 1
+            fi
+
+            exec ${pkgs.playwright-mcp}/bin/playwright-mcp \
+              --cdp-endpoint "http://127.0.0.1:$port" \
+              "$@"
+          '')
 
           # Legacy voice dictation fallback: capture mic via PipeWire,
           # transcribe via local Wyoming server, and copy transcript to the
@@ -340,7 +390,7 @@
           '')
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
-            exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
+            exec claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions "$@"
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
@@ -398,6 +448,19 @@
         home.preferXdgDirectories = true;
 
         xdg = {
+          desktopEntries.agent-chrome-travel = {
+            name = "Agent Chrome Travel";
+            genericName = "Supervised agent browser";
+            comment = "Dedicated Chrome profile for supervised agent browser research";
+            exec = "/etc/profiles/per-user/andy/bin/agent-chrome";
+            icon = "google-chrome";
+            terminal = false;
+            categories = [
+              "Network"
+              "WebBrowser"
+            ];
+            startupNotify = true;
+          };
           mimeApps = {
             enable = true;
             defaultApplications = {
@@ -515,7 +578,7 @@
               end
               zellij attach --create $name options --default-layout $layout
             '';
-            # co: Claude Code with Anthropic Opus (Pro plan)
+            # co: Claude Code with Anthropic Opus and supervised Agent Chrome / Playwright MCP
             co = "__zj (basename $PWD | string replace -a . _)-co co";
             # cg: Claude Code with Z.AI GLM
             cg = "__zj (basename $PWD | string replace -a . _)-cg cg";
@@ -796,7 +859,7 @@
               '';
             in
             {
-              co = agentLayout "clade-agent-env co claude-opus --continue --dangerously-skip-permissions; or clade-agent-env co claude-opus --dangerously-skip-permissions";
+              co = agentLayout "clade-agent-env co claude-opus --continue; or clade-agent-env co claude-opus";
               cg = agentLayout "clade-agent-env cg claude-glm --continue --dangerously-skip-permissions; or clade-agent-env cg claude-glm --dangerously-skip-permissions";
               oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";

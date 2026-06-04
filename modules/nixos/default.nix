@@ -141,7 +141,8 @@
       '';
     };
 
-    # Shared MCP config for both claude-opus and claude-glm.
+    # Base MCP config without browser tooling. Claude GLM uses this; Opus uses
+    # claude-mcp-browser.json through the normal co launcher.
     # Loaded via --mcp-config flag (claude does not read mcpServers from settings.json).
     templates."claude-mcp.json" = {
       owner = "andy";
@@ -162,6 +163,37 @@
             },
             "zellij": {
               "command": "/home/andy/dev/zellij-mcp/target/release/zellij-mcp"
+            }
+          }
+        }
+      '';
+    };
+
+    # Browser MCP config for explicitly supervised Claude sessions.
+    # agent-chrome must be started manually first; the MCP wrapper attaches to
+    # its localhost-only DevTools endpoint.
+    templates."claude-mcp-browser.json" = {
+      owner = "andy";
+      group = "users";
+      mode = "0400";
+      content = ''
+        {
+          "mcpServers": {
+            "brave-search": {
+              "command": "nix",
+              "args": ["shell", "nixpkgs#nodejs", "-c", "npx", "-y", "@modelcontextprotocol/server-brave-search"],
+              "env": {
+                "BRAVE_API_KEY": "${config.sops.placeholder.brave_api_key}"
+              }
+            },
+            "nixos": {
+              "command": "${pkgs.mcp-nixos}/bin/mcp-nixos"
+            },
+            "zellij": {
+              "command": "/home/andy/dev/zellij-mcp/target/release/zellij-mcp"
+            },
+            "playwright": {
+              "command": "/etc/profiles/per-user/andy/bin/agent-chrome-playwright-mcp"
             }
           }
         }

@@ -49,6 +49,9 @@
       brave_api_key = {
         owner = "andy";
       };
+      beeper_desktop_api_token = {
+        owner = "andy";
+      };
       modal_token_id = {
         owner = "andy";
       };

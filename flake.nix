@@ -10,10 +10,6 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    antigravity-nix = {
-      url = "github:jacopone/antigravity-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     claude-code.url = "github:sadjow/claude-code-nix";
     # Temporary dogfood override for pkgs.beeper. Remove after the
     # beeper-postextract-hardening nixpkgs PR lands upstream.

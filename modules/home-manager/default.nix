@@ -159,7 +159,6 @@
           # (pkgs.writeShellScriptBin "my-hello" ''
           #   echo "Hello, ${config.home.username}!"
           # '')
-          inputs.antigravity-nix.packages.x86_64-linux.google-antigravity-cli
           inputs.claude-code.packages.x86_64-linux.claude-code
           beeper
           tea # Codeberg CLI

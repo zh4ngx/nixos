@@ -1,37 +1,24 @@
-{ config, ... }:
 {
-  programs.gemini-cli = {
+  programs.antigravity-cli = {
     enable = true;
     enableMcpIntegration = true;
-    defaultModel = "gemini-3.1-pro-preview";
+    defaultModel = "Gemini 3.5 Flash (High)";
     settings = {
-      general = {
-        vimMode = true;
-        sessionRetention.enabled = false;
-        checkpointing.enabled = false;
+      model = "Gemini 3.5 Flash (High)";
+      statusLine = {
+        type = "command";
+        command = "\"\"";
+        enabled = false;
       };
-      model = {
-        name = "gemini-3.1-pro-preview";
-        compressionThreshold = 0.9;
-      };
-      ui = {
-        hideContextPercentage = false;
-        showMemoryUsage = true;
-        hideBanner = true;
-      };
-      privacy = {
-        usageStatisticsEnabled = false;
-      };
-      security = {
-        auth = {
-          selectedType = "oauth-personal";
-        };
-      };
+      toolPermission = "always-proceed";
+      trustedWorkspaces = [
+        "/home/andy"
+        "/home/andy/office"
+        "/home/andy/dev/nixpkgs"
+      ];
     };
   };
 
-  # Gemini model pinning
-  programs.fish.shellInit = ''
-    set -gx GEMINI_MODEL "gemini-3.1-pro-preview"
-  '';
+  home.file.".gemini/config/mcp_config.json".force = true;
+  home.file.".gemini/antigravity-cli/settings.json".force = true;
 }

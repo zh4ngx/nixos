@@ -95,7 +95,7 @@ objects. It is not OpenCode's `{parts:[...]}` payload, and it is not a string.
   "id": 3,
   "method": "turn/start",
   "params": {
-    "threadId": "019de261-020b-7011-9e58-ed9f1dbdd41e",
+    "threadId": "<current-thread-id>",
     "input": [
       {
         "type": "text",

@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "beeper-nixpkgs": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1780044586,
-        "narHash": "sha256-nlavnPCH0a5abphx/5LkFkPHEjOJcRkR9OEm75Izruc=",
-        "owner": "zh4ngx",
-        "repo": "nixpkgs",
-        "rev": "1a9fcefa3df96ab15135ed50fd552982653cde8c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "zh4ngx",
-        "repo": "nixpkgs",
-        "rev": "1a9fcefa3df96ab15135ed50fd552982653cde8c",
-        "type": "github"
-      }
-    },
     "claude-code": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -216,7 +199,6 @@
     },
     "root": {
       "inputs": {
-        "beeper-nixpkgs": "beeper-nixpkgs",
         "claude-code": "claude-code",
         "home-manager": "home-manager",
         "metastack": "metastack",

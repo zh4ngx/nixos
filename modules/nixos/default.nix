@@ -523,26 +523,6 @@
   #   in particular reliably hangs builds; rebuilds take 10+ min when uncached.
   nixpkgs.overlays = [
     (final: prev: {
-      # Temporary dogfood of nixpkgs beeper-postextract-hardening against the
-      # latest Beeper AppImage. This overrides only pkgs.beeper and should be
-      # removed after the PR lands.
-      beeper =
-        let
-          version = "4.2.892";
-          src = final.fetchurl {
-            url = "https://beeper-desktop.download.beeper.com/builds/Beeper-${version}-x86_64.AppImage";
-            hash = "sha256-kTX0VrfJb7UnQ6JVfRIgjLlIsDgzDVgTnx7twlYMf9k=";
-          };
-          appimageTools = final.appimageTools // {
-            extract = args: final.appimageTools.extract (args // { inherit version src; });
-            wrapAppImage = args: final.appimageTools.wrapAppImage (args // { inherit version; });
-          };
-        in
-        (final.callPackage "${inputs.beeper-nixpkgs}/pkgs/by-name/be/beeper/package.nix" {
-          inherit appimageTools;
-          fetchurl = _: src;
-        });
-
       python313 = prev.python313.override {
         packageOverrides = pyFinal: pyPrev: {
           aioboto3 = pyPrev.aioboto3.overridePythonAttrs (_: {

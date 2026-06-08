@@ -11,12 +11,6 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     claude-code.url = "github:sadjow/claude-code-nix";
-    # Temporary dogfood override for pkgs.beeper. Remove after the
-    # beeper-postextract-hardening nixpkgs PR lands upstream.
-    beeper-nixpkgs = {
-      url = "github:zh4ngx/nixpkgs/1a9fcefa3df96ab15135ed50fd552982653cde8c";
-      flake = false;
-    };
     # MetaStack updates are governance-sensitive: consume semver tags when
     # available, or explicit reviewed revs. Do not point this at floating main.
     metastack = {

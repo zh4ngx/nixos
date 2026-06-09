@@ -343,30 +343,6 @@
     flake = "/home/andy/nixos";
   };
 
-  system.autoUpgrade = {
-    enable = true;
-    flake = "github:zh4ngx/nixos";
-    dates = "daily";
-    persistent = true;
-    operation = "switch";
-    upgrade = false;
-  };
-
-  systemd.services.nixos-upgrade = {
-    # Give the network stack time to settle after boot, then retry transient fetch failures.
-    preStart = ''
-      ${pkgs.coreutils}/bin/sleep 120
-    '';
-    serviceConfig = {
-      Restart = "on-failure";
-      RestartSec = "2min";
-    };
-    unitConfig = {
-      StartLimitIntervalSec = 1800;
-      StartLimitBurst = 10;
-    };
-  };
-
   # Enable the COSMIC login manager
   # services.displayManager.cosmic-greeter.enable = true;
 

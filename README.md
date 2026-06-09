@@ -25,6 +25,12 @@ open https://github.com/settings/ssh/new # create a new key and paste here
 
 # Periodic & manual updates
 
-The github workflow `update-flake-lock.yml` handles updating the flake lock file. Update the cron schedule as needed. Updates are auto-merged and `system.autoUpgrade` is also enabled.
+The GitHub workflow `update-flake-lock.yml` handles updating the flake lock
+file. Update the cron schedule as needed. Lock-file updates may be auto-merged,
+but NixOS host upgrades are manual: `system.autoUpgrade` and
+`nixos-upgrade.timer` should stay disabled unless Andy explicitly changes that
+policy.
 
-After first time setup, you can manually update using the `nh os switch` command, either after updating the flake or if you change the configuration.
+After first time setup, manually activate changes with
+`sudo nixos-rebuild switch --flake .` from the repo root. Keep `nh clean` /
+garbage collection automation enabled; it is separate from host upgrades.

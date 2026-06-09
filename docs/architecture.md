@@ -36,7 +36,10 @@ This document describes the architecture and ongoing projects for the NixOS conf
 
 **Current setup:**
 - GitHub workflow (`update-flake-lock.yml`) runs daily, updates nixpkgs, auto-merges
-- `system.autoUpgrade` pulls from GitHub daily, rebuilds locally
+- NixOS host upgrades are manual. Do not re-enable `system.autoUpgrade` or
+  `nixos-upgrade.timer` unless Andy explicitly changes the policy.
+- `nh clean` / garbage collection remains automatic and is separate from host
+  upgrades.
 - Rollback is cheap (boot previous NixOS generation)
 
 **Future improvements:**

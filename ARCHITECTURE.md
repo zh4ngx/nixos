@@ -37,8 +37,8 @@ configuration.
 
 - Location: `modules/nixos/`
 - Owns system-wide services and policies: boot, networking, desktop stack,
-  sops-nix, sudo, nix settings, auto-upgrade, caches, hardware support, and
-  system packages
+  sops-nix, sudo, nix settings, caches, hardware support, manual upgrade
+  policy, and system packages
 - Hardware-specific shared modules live under `modules/nixos/hardware/`
 
 **Home Manager layer**
@@ -101,9 +101,11 @@ policy. This architecture document should not duplicate command policy in full.
 ## Failure Model
 
 Nix evaluation and build errors fail before activation. Runtime service failures
-are handled by systemd policies where configured. Auto-upgrade is enabled and
-uses the GitHub flake source, so rebuild commands should pull first when making
-manual changes.
+are handled by systemd policies where configured. NixOS host upgrades are
+manual: `system.autoUpgrade` and `nixos-upgrade.timer` should stay disabled
+unless Andy explicitly changes that policy. The GitHub flake-lock workflow may
+still update `flake.lock`, so rebuild commands should pull first before manual
+activation.
 
 The practical recovery path is:
 

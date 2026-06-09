@@ -57,8 +57,8 @@ modules, and any host-only hardware modules.
 **`modules/nixos/`**
 
 System-level configuration shared across hosts: Nix settings, sops-nix, desktop
-services, networking, sudo, auto-upgrade, caches, system packages, and shared
-hardware modules.
+services, networking, sudo, manual upgrade policy, caches, system packages, and
+shared hardware modules.
 
 **`modules/home-manager/`**
 

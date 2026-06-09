@@ -396,7 +396,9 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 
 **Why:** Passwordless sudo is configured for `nixos-rebuild`, not `nh`. Using the former allows automated rebuilds without prompting for password.
 
-**Always `git pull` before rebuilding.** Auto-upgrade may have pushed newer flake.lock or config changes to origin.
+**Always `git pull` before rebuilding.** The flake-lock workflow may have pushed newer flake.lock or config changes to origin.
+
+**NixOS upgrades are manual.** Do not re-enable `system.autoUpgrade` or `nixos-upgrade.timer` unless Andy explicitly changes that policy. Keep `nh clean` / garbage collection automation enabled; it is separate from host upgrades.
 
 **Don't specify `.#<hostname>` unless cross-host deploying.** Plain `.` auto-matches by `hostname -s` and fails safely on mismatch. Manually typing the hostname risks silently activating the wrong machine's config (recoverable via rollback to previous generation, but disruptive).
 

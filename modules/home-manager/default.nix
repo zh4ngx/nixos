@@ -23,6 +23,7 @@
           ]
         );
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
+        cladeLensSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-lens";
       in
       {
         imports = [
@@ -685,6 +686,7 @@
           ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
           ".claude-shared/scripts/statusline.sh".source = ./../../files/statusline.sh;
           ".claude-shared/skills/clade-inbox".source = cladeInboxSkill;
+          ".claude-shared/skills/clade-lens".source = cladeLensSkill;
 
           # Claude Code GLM - symlinks to shared resources from ~/.claude-shared
           ".claude-glm/settings.json".source =
@@ -717,11 +719,16 @@
           # Other agent config files
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".gemini/skills/clade-inbox".source = cladeInboxSkill;
+          ".gemini/skills/clade-lens".source = cladeLensSkill;
           ".gemini/antigravity-cli/skills/clade-inbox".source = cladeInboxSkill;
+          ".gemini/antigravity-cli/skills/clade-lens".source = cladeLensSkill;
           ".config/opencode/AGENTS.md".source = ./../../agents/AGENTS.md;
           ".config/opencode/skills/clade-inbox".source = cladeInboxSkill;
+          ".config/opencode/skills/clade-lens".source = cladeLensSkill;
           ".config/codex/skills/clade-inbox".source = cladeInboxSkill;
+          ".config/codex/skills/clade-lens".source = cladeLensSkill;
           ".qwen/skills/clade-inbox".source = cladeInboxSkill;
+          ".qwen/skills/clade-lens".source = cladeLensSkill;
 
           # tea CLI config from sops-nix template
           ".config/tea/config.yml".source =

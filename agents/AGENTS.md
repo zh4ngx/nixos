@@ -178,7 +178,13 @@ Current shared skills:
   fallback only; normal messages to Codex agents go through MetaStack.
 - `clade-lens`: canonical source `/home/andy/clade/skills/clade-lens`.
   Use it for diagnostic tool outputs that should retain a raw handle plus a
-  compact digest.
+  compact digest. On Andy's NixOS host, prefer the Home Manager `clade-lens`
+  wrapper in `PATH` over the repo-local script. It uses the declarative store
+  `lens` binary and routes through the user `clade-lensd` daemon at
+  `$XDG_RUNTIME_DIR/clade-lensd.sock` when present. The daemon defaults to the
+  teacher distiller (`opencode-go/deepseek-v4-flash`) for scoped diagnostic
+  dogfood. Use `clade-lens --distiller local ...` for sensitive/no-network
+  runs; owned-v2 remains explicit opt-in only.
 
 Native paths currently managed by Home Manager:
 

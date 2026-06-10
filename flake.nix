@@ -11,6 +11,10 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     claude-code.url = "github:sadjow/claude-code-nix";
+    clade-wasm-kernel = {
+      url = "git+file:///home/andy/clade?ref=refs/tags/lens-dogfood-v0.1.0&dir=prototypes/clade-wasm-kernel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # MetaStack updates are governance-sensitive: consume semver tags when
     # available, or explicit reviewed revs. Do not point this at floating main.
     metastack = {

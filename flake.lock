@@ -1,5 +1,29 @@
 {
   "nodes": {
+    "clade-wasm-kernel": {
+      "inputs": {
+        "fenix": "fenix",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "dir": "prototypes/clade-wasm-kernel",
+        "lastModified": 1781055749,
+        "narHash": "sha256-NAHeZad0kGz5w/HCxRYEpfhUkQa9xNxZ6ewJIYrtq9g=",
+        "ref": "refs/tags/lens-dogfood-v0.1.0",
+        "rev": "f5f486d618c3d49db2a6bd1e0a03164bebf347d0",
+        "revCount": 322,
+        "type": "git",
+        "url": "file:///home/andy/clade"
+      },
+      "original": {
+        "dir": "prototypes/clade-wasm-kernel",
+        "ref": "refs/tags/lens-dogfood-v0.1.0",
+        "type": "git",
+        "url": "file:///home/andy/clade"
+      }
+    },
     "claude-code": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -16,6 +40,28 @@
       "original": {
         "owner": "sadjow",
         "repo": "claude-code-nix",
+        "type": "github"
+      }
+    },
+    "fenix": {
+      "inputs": {
+        "nixpkgs": [
+          "clade-wasm-kernel",
+          "nixpkgs"
+        ],
+        "rust-analyzer-src": "rust-analyzer-src"
+      },
+      "locked": {
+        "lastModified": 1780218205,
+        "narHash": "sha256-c4MSlBQw5MIDRkad9UNUUnBaOHAHnhuCXrDt90FDVrg=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "96e0fc9f1a9b37f6477fa11c3fd48575354773ed",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "fenix",
         "type": "github"
       }
     },
@@ -199,6 +245,7 @@
     },
     "root": {
       "inputs": {
+        "clade-wasm-kernel": "clade-wasm-kernel",
         "claude-code": "claude-code",
         "home-manager": "home-manager",
         "metastack": "metastack",
@@ -206,6 +253,23 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",
         "sops-nix": "sops-nix"
+      }
+    },
+    "rust-analyzer-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780179631,
+        "narHash": "sha256-61A3gj4V1DyPP6lVHTdui4+dvG66pkMZSMd1Kke3Rz8=",
+        "owner": "rust-lang",
+        "repo": "rust-analyzer",
+        "rev": "cce33f2f1565958787bb763ae751a6a5f56b95e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rust-lang",
+        "ref": "nightly",
+        "repo": "rust-analyzer",
+        "type": "github"
       }
     },
     "rust-overlay": {

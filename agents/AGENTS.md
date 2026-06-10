@@ -141,21 +141,21 @@ need to route through a parent, child, or main-loop agent. Project ownership
 still controls who edits which files; it does not restrict who can send a
 message or task.
 
-Choose the transport by target harness:
+Use CLADE inbox as the default durable agent-to-agent transport:
 
-- For Codex targets (`*-cx`, or any target whose MetaStack backend is `codex`),
-  use `metastack send <target-agent-id> "<message>"`. Codex agents are routed
-  through the Codex app-server path; CLADE inbox is not their normal live
-  communication path.
-- For non-Codex targets, use CLADE inbox:
-  `clade-inbox-send <target-agent-id> "<message>"`.
+```bash
+clade-inbox-send <target-agent-id> "<message>"
+```
+
+Use MetaStack, raw Codex app-server APIs, or zellij keystrokes only when CLADE
+inbox is unavailable, missing a needed live-injection feature, or you are
+explicitly debugging that lower-level transport. Report the exception when you
+use it.
 
 Examples:
-- Use `metastack send clade-cx "<message>"` for direct sends to Codex agents.
-  The `~/.config/metastack/routing.yaml` target map is flat; there is no
-  hierarchy gate.
-- Use `clade-inbox-send andy-ag "<message>"` for direct wakeup and inbox
-  coordination with non-Codex agents.
+- Use `clade-inbox-send andy-ag "<message>"` or
+  `clade-inbox-send clade-cx "<message>"` for direct wakeup and inbox
+  coordination.
 - Dispatch vault writes to `vault-cx` instead of editing `~/vault` directly
   from the NixOS or other project agent.
 - Use raw backend APIs or zellij keystrokes only when the canonical transport is
@@ -171,11 +171,8 @@ Current shared skills:
 
 - `clade-inbox`: canonical source `/home/andy/clade/skills/clade-inbox`.
   Use `$clade-inbox` or `/clade-inbox` where the harness supports native skill
-  invocation for non-Codex coordination. When no native skill loader is
-  available, use the wrapper directly:
+  invocation. When no native skill loader is available, use the wrapper directly:
   `/home/andy/clade/skills/clade-inbox/scripts/clade-inbox`.
-  Codex agents have the skill installed for explicit inbox debugging and
-  fallback only; normal messages to Codex agents go through MetaStack.
 - `clade-lens`: canonical source `/home/andy/clade/skills/clade-lens`.
   Use it for diagnostic tool outputs that should retain a raw handle plus a
   compact digest. On Andy's NixOS host, prefer the Home Manager `clade-lens`
@@ -198,12 +195,8 @@ Native paths currently managed by Home Manager:
 
 The same harness skill directories also expose `clade-lens`.
 
-Long-lived non-Codex agents must treat CLADE inbox as their normal wake path.
-Codex agents should use MetaStack for normal live communication and should not
-rely on CLADE inbox unless Andy explicitly asks for inbox debugging or a
-fallback. Codex background tool sessions do not reliably inject a completed
-`clade-inbox-await` as a new model-visible turn, so the read/process/rearm loop
-is not dependable there. On start/restart, non-Codex agents should:
+Long-lived agents must treat CLADE inbox as their normal wake path. On
+start/restart:
 
 1. Determine your agent id. Prefer `$CLADE_AGENT_ID`, which NixOS launchers set
    from `cwd + harness` (`nixos-cx`, `andy-oc`, `clade-cx`, etc.). If it is
@@ -218,40 +211,41 @@ is not dependable there. On start/restart, non-Codex agents should:
 
 3. Process every returned message and reply with CLADE inbox when a reply is
    needed.
-4. After startup processing, start a tracked background await using the agent
-   harness's normal background command facility:
+4. After startup processing, start a tracked background `connect` using the
+   agent harness's normal background command facility:
 
    ```bash
-   clade-inbox-await "$CLADE_AGENT_ID"
+   clade-inbox-connect "$CLADE_AGENT_ID"
    ```
 
-When await returns, read the pending batch, process every message, reply with
-CLADE inbox when a reply is needed, then start a new tracked await:
+When `connect` returns, read the pending batch, process every message, reply
+with CLADE inbox when a reply is needed, then start a new tracked `connect`:
 
 ```bash
 clade-inbox-read "$CLADE_AGENT_ID"
 clade-inbox-send "$SENDER_AGENT_ID" "..."
-clade-inbox-await "$CLADE_AGENT_ID"
+clade-inbox-connect "$CLADE_AGENT_ID"
 ```
 
-Treat `clade-inbox-await` as one-shot: when it returns, no live await remains.
-After read/process/reply, start a new tracked await before idling. Inbox
-closeout should include Work Completed, Artifacts/Commits when applicable, and
-Loop Closure with the active await handle.
+Treat `clade-inbox-connect` as one-shot: when it returns, no live connection
+remains. After read/process/reply, start a new tracked `connect` before idling.
+Inbox closeout should include Work Completed, Artifacts/Commits when applicable,
+and Loop Closure with the active connect handle.
 
-Keep the await model-visible and tracked after startup processing. Do not create
-hidden detached shell loops, systemd sidecars, or launcher-side readers that mark
-messages read before the agent has processed them.
+Keep the connect model-visible and tracked after startup processing. Do not
+create hidden detached shell loops, systemd sidecars, or launcher-side readers
+that mark messages read before the agent has processed them.
 
-Use only CLADE inbox `await`, `read`, and `send` for this coordination path.
-Do not use CLADE `claim`, `ack`, `answer`, worker, or daemon semantics.
+Use only CLADE inbox `connect`, `read`, and `send` for this coordination path.
+`clade-inbox-await` is a compatibility fallback for older binaries only. Do not
+use CLADE `claim`, `ack`, `answer`, worker, or daemon semantics.
 
 Claude/Huddle is retired. Do not use `coh` or Huddle channels. For Claude
 coordination, start plain `co` and use `clade-inbox`:
 
 ```bash
 clade-inbox-read "$CLADE_AGENT_ID"
-clade-inbox-await "$CLADE_AGENT_ID"
+clade-inbox-connect "$CLADE_AGENT_ID"
 ```
 
 ## Agent Chrome / Browser MCP
@@ -327,17 +321,9 @@ cd ~/<repo> && stdbuf -oL -eL claude-opus -p "..." \
 For other agents, use their headless / non-interactive mode (consult agent docs
 for exact flags). The principle is constant.
 
-Direct all-to-all messaging is permitted. Do not require a parent/main-loop
-round trip unless Andy explicitly asks for that routing.
-
-Use MetaStack for Codex targets in the flat
-`~/.config/metastack/routing.yaml` map:
-
-```bash
-metastack send <target-agent-id> "<message>"
-```
-
-Use CLADE inbox for non-Codex targets:
+Direct all-to-all messaging is permitted. Use CLADE inbox unless the task
+explicitly says to debug or use a lower-level transport. Do not require a
+parent/main-loop round trip unless Andy explicitly asks for that routing.
 
 ```bash
 clade-inbox-send <target-agent-id> "<message>"
@@ -368,12 +354,12 @@ project-specific knowledge out of the parent session's global context.
 **Default: parent-agent's backgrounded-shell facility.** For Claude Code, that
 is `Bash(run_in_background: true)`. Use the harness equivalent only when it
 actually reports completion back into the agent's model-visible turn stream.
-Claude and Antigravity handle this well for CLADE inbox awaits. Codex remote
-`exec_command` sessions do not provide the same dependable notification/rearm
-loop, so use MetaStack for Codex agent communication instead of CLADE inbox
-awaits. Lifecycle is tied to the parent agent — acceptable in this user's setup
-because the parent always runs inside tmux/zellij, which preserves the parent
-across SSH disconnect, terminal close, machine sleep.
+Claude and Antigravity handle this well for CLADE inbox `connect` waits. If a
+harness cannot surface a completed `connect` as a model-visible event, prefer a
+fresh restart plus backlog read over a hidden detached reader. Lifecycle is tied
+to the parent agent — acceptable in this user's setup because the parent always
+runs inside tmux/zellij, which preserves the parent across SSH disconnect,
+terminal close, machine sleep.
 
 **Edge case: shell-detach `(cmd &)`.** Use only when the dispatch must outlive
 a deliberate parent-agent `/exit`, span machine reboot, or be true

@@ -402,6 +402,24 @@
 
             exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox "$@"
           '')
+          (pkgs.writeShellScriptBin "clade-inbox-connect" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            agent_id="''${1:-''${CLADE_AGENT_ID:-}}"
+            if [ -z "$agent_id" ] && { [ -n "''${CODEX_THREAD_ID:-}" ] || [ -n "''${CODEX_HOME:-}" ]; }; then
+              base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
+              agent_id="$base-cx"
+            fi
+            if [ -z "$agent_id" ]; then
+              echo "usage: clade-inbox-connect [agent-id]" >&2
+              echo "or set CLADE_AGENT_ID" >&2
+              exit 64
+            fi
+
+            exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox \
+              --actor "$agent_id" connect --agent "$agent_id" --json
+          '')
           (pkgs.writeShellScriptBin "clade-inbox-await" ''
             #!/usr/bin/env bash
             set -euo pipefail

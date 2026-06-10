@@ -35,6 +35,10 @@ in
       # No telemetry.
       hide_agent_reasoning = false;
 
+      notice = {
+        hide_rate_limit_model_nudge = true;
+      };
+
       projects."/home/andy".trust_level = "trusted";
 
       features = {

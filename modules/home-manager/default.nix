@@ -392,6 +392,7 @@
               base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
               export CLADE_AGENT_ID="$base-$kind"
             fi
+            export CLADE_HARNESS="$kind"
             export CLADE_INBOX="/home/andy/clade/skills/clade-inbox/scripts/clade-inbox"
 
             exec "$@"
@@ -406,8 +407,18 @@
             #!/usr/bin/env bash
             set -euo pipefail
 
-            agent_id="''${1:-''${CLADE_AGENT_ID:-}}"
-            if [ -z "$agent_id" ] && { [ -n "''${CODEX_THREAD_ID:-}" ] || [ -n "''${CODEX_HOME:-}" ]; }; then
+            agent_id="''${CLADE_AGENT_ID:-}"
+            if [ "$#" -gt 0 ] && [[ "$1" != --* ]]; then
+              agent_id="$1"
+              shift
+            fi
+
+            codex_session=0
+            if [ -n "''${CODEX_THREAD_ID:-}" ]; then
+              codex_session=1
+            fi
+
+            if [ -z "$agent_id" ] && [ "$codex_session" -eq 1 ]; then
               base="$(${pkgs.coreutils}/bin/basename "$PWD" | ${pkgs.coreutils}/bin/tr . _)"
               agent_id="$base-cx"
             fi
@@ -417,8 +428,33 @@
               exit 64
             fi
 
+            has_harness=0
+            has_cwd=0
+            has_thread_id=0
+            for arg in "$@"; do
+              case "$arg" in
+                --harness|--harness=*) has_harness=1 ;;
+                --cwd|--cwd=*) has_cwd=1 ;;
+                --thread-id|--thread-id=*) has_thread_id=1 ;;
+              esac
+            done
+
+            connect_args=(--actor "$agent_id" connect --agent "$agent_id")
+            if [ "$codex_session" -eq 1 ]; then
+              if [ "$has_harness" -eq 0 ]; then
+                connect_args+=(--harness codex)
+              fi
+              if [ "$has_cwd" -eq 0 ]; then
+                connect_args+=(--cwd "$PWD")
+              fi
+              if [ "$has_thread_id" -eq 0 ]; then
+                connect_args+=(--thread-id "$CODEX_THREAD_ID")
+              fi
+            fi
+            connect_args+=("$@")
+
             exec /home/andy/clade/skills/clade-inbox/scripts/clade-inbox \
-              --actor "$agent_id" connect --agent "$agent_id" --json
+              "''${connect_args[@]}" --json
           '')
           (pkgs.writeShellScriptBin "clade-inbox-await" ''
             #!/usr/bin/env bash

@@ -174,14 +174,18 @@ Current shared skills:
   invocation. When no native skill loader is available, use the wrapper directly:
   `/home/andy/clade/skills/clade-inbox/scripts/clade-inbox`.
 - `clade-lens`: canonical source `/home/andy/clade/skills/clade-lens`.
-  Use it for diagnostic tool outputs that should retain a raw handle plus a
-  compact digest. On Andy's NixOS host, prefer the Home Manager `clade-lens`
-  wrapper in `PATH` over the repo-local script. It uses the declarative store
-  `lens` binary and routes through the user `clade-lensd` daemon at
-  `$XDG_RUNTIME_DIR/clade-lensd.sock` when present. The daemon defaults to the
-  teacher distiller (`opencode-go/deepseek-v4-flash`) for scoped diagnostic
-  dogfood. Use `clade-lens --distiller local ...` for sensitive/no-network
-  runs; owned-v2 remains explicit opt-in only.
+  Use it for nontrivial Rust, Nix, build, test, check, evaluation, rebuild, or
+  long diagnostic command output where a compact digest plus retrievable raw
+  handle may matter later. On Andy's NixOS host, prefer the Home
+  Manager-provided `clade-lens` wrapper in `PATH`; it routes through the user
+  `clade-lensd` daemon when available and uses the teacher distiller for normal
+  diagnostic dogfood. Do not pass `--distiller local` for ordinary diagnostics
+  just to avoid teacher use. Avoid Lens for exact source reads, quick
+  `git status` / `rg` / `jq` inspections, interactive programs, binary output,
+  or secret/privacy-sensitive commands unless Andy explicitly asks for a
+  redacted safe run. For operational details such as compact default output,
+  raw-handle retrieval, passthrough mode, and alternate distillers, use the
+  `clade-lens` skill.
 
 Native paths currently managed by Home Manager:
 
@@ -211,8 +215,16 @@ start/restart:
 
 3. Process every returned message and reply with CLADE inbox when a reply is
    needed.
-4. After startup processing, start a tracked background `connect` using the
-   agent harness's normal background command facility:
+4. After startup processing, start a tracked background `connect`. For Codex
+   agents, run the wrapper from the active Codex session so it can pass that
+   session's live `CODEX_THREAD_ID`:
+
+   ```bash
+   clade-inbox-connect "$CLADE_AGENT_ID"
+   ```
+
+   For non-Codex agents, use the harness's normal visible background/tracked
+   command facility:
 
    ```bash
    clade-inbox-connect "$CLADE_AGENT_ID"
@@ -227,14 +239,33 @@ clade-inbox-send "$SENDER_AGENT_ID" "..."
 clade-inbox-connect "$CLADE_AGENT_ID"
 ```
 
-Treat `clade-inbox-connect` as one-shot: when it returns, no live connection
-remains. After read/process/reply, start a new tracked `connect` before idling.
+Treat non-Codex `clade-inbox-connect` as one-shot: when it returns, no live
+connection remains. After read/process/reply, start a new tracked `connect`
+before idling. Codex is different: when `CODEX_THREAD_ID` is present, the NixOS
+wrapper registers a persistent app-server wake lease using
+`--harness codex --cwd "$PWD" --thread-id "$CODEX_THREAD_ID"`. A new connect
+for the same agent id intentionally supersedes the old lease.
+
+Do not hardcode, save, or declaratively pin a Codex thread id. Use only the
+live `CODEX_THREAD_ID` from the currently running Codex session. Do not use
+`--harness codex` for Claude, Antigravity, OpenCode, or any other non-Codex
+agent unless it is actually a Codex app-server session with `CODEX_THREAD_ID`.
+
 Inbox closeout should include Work Completed, Artifacts/Commits when applicable,
 and Loop Closure with the active connect handle.
 
 Keep the connect model-visible and tracked after startup processing. Do not
 create hidden detached shell loops, systemd sidecars, or launcher-side readers
 that mark messages read before the agent has processed them.
+
+Do not count a transient shell-tool session as armed unless it can still be
+verified after the turn boundary. In particular, a Codex `exec_command` session
+id that disappears on the next user turn is not a valid long-lived connector.
+If the current harness cannot keep a visible tracked background command alive,
+and no supervised zellij/tmux pane is available, do not fake it with `cmd &` or
+a hidden loop. State that no connect is armed, include the failed handle or
+lease evidence, and let the next startup drain backlog with
+`clade-inbox-read "$CLADE_AGENT_ID"`.
 
 Use only CLADE inbox `connect`, `read`, and `send` for this coordination path.
 `clade-inbox-await` is a compatibility fallback for older binaries only. Do not

@@ -199,77 +199,29 @@ Native paths currently managed by Home Manager:
 
 The same harness skill directories also expose `clade-lens`.
 
-Long-lived agents must treat CLADE inbox as their normal wake path. On
-start/restart:
+Long-lived agents must treat CLADE inbox as their normal wake path. Use the
+`clade-inbox` skill as the authoritative workflow for startup backlog reads,
+message processing, replies, connect/lease handling, and loop closeout.
 
-1. Determine your agent id. Prefer `$CLADE_AGENT_ID`, which NixOS launchers set
-   from `cwd + harness` (`nixos-cx`, `andy-oc`, `clade-cx`, etc.). If it is
-   missing, use the target id from the task or derive the same `basename($PWD)-<harness>`
-   shape manually.
-2. Read the startup backlog first. This catches messages that arrived while the
-   agent was offline:
-
-   ```bash
-   clade-inbox-read "$CLADE_AGENT_ID"
-   ```
-
-3. Process every returned message and reply with CLADE inbox when a reply is
-   needed.
-4. After startup processing, start a tracked background `connect`. For Codex
-   agents, run the wrapper from the active Codex session so it can pass that
-   session's live `CODEX_THREAD_ID`:
-
-   ```bash
-   clade-inbox-connect "$CLADE_AGENT_ID"
-   ```
-
-   For non-Codex agents, use the harness's normal visible background/tracked
-   command facility:
-
-   ```bash
-   clade-inbox-connect "$CLADE_AGENT_ID"
-   ```
-
-When `connect` returns, read the pending batch, process every message, reply
-with CLADE inbox when a reply is needed, then start a new tracked `connect`:
-
-```bash
-clade-inbox-read "$CLADE_AGENT_ID"
-clade-inbox-send "$SENDER_AGENT_ID" "..."
-clade-inbox-connect "$CLADE_AGENT_ID"
-```
-
-Treat non-Codex `clade-inbox-connect` as one-shot: when it returns, no live
-connection remains. After read/process/reply, start a new tracked `connect`
-before idling. Codex is different: when `CODEX_THREAD_ID` is present, the NixOS
-wrapper registers a persistent app-server wake lease using
-`--harness codex --cwd "$PWD" --thread-id "$CODEX_THREAD_ID"`. A new connect
-for the same agent id intentionally supersedes the old lease.
+Keep the global rule thin: read pending messages before idle work, process every
+returned message visibly, reply with `clade-inbox-send` when needed, and use
+`clade-inbox-connect` according to the skill's lease model. The skill
+distinguishes non-Codex one-shot connects from Codex persistent app-server
+leases; do not rearm a Codex session merely because a message was read. Refresh
+a Codex connector only when the active lease is missing, stale, expired, or tied
+to the wrong live session.
 
 Do not hardcode, save, or declaratively pin a Codex thread id. Use only the
 live `CODEX_THREAD_ID` from the currently running Codex session. Do not use
 `--harness codex` for Claude, Antigravity, OpenCode, or any other non-Codex
 agent unless it is actually a Codex app-server session with `CODEX_THREAD_ID`.
 
-Inbox closeout should include Work Completed, Artifacts/Commits when applicable,
-and Loop Closure with the active connect handle.
-
-Keep the connect model-visible and tracked after startup processing. Do not
-create hidden detached shell loops, systemd sidecars, or launcher-side readers
-that mark messages read before the agent has processed them.
-
-Do not count a transient shell-tool session as armed unless it can still be
-verified after the turn boundary. In particular, a Codex `exec_command` session
-id that disappears on the next user turn is not a valid long-lived connector.
-If the current harness cannot keep a visible tracked background command alive,
-and no supervised zellij/tmux pane is available, do not fake it with `cmd &` or
-a hidden loop. State that no connect is armed, include the failed handle or
-lease evidence, and let the next startup drain backlog with
-`clade-inbox-read "$CLADE_AGENT_ID"`.
-
-Use only CLADE inbox `connect`, `read`, and `send` for this coordination path.
-`clade-inbox-await` is a compatibility fallback for older binaries only. Do not
-use CLADE `claim`, `ack`, `answer`, worker, or daemon semantics.
+Keep connects model-visible and tracked. Do not create hidden detached shell
+loops, systemd sidecars, or launcher-side readers that mark messages read before
+the agent has processed them. Use only CLADE inbox `connect`, `read`, and
+`send` for this coordination path. `clade-inbox-await` is a compatibility
+fallback for older binaries only. Do not use CLADE `claim`, `ack`, `answer`,
+worker, or daemon semantics.
 
 Claude/Huddle is retired. Do not use `coh` or Huddle channels. For Claude
 coordination, start plain `co` and use `clade-inbox`:

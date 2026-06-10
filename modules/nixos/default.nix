@@ -78,8 +78,10 @@
               "Bash(nix search:*)"
             ]
           },
+          "model": "fable",
           "effortLevel": "xhigh",
           "alwaysThinkingEnabled": true,
+          "switchModelsOnFlag": false,
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,

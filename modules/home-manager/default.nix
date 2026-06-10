@@ -484,7 +484,7 @@
           '')
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
-            exec claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions "$@"
+            exec claude --model fable --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions "$@"
           '')
           (pkgs.writeShellScriptBin "claude-glm" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"

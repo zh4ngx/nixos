@@ -4,6 +4,105 @@
   ...
 }:
 
+let
+  hwmonTemperatureLog = pkgs.writeShellApplication {
+    name = "hwmon-temperature-log";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.jq
+    ];
+    text = ''
+      set -euo pipefail
+
+      log_dir="''${HWMON_TEMPERATURE_LOG_DIR:-/var/log/hwmon-temperature}"
+      log_file="$log_dir/temperature.jsonl"
+      retention_samples="''${HWMON_TEMPERATURE_RETENTION_SAMPLES:-1440}"
+
+      json_string() {
+        jq -Rn --arg v "$1" '$v'
+      }
+
+      json_num_or_null() {
+        if [[ "$1" =~ ^-?[0-9]+$ ]]; then
+          printf '%s' "$1"
+        else
+          printf 'null'
+        fi
+      }
+
+      read_optional() {
+        local path="$1"
+        if [ -r "$path" ]; then
+          tr -d '\n' < "$path"
+        fi
+      }
+
+      mkdir -p "$log_dir"
+      tmp=$(mktemp)
+      prune_tmp=
+      trap 'rm -f "$tmp" "$prune_tmp"' EXIT
+
+      timestamp=$(date --iso-8601=seconds)
+      host=$(tr -d '\n' < /proc/sys/kernel/hostname)
+
+      {
+        printf '{"timestamp":%s,"host":%s,"readings":[' \
+          "$(json_string "$timestamp")" \
+          "$(json_string "$host")"
+
+        first=1
+        shopt -s nullglob
+        for hwmon in /sys/class/hwmon/hwmon*; do
+          name=$(read_optional "$hwmon/name")
+          chip=$(basename "$hwmon")
+
+          for input in "$hwmon"/temp*_input; do
+            value=$(read_optional "$input")
+            if ! [[ "$value" =~ ^-?[0-9]+$ ]]; then
+              continue
+            fi
+
+            base="''${input%_input}"
+            label=$(read_optional "''${base}_label")
+            max=$(read_optional "''${base}_max")
+            crit=$(read_optional "''${base}_crit")
+
+            if [ "$first" -eq 1 ]; then
+              first=0
+            else
+              printf ','
+            fi
+
+            printf '{"hwmon":%s,"name":%s,"sensor":%s,"label":%s,"millidegrees_c":%s,"max_millidegrees_c":%s,"crit_millidegrees_c":%s}' \
+              "$(json_string "$chip")" \
+              "$(json_string "$name")" \
+              "$(json_string "$(basename "$input")")" \
+              "$(json_string "$label")" \
+              "$(json_num_or_null "$value")" \
+              "$(json_num_or_null "$max")" \
+              "$(json_num_or_null "$crit")"
+          done
+        done
+
+        printf ']}\n'
+      } > "$tmp"
+
+      cat "$tmp" >> "$log_file"
+      if [[ "$retention_samples" =~ ^[0-9]+$ ]] && [ "$retention_samples" -gt 0 ]; then
+        line_count=$(wc -l < "$log_file")
+        if [ "$line_count" -gt "$retention_samples" ]; then
+          prune_tmp=$(mktemp)
+          tail -n "$retention_samples" "$log_file" > "$prune_tmp"
+          cat "$prune_tmp" > "$log_file"
+          rm -f "$prune_tmp"
+          prune_tmp=
+        fi
+      fi
+      cat "$tmp"
+    '';
+  };
+in
+
 {
   imports = [
     ./hardware-configuration.nix
@@ -45,4 +144,31 @@
     pkgs.keychron-udev-rules
   ];
   hardware.amdgpu.initrd.enable = true;
+
+  environment.systemPackages = [
+    pkgs.lm_sensors
+    hwmonTemperatureLog
+  ];
+
+  hardware.rasdaemon.enable = true;
+
+  systemd.services.hwmon-temperature-log = {
+    description = "Log hardware temperature sensor snapshot";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${hwmonTemperatureLog}/bin/hwmon-temperature-log";
+      LogsDirectory = "hwmon-temperature";
+      Environment = "HWMON_TEMPERATURE_RETENTION_SAMPLES=1440";
+    };
+  };
+
+  systemd.timers.hwmon-temperature-log = {
+    description = "Log hardware temperature sensors every 5 seconds";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "30s";
+      OnUnitActiveSec = "5s";
+      AccuracySec = "1s";
+    };
+  };
 }

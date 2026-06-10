@@ -24,12 +24,12 @@
         );
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
         cladeLensSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-lens";
-        cladeCapability = inputs.clade-wasm-kernel.packages.${pkgs.stdenv.hostPlatform.system}.clade-capability;
+        cladeCapability =
+          inputs.clade-wasm-kernel.packages.${pkgs.stdenv.hostPlatform.system}.clade-capability;
       in
       {
         imports = [
           inputs.nix-index-database.homeModules.nix-index
-          inputs.metastack.homeModules.default
           ./obsidian.nix
           ./opencode.nix
           ./gemini.nix
@@ -40,90 +40,6 @@
         home.stateVersion = "26.05"; # Please read the comment before changing.
 
         xdg.enable = true;
-
-        programs.metastack = {
-          enable = true;
-          routingConfig = {
-            version = 2;
-
-            backends = {
-              opencode = {
-                type = "opencode";
-                base_url = "http://127.0.0.1:4096";
-              };
-
-              codex = {
-                type = "codex";
-                url = "ws://127.0.0.1:4107";
-                model = "gpt-5.5";
-                effort = "xhigh";
-                approval_policy = "never";
-                sandbox_policy.type = "dangerFullAccess";
-              };
-            };
-
-            aliases = {
-              main = "andy-cx";
-            };
-
-            agents = {
-              "andy-oc" = {
-                backend = "opencode";
-                cwd = "/home/andy";
-              };
-
-              "andy-cx" = {
-                backend = "codex";
-                cwd = "/home/andy";
-              };
-
-              "nixos-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/nixos";
-              };
-
-              "metastack-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/dev/metastack";
-              };
-
-              "home-manager-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/dev/home-manager";
-              };
-
-              "vault-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/vault";
-              };
-
-              "clade-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/clade";
-              };
-
-              "office-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/office";
-              };
-
-              "sutro-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/sutro";
-              };
-
-              "hinton-problems-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/sutro/hinton-problems";
-              };
-
-              "sutro-problems-cx" = {
-                backend = "codex";
-                cwd = "/home/andy/sutro/sutro-problems";
-              };
-            };
-          };
-        };
 
         # All XDG user dirs → ~/inbox (single triage zone). See vault/01-projects/xdg-inbox-refactor.md.
         xdg.userDirs = {
@@ -530,11 +446,13 @@
             export OPENAI_API_KEY=$(cat /run/secrets/openrouter_api_key)
             export OPENAI_BASE_URL=https://openrouter.ai/api/v1
             # We override qwen-code to permanently bump its unknown model fallback limit from 131k to 1M
-            exec ${pkgs.qwen-code.overrideAttrs (old: {
-              postInstall = (old.postInstall or "") + ''
-                sed -i 's/DEFAULT_TOKEN_LIMIT = 131072/DEFAULT_TOKEN_LIMIT = 1000000/g' $out/share/qwen-code/cli.js
-              '';
-            })}/bin/qwen --auth-type openai -m qwen3.6-max-preview "$@"
+            exec ${
+              pkgs.qwen-code.overrideAttrs (old: {
+                postInstall = (old.postInstall or "") + ''
+                  sed -i 's/DEFAULT_TOKEN_LIMIT = 131072/DEFAULT_TOKEN_LIMIT = 1000000/g' $out/share/qwen-code/cli.js
+                '';
+              })
+            }/bin/qwen --auth-type openai -m qwen3.6-max-preview "$@"
           '')
           (pkgs.writeShellScriptBin "claude-opus" ''
             export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
@@ -833,8 +751,7 @@
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/tea-config.yml";
 
           # Modal CLI credentials from sops-nix template
-          ".modal.toml".source =
-            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/modal.toml";
+          ".modal.toml".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/modal.toml";
         };
 
         systemd.user.services.clade-lensd = {
@@ -846,10 +763,12 @@
           Service = {
             Type = "simple";
             Environment = [
-              "PATH=${lib.makeBinPath [
-                config.programs.opencode.package
-                pkgs.coreutils
-              ]}:/run/current-system/sw/bin"
+              "PATH=${
+                lib.makeBinPath [
+                  config.programs.opencode.package
+                  pkgs.coreutils
+                ]
+              }:/run/current-system/sw/bin"
             ];
             ExecStart = "${cladeCapability}/bin/lensd --socket %t/clade-lensd.sock --log %h/.local/share/clade/trace.jsonl --store %h/.local/share/clade/blobs --distiller teacher";
             Restart = "on-failure";
@@ -1184,7 +1103,7 @@
             whisper = {
               mode = "local";
               language = "en";
-              initial_prompt = "NixOS, Home Manager, flakes, sops, zellij, OpenCode, Codex, Claude, metastack, TypeScript, Rust.";
+              initial_prompt = "NixOS, Home Manager, flakes, sops, zellij, OpenCode, Codex, Claude, Wasm, Rust.";
               gpu_device = 0;
               gpu_isolation = true;
               context_window_optimization = false;

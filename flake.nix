@@ -15,12 +15,6 @@
       url = "git+file:///home/andy/clade?ref=refs/tags/lens-dogfood-v0.1.0&dir=prototypes/clade-wasm-kernel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # MetaStack updates are governance-sensitive: consume semver tags when
-    # available, or explicit reviewed revs. Do not point this at floating main.
-    metastack = {
-      url = "github:zh4ngx/metastack/v0.11.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =

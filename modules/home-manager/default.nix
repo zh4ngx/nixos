@@ -1132,7 +1132,6 @@
                 "open code" = "OpenCode";
                 "zed leege" = "zellij";
                 "sellij" = "zellij";
-                "meta stack" = "metastack";
               };
             };
             status.icon_theme = "minimal";

@@ -90,9 +90,8 @@ Agent configuration is declarative and user-scoped where possible.
 - Shared agent guidance lives in `agents/AGENTS.md`.
 - Claude shared resources are symlinked through Home Manager.
 - OpenCode and Codex have persistent user services for structured injection.
-- MetaStack is consumed through its upstream Home Manager module; this repo owns
-  only the local routing configuration. It is retained for legacy/debug
-  fallback; normal agent coordination uses CLADE inbox.
+- CLADE inbox is the durable agent-to-agent transport. Raw backend APIs are
+  reserved for debugging or fallback when the canonical transport is unavailable.
 - VoxType is configured through the local Home Manager module for desktop STT.
 
 Use `agents/AGENTS.md` for exact dispatch, routing, and canonical-tooling

@@ -219,7 +219,7 @@ in
 
         The hook receives transcribed text on stdin and must print the text that
         VoxType should type/paste on stdout. It may also perform side effects,
-        such as routing command-like utterances to metastack.
+        such as routing command-like utterances to an agent transport.
 
         If the hook is missing or not executable, dictation passes through
         unchanged. The latest raw transcript is also written to:

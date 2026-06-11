@@ -147,10 +147,9 @@ Use CLADE inbox as the default durable agent-to-agent transport:
 clade-inbox-send <target-agent-id> "<message>"
 ```
 
-Use MetaStack, raw Codex app-server APIs, or zellij keystrokes only when CLADE
-inbox is unavailable, missing a needed live-injection feature, or you are
-explicitly debugging that lower-level transport. Report the exception when you
-use it.
+Use raw Codex app-server APIs or zellij keystrokes only when CLADE inbox is
+unavailable, missing a needed live-injection feature, or you are explicitly
+debugging that lower-level transport. Report the exception when you use it.
 
 Examples:
 - Use `clade-inbox-send andy-ag "<message>"` or
@@ -317,10 +316,6 @@ OpenCode `prompt_async`, Codex app-server JSON-RPC, raw backend APIs, zellij
 keystroke messaging, or hidden side channels as normal agent coordination
 paths; those are debugging/fallback primitives only, and the exception should
 be explicit in the task or report.
-
-MetaStack flake governance: NixOS consumes semver tags when available, or an
-explicit reviewed rev. Do not track floating `main`; branch promotion and tag
-cutting happen in the MetaStack project before NixOS updates its input.
 
 Interactive project agents should use the standard launchers (`co`, `cg`, `oc`,
 `qc`, `ag`, `cx`) from the project root so project-scoped history, skill paths,

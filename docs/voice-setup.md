@@ -44,7 +44,7 @@ Create an executable hook at:
 
 The hook receives transcribed text on stdin and must print the text VoxType
 should type on stdout. This is the extension point for command routing,
-metastack integration, or local text cleanup beyond VoxType's built-in
+agent-routing integration, or local text cleanup beyond VoxType's built-in
 replacement table.
 
 ## Legacy Wyoming Fallback
@@ -63,7 +63,7 @@ the transcript to the Wayland clipboard. It does not inject into agents.
 
 The removed tmux-era `voice-inject` socket service is no longer part of the
 configuration. If Android-over-Tailnet dictation becomes active again, the
-missing piece is a real Wyoming protocol bridge or a separate metastack routing
+missing piece is a real Wyoming protocol bridge or a separate agent-routing
 integration.
 
 ## Status

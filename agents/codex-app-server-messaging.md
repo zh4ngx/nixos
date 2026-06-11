@@ -43,8 +43,8 @@ caller will lose readback and may see a close-time client error.
   "method": "initialize",
   "params": {
     "clientInfo": {
-      "name": "metastack-codex-adapter",
-      "title": "metastack Codex adapter",
+      "name": "codex-app-server-client",
+      "title": "Codex app-server client",
       "version": "0.1.0"
     },
     "capabilities": {

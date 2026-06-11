@@ -147,9 +147,12 @@ Use CLADE inbox as the default durable agent-to-agent transport:
 clade-inbox-send <target-agent-id> "<message>"
 ```
 
-Use raw Codex app-server APIs or zellij keystrokes only when CLADE inbox is
-unavailable, missing a needed live-injection feature, or you are explicitly
-debugging that lower-level transport. Report the exception when you use it.
+If no live connector is present, still use `clade-inbox-send`; the durable
+queued message is the correct behavior. Do not fall back to raw backend APIs or
+zellij keystrokes merely to force a wake. Use raw Codex app-server APIs or
+zellij keystrokes only when CLADE inbox itself is unavailable or you are
+explicitly debugging that lower-level transport. Report the exception when you
+use it.
 
 Examples:
 - Use `clade-inbox-send andy-ag "<message>"` or
@@ -158,7 +161,7 @@ Examples:
 - Dispatch vault writes to `vault-cx` instead of editing `~/vault` directly
   from the NixOS or other project agent.
 - Use raw backend APIs or zellij keystrokes only when the canonical transport is
-  broken, missing a feature, or you are debugging the transport itself.
+  unavailable or you are debugging the transport itself.
 
 ## Universal Agent Skills
 
@@ -311,11 +314,12 @@ parent/main-loop round trip unless Andy explicitly asks for that routing.
 clade-inbox-send <target-agent-id> "<message>"
 ```
 
-Include the task, subject, body, and artifacts needed to continue. Do not use
-OpenCode `prompt_async`, Codex app-server JSON-RPC, raw backend APIs, zellij
-keystroke messaging, or hidden side channels as normal agent coordination
-paths; those are debugging/fallback primitives only, and the exception should
-be explicit in the task or report.
+Include the task, subject, body, and artifacts needed to continue. If no live
+lease exists, accept CLADE inbox's durable queued delivery instead of forcing a
+wake through another channel. Do not use OpenCode `prompt_async`, Codex
+app-server JSON-RPC, raw backend APIs, zellij keystroke messaging, or hidden
+side channels as normal agent coordination paths; those are debugging/fallback
+primitives only, and the exception should be explicit in the task or report.
 
 Interactive project agents should use the standard launchers (`co`, `cg`, `oc`,
 `qc`, `ag`, `cx`) from the project root so project-scoped history, skill paths,

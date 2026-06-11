@@ -62,7 +62,7 @@ in
 
     Service = {
       Environment = "CODEX_HOME=${config.xdg.configHome}/codex";
-      ExecStart = "${lib.getExe config.programs.codex.package} app-server --listen ws://127.0.0.1:4107";
+      ExecStart = "${lib.getExe config.programs.codex.package} app-server --listen ws://127.0.0.1:4107 -c notice.hide_rate_limit_model_nudge=true";
       Restart = "on-failure";
       RestartSec = "5s";
     };

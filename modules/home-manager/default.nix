@@ -482,6 +482,7 @@
               -C "$PWD"
               -c 'model="gpt-5.5"'
               -c 'model_reasoning_effort="xhigh"'
+              -c 'notice.hide_rate_limit_model_nudge=true'
               -c "projects.$PWD.trust_level=\"trusted\""
             )
 

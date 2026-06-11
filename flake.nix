@@ -12,7 +12,7 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     claude-code.url = "github:sadjow/claude-code-nix";
     clade-wasm-kernel = {
-      url = "git+file:///home/andy/clade?ref=refs/tags/lens-dogfood-v0.1.0&dir=prototypes/clade-wasm-kernel";
+      url = "git+file:///home/andy/clade?rev=dfa1f4d651cca4596ead77fe0b7d57f4b2ab8bf9&dir=prototypes/clade-wasm-kernel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

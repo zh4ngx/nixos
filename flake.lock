@@ -9,17 +9,17 @@
       },
       "locked": {
         "dir": "prototypes/clade-wasm-kernel",
-        "lastModified": 1781066358,
-        "narHash": "sha256-SrF4P/Zlgs2v788tVvx5a3lhegyPSrPll3s4RTxeiko=",
-        "ref": "refs/tags/lens-dogfood-v0.1.0",
-        "rev": "2da5521681e118e6f18765ecf1cafd5e31cb929d",
-        "revCount": 328,
+        "lastModified": 1781156335,
+        "narHash": "sha256-y6jclUziaS6CwabMFjr1yJc/6VirANNZkwIaCu7YvGs=",
+        "ref": "refs/heads/wasm-kernel-core",
+        "rev": "dfa1f4d651cca4596ead77fe0b7d57f4b2ab8bf9",
+        "revCount": 346,
         "type": "git",
         "url": "file:///home/andy/clade"
       },
       "original": {
         "dir": "prototypes/clade-wasm-kernel",
-        "ref": "refs/tags/lens-dogfood-v0.1.0",
+        "rev": "dfa1f4d651cca4596ead77fe0b7d57f4b2ab8bf9",
         "type": "git",
         "url": "file:///home/andy/clade"
       }

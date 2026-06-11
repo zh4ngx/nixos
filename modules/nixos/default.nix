@@ -52,6 +52,12 @@
       beeper_desktop_api_token = {
         owner = "andy";
       };
+      bitwarden_agent_session = {
+        owner = "andy";
+      };
+      bitwarden_agent_allowlist = {
+        owner = "andy";
+      };
       modal_token_id = {
         owner = "andy";
       };
@@ -204,6 +210,13 @@
                 "BEEPER_DESKTOP_BASE_URL": "http://127.0.0.1:23373",
                 "BEEPER_ACCESS_TOKEN_FILE": "/run/secrets/beeper_desktop_api_token",
                 "BEEPER_READONLY": "1"
+              }
+            },
+            "bitwarden-delegated": {
+              "command": "/etc/profiles/per-user/andy/bin/agent-bitwarden-mcp",
+              "env": {
+                "AGENT_BITWARDEN_ALLOWLIST_FILE": "/run/secrets/bitwarden_agent_allowlist",
+                "BITWARDEN_AGENT_SESSION_FILE": "/run/secrets/bitwarden_agent_session"
               }
             }
           }

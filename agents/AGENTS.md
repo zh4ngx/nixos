@@ -259,6 +259,23 @@ archive, mute, delete, or change Beeper state. Do not dump raw message bodies,
 contacts, PII, screenshots, or logs into a repo; extract only the trip facts
 needed for the active task.
 
+Claude browser sessions may also expose `bitwarden-delegated`, a scoped MCP
+wrapper around the Bitwarden CLI. Use it only for aliases present in the
+NixOS sops-managed delegated allowlist; the wrapper must not accept arbitrary
+item ids, search the vault, expose notes/custom fields/cards, or return
+non-login material. The Bitwarden session secret can technically unlock the
+whole existing vault, so this is a policy-in-code boundary rather than
+cryptographic isolation. Keep the delegated collection small.
+
+For supervised travel/financial portal research, agents may use delegated
+Bitwarden username/password credentials to complete login and authentication
+forms for the explicitly delegated site. Do not migrate or request Ente Auth
+TOTP secrets. If the site sends an SMS code, read that existing code through
+`beeper-readonly` only; Beeper remains read-only. After authentication, the
+world-facing policy is unchanged: no purchases, transfers, applications,
+settings changes, checkouts, messages, or other account-changing submissions
+without Andy's explicit confirmation in the visible browser session.
+
 ## Anti-slop writing style (for human-facing drafts)
 
 When drafting text Andy may paste or send to a human reader, remove obvious AI writing tells. This applies to support chats, emails, PR descriptions, issue comments, public posts, dispute notes, and external-facing docs. It does not apply to internal CLI conversation, scratch planning, quoted source text, generated code, or technical formats where bullets, headings, or tables are genuinely the clearest form.

@@ -22,6 +22,11 @@
             httpx
           ]
         );
+        agentBitwardenMcpPython = pkgs.python313.withPackages (
+          pythonPackages: with pythonPackages; [
+            fastmcp
+          ]
+        );
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
         cladeLensSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-lens";
         cladeCapability =
@@ -151,6 +156,29 @@
             export FASTMCP_ENABLE_RICH_LOGGING=false
 
             exec ${beeperReadonlyMcpPython}/bin/python ${../../files/beeper-readonly-mcp.py} "$@"
+          '')
+          (pkgs.writeShellScriptBin "agent-bitwarden" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            export AGENT_BITWARDEN_BW_BIN="''${AGENT_BITWARDEN_BW_BIN:-${pkgs.bitwarden-cli}/bin/bw}"
+            export AGENT_BITWARDEN_ALLOWLIST_FILE="''${AGENT_BITWARDEN_ALLOWLIST_FILE:-/run/secrets/bitwarden_agent_allowlist}"
+            export BITWARDEN_AGENT_SESSION_FILE="''${BITWARDEN_AGENT_SESSION_FILE:-/run/secrets/bitwarden_agent_session}"
+
+            exec ${pkgs.python313}/bin/python ${../../files/agent-bitwarden.py} "$@"
+          '')
+          (pkgs.writeShellScriptBin "agent-bitwarden-mcp" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            export AGENT_BITWARDEN_COMMAND="''${AGENT_BITWARDEN_COMMAND:-/etc/profiles/per-user/andy/bin/agent-bitwarden}"
+            export AGENT_BITWARDEN_ALLOWLIST_FILE="''${AGENT_BITWARDEN_ALLOWLIST_FILE:-/run/secrets/bitwarden_agent_allowlist}"
+            export BITWARDEN_AGENT_SESSION_FILE="''${BITWARDEN_AGENT_SESSION_FILE:-/run/secrets/bitwarden_agent_session}"
+            export FASTMCP_LOG_LEVEL=ERROR
+            export FASTMCP_SHOW_SERVER_BANNER=false
+            export FASTMCP_ENABLE_RICH_LOGGING=false
+
+            exec ${agentBitwardenMcpPython}/bin/python ${../../files/agent-bitwarden-mcp.py} "$@"
           '')
 
           # Legacy voice dictation fallback: capture mic via PipeWire,

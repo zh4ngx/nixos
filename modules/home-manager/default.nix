@@ -29,8 +29,7 @@
         );
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
         cladeLensSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-lens";
-        cladeCapability =
-          inputs.clade-wasm-kernel.packages.${pkgs.stdenv.hostPlatform.system}.clade-capability;
+        cladeLensScript = "/home/andy/clade/skills/clade-lens/scripts/clade-lens";
       in
       {
         imports = [
@@ -93,7 +92,6 @@
           mcp-nixos
           wl-clipboard
           ollama
-          cladeCapability
           (pkgs.writeShellScriptBin "agent-chrome" ''
             #!/usr/bin/env bash
             set -euo pipefail
@@ -266,43 +264,13 @@
             #!/usr/bin/env bash
             set -euo pipefail
 
-            explicit_socket=0
-            inject_socket=1
-            previous=""
-
-            for arg in "$@"; do
-              if [ "$previous" = "--distiller" ]; then
-                case "$arg" in
-                  local|fallback|no-teacher|owned-v2|owned|lens-extraction-v2)
-                    inject_socket=0
-                    ;;
-                esac
-                previous=""
-                continue
-              fi
-
-              case "$arg" in
-                --socket|--daemon)
-                  explicit_socket=1
-                  ;;
-                --local|--no-teacher)
-                  inject_socket=0
-                  ;;
-                --distiller)
-                  previous="--distiller"
-                  ;;
-              esac
-            done
-
-            if [ "$explicit_socket" -eq 0 ] && [ "$inject_socket" -eq 1 ]; then
-              runtime_dir="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"
-              socket="''${CLADE_LENS_SOCKET:-$runtime_dir/clade-lensd.sock}"
-              if [ -S "$socket" ]; then
-                exec ${cladeCapability}/bin/lens --socket "$socket" "$@"
-              fi
+            if [ ! -x ${lib.escapeShellArg cladeLensScript} ]; then
+              echo "clade-lens prototype wrapper is missing or not executable: ${cladeLensScript}" >&2
+              echo "Expected local Clade checkout at /home/andy/clade; build/use the repo-local skill wrapper." >&2
+              exit 127
             fi
 
-            exec ${cladeCapability}/bin/lens "$@"
+            exec ${lib.escapeShellArg cladeLensScript} "$@"
           '')
           (pkgs.writeShellScriptBin "clade-agent-id" ''
             #!/usr/bin/env bash
@@ -799,7 +767,7 @@
                 ]
               }:/run/current-system/sw/bin"
             ];
-            ExecStart = "${cladeCapability}/bin/lensd --socket %t/clade-lensd.sock --log %h/.local/share/clade/trace.jsonl --store %h/.local/share/clade/blobs --distiller teacher";
+            ExecStart = "/etc/profiles/per-user/andy/bin/clade-lens lensd --socket %t/clade-lensd.sock --log %h/.local/share/clade/trace.jsonl --store %h/.local/share/clade/blobs --distiller teacher";
             Restart = "on-failure";
             RestartSec = "5s";
           };

@@ -133,7 +133,7 @@
               "Bash(nix search:*)"
             ]
           },
-          "effortLevel": "high",
+          "effortLevel": "xhigh",
           "cleanupPeriodDays": 99999,
           "skipDangerousModePermissionPrompt": true,
           "attribution": {

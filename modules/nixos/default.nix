@@ -43,7 +43,19 @@
       opencode_api_key = {
         owner = "andy";
       };
+      "opencode-key" = {
+        key = "opencode_api_key";
+        owner = "andy";
+      };
+      "zai-key" = {
+        key = "glm_token";
+        owner = "andy";
+      };
       ollama_api_key = {
+        owner = "andy";
+      };
+      "ollama-token" = {
+        key = "ollama_api_key";
         owner = "andy";
       };
       brave_api_key = {

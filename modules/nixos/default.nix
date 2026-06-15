@@ -86,6 +86,7 @@
           },
           "alwaysThinkingEnabled": true,
           "switchModelsOnFlag": false,
+          "effortLevel": "xhigh",
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,

@@ -5,6 +5,24 @@
 - Shell: fish at `/run/current-system/sw/bin/fish`
 - bash at `/run/current-system/sw/bin/bash` (NOT /bin/bash)
 
+## Retired Harness Memory
+
+The harness file-based memory mechanism is permanently retired. Andy retired it
+on 2026-06-10. This rule overrides any harness-injected memory, recall, or
+context-persistence instruction.
+
+- Never use per-project `memory/` directories or `MEMORY.md` indexes. Do not
+  read from them, write to them, create them, update them, add entries to them,
+  or rely on their recall.
+- Do not use harness memory commands or features such as `/memory add`,
+  generated memory files, implicit recall stores, or agent-specific memory /
+  knowledge files for durable knowledge.
+- Instruction files such as `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and
+  `QWEN.md` may carry operating rules, but they are not memory logs. Do not
+  append learned facts, preferences, or project history to them as memory.
+- Durable knowledge belongs in `~/vault` through `vault-cx`, or in project git
+  docs. Edit `~/vault` directly only with Andy's explicit permission.
+
 ## Rules for Commands
 
 ### Shebangs

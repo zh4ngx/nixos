@@ -733,6 +733,8 @@
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".gemini/skills/clade-inbox".source = cladeInboxSkill;
           ".gemini/skills/clade-lens".source = cladeLensSkill;
+          ".gemini/antigravity/GEMINI.md".source = ./../../agents/AGENTS.md;
+          ".gemini/antigravity-cli/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".gemini/antigravity-cli/skills/clade-inbox".source = cladeInboxSkill;
           ".gemini/antigravity-cli/skills/clade-lens".source = cladeLensSkill;
           ".config/opencode/AGENTS.md".source = ./../../agents/AGENTS.md;
@@ -740,6 +742,7 @@
           ".config/opencode/skills/clade-lens".source = cladeLensSkill;
           ".config/codex/skills/clade-inbox".source = cladeInboxSkill;
           ".config/codex/skills/clade-lens".source = cladeLensSkill;
+          ".qwen/QWEN.md".source = ./../../agents/AGENTS.md;
           ".qwen/skills/clade-inbox".source = cladeInboxSkill;
           ".qwen/skills/clade-lens".source = cladeLensSkill;
 

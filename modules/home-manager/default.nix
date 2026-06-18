@@ -450,14 +450,6 @@
               })
             }/bin/qwen --auth-type openai -m qwen3.6-max-preview "$@"
           '')
-          (pkgs.writeShellScriptBin "claude-opus" ''
-            export CLAUDE_CONFIG_DIR="$HOME/.claude-opus"
-            exec claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions "$@"
-          '')
-          (pkgs.writeShellScriptBin "claude-glm" ''
-            export CLAUDE_CONFIG_DIR="$HOME/.claude-glm"
-            exec claude --mcp-config /run/secrets/rendered/claude-mcp.json "$@"
-          '')
           (pkgs.writeShellScriptBin "opencode-attach-current" ''
             #!/usr/bin/env bash
             set -euo pipefail
@@ -616,10 +608,8 @@
           functions = {
             plugin = ''
               command plugin $argv
-              and ~/.claude-shared/scripts/fix-plugins-nixos.sh
+              and ~/.claude/scripts/fix-plugins-nixos.sh
             '';
-            # claude: bare default instance retired 2026-04-25 (was pre-split GLM-routed; history preserved in ~/.claude-glm/).
-            claude = "echo '⚠ bare claude retired — use co (Opus) or cg (GLM)' >&2; return 1";
             # __zj: internal helper. Idempotent create-or-attach to a named zellij
             # session running a layout. $argv[1]=session name, $argv[2]=layout name.
             # `zellij attach --create` attaches if the session exists, or creates
@@ -641,10 +631,8 @@
               end
               zellij attach --create $name options --default-layout $layout
             '';
-            # co: Claude Code with Anthropic Opus and supervised Agent Chrome / Playwright MCP
+            # co: Claude Code with supervised Agent Chrome / Playwright MCP
             co = "__zj (basename $PWD | string replace -a . _)-co co";
-            # cg: Claude Code with Z.AI GLM
-            cg = "__zj (basename $PWD | string replace -a . _)-cg cg";
             # oc: start opencode attached to the persistent OpenCode server
             oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
@@ -692,42 +680,16 @@
           ];
         };
 
-        # Agent config files - ~/.claude-shared is the canonical shared home
+        # Agent config files
         home.file = {
-          # Canonical shared resources in ~/.claude-shared
-          ".claude-shared/CLAUDE.md".source = ./../../agents/AGENTS.md;
-          ".claude-shared/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
-          ".claude-shared/scripts/statusline.sh".source = ./../../files/statusline.sh;
-          ".claude-shared/skills/clade-inbox".source = cladeInboxSkill;
-          ".claude-shared/skills/clade-lens".source = cladeLensSkill;
-
-          # Claude Code GLM - symlinks to shared resources from ~/.claude-shared
-          ".claude-glm/settings.json".source =
-            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings-glm.json";
-          ".claude-glm/CLAUDE.md".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/CLAUDE.md";
-          ".claude-glm/scripts".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/scripts";
-          ".claude-glm/plugins".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/plugins";
-          ".claude-glm/skills".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/skills";
-          ".claude-glm/commands".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/commands";
-
-          # Claude Code Opus - symlinks to shared resources from ~/.claude-shared
-          ".claude-opus/settings.json".source =
-            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings-opus.json";
-          ".claude-opus/CLAUDE.md".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/CLAUDE.md";
-          ".claude-opus/scripts".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/scripts";
-          ".claude-opus/plugins".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/plugins";
-          ".claude-opus/skills".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/skills";
-          ".claude-opus/commands".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.claude-shared/commands";
+          # Claude Code default home
+          ".claude/settings.json".source =
+            config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/claude-settings.json";
+          ".claude/CLAUDE.md".source = ./../../agents/AGENTS.md;
+          ".claude/scripts/fix-plugins-nixos.sh".source = ./../../files/fix-plugins-nixos.sh;
+          ".claude/scripts/statusline.sh".source = ./../../files/statusline.sh;
+          ".claude/skills/clade-inbox".source = cladeInboxSkill;
+          ".claude/skills/clade-lens".source = cladeLensSkill;
 
           # Other agent config files
           ".gemini/GEMINI.md".source = ./../../agents/AGENTS.md;
@@ -921,7 +883,7 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Fish shortcuts for co/cg/oc/qc/ag/cx attach to
+        # tmux 2026-04-29). Fish shortcuts for co/oc/qc/ag/cx attach to
         # or spawn a zellij session that loads the corresponding layout below.
         # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
@@ -954,8 +916,7 @@
               '';
             in
             {
-              co = agentLayout "clade-agent-env co claude-opus --continue; or clade-agent-env co claude-opus";
-              cg = agentLayout "clade-agent-env cg claude-glm --continue --dangerously-skip-permissions; or clade-agent-env cg claude-glm --dangerously-skip-permissions";
+              co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions";
               oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";
               ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";

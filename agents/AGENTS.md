@@ -111,7 +111,7 @@ when maintaining a package that intentionally tracks nixpkgs' Rust compiler.
 ## Store Protection
 `/nix/store` is read-only. All config changes via .nix files, never direct edits.
 
-**Symlinks to nix store:** Many config files (e.g., `~/.claude-shared/CLAUDE.md`, `~/.claude-opus/settings.json`) are symlinks into `/nix/store`. Always trace symlinks (`readlink -f <path>`) to find the source file in your nix config before editing.
+**Symlinks to nix store:** Many config files (e.g., `~/.claude/CLAUDE.md`, `~/.claude/settings.json`) are symlinks into `/nix/store`. Always trace symlinks (`readlink -f <path>`) to find the source file in your nix config before editing.
 
 ## Plugin Issues
 Plugin hook scripts often have hardcoded `/bin/bash` shebangs.
@@ -124,7 +124,7 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `cg`, `ag`, `oc`, `qc`, `cx`) run inside zellij
+All AI CLI launchers (`co`, `ag`, `oc`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
@@ -132,13 +132,14 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - **Destructive Warning**: Print "DESTRUCTIVE ACTION" before rm/mv/nix-collect-garbage.
 
 ### Fish Functions
-- `co` - Claude Opus with supervised Agent Chrome / Playwright MCP, per-project (session: `{dir}-co`)
-- `cg` - Claude GLM, per-project (session: `{dir}-cg`)
+- `co` - Claude Code with supervised Agent Chrome / Playwright MCP, per-project (session: `{dir}-co`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `ag` - Antigravity CLI (session: `{dir}-ag`)
 - `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.5 xhigh, session: `{dir}-cx`)
 - `agents` - list zellij-backed agent sessions
+
+Claude GLM via Claude Code is retired. GLM runs through Pi instead.
 
 There is no special `main` launcher. Main-loop identity is operational:
 `cwd + harness`. Examples: `cd ~; oc` → `andy-oc`, `cd ~; cx` →
@@ -210,8 +211,7 @@ Current shared skills:
 Native paths currently managed by Home Manager:
 
 - Codex: `~/.config/codex/skills/clade-inbox`
-- Claude Opus/GLM: `~/.claude-shared/skills/clade-inbox`, reached through
-  each launcher-specific `skills` directory
+- Claude Code: `~/.claude/skills/clade-inbox`
 - OpenCode: `~/.config/opencode/skills/clade-inbox`
 - Qwen Code: `~/.qwen/skills/clade-inbox`
 - Gemini CLI: `~/.gemini/skills/clade-inbox`
@@ -332,7 +332,7 @@ Spawn a fresh agent instance scoped to the target project, run a single bounded
 task, capture output to a known location. Claude example:
 
 ```fish
-cd ~/<repo> && stdbuf -oL -eL claude-opus -p "..." \
+cd ~/<repo> && stdbuf -oL -eL claude -p "..." \
   --dangerously-skip-permissions --add-dir ~/<repo> \
   --output-format=stream-json --verbose --include-partial-messages \
   > /tmp/<task>.jsonl 2>&1
@@ -356,13 +356,13 @@ app-server JSON-RPC, raw backend APIs, zellij keystroke messaging, or hidden
 side channels as normal agent coordination paths; those are debugging/fallback
 primitives only, and the exception should be explicit in the task or report.
 
-Interactive project agents should use the standard launchers (`co`, `cg`, `oc`,
+Interactive project agents should use the standard launchers (`co`, `oc`,
 `qc`, `ag`, `cx`) from the project root so project-scoped history, skill paths,
 and `CLADE_AGENT_ID` are set consistently. Do not launch raw CLIs for persistent
 agent sessions unless you are explicitly debugging the launcher itself.
 
 **Trace continuity** lives in the agent's project-slug directory (Claude:
-`~/.claude-opus/projects/-home-andy-<repo>/`; other agents have their own
+`~/.claude/projects/-home-andy-<repo>/`; other agents have their own
 schemes). Project-scoped traces enable agent `--continue` semantics and keep
 project-specific knowledge out of the parent session's global context.
 
@@ -399,7 +399,7 @@ slug. Use only for cross-project research / synthesis where the trace
 genuinely belongs in the parent.
 
 **Interactive attach by default.** Don't default to spawning interactive
-`co`/`cg`/`oc`/`ag`/`qc` instances. Reserve for tasks that genuinely need
+`co`/`oc`/`ag`/`qc` instances. Reserve for tasks that genuinely need
 real-time human steering — and ask the user first.
 
 **`cd` in parent-agent shell tool calls without a subshell.** Use

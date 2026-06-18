@@ -78,8 +78,9 @@
       };
     };
 
-    # Generate Claude Code settings.json for Opus instance (Anthropic direct, OAuth)
-    templates."claude-settings-opus.json" = {
+    # Generate Claude Code settings.json for the default Claude home
+    # (Anthropic direct, OAuth).
+    templates."claude-settings.json" = {
       owner = "andy";
       group = "users";
       mode = "0400";
@@ -105,7 +106,7 @@
           "language": "en",
           "statusLine": {
             "type": "command",
-            "command": "~/.claude-shared/scripts/statusline.sh",
+            "command": "~/.claude/scripts/statusline.sh",
             "refreshInterval": 30
           },
           "context_management": {
@@ -119,52 +120,8 @@
       '';
     };
 
-    # Generate Claude Code settings.json for GLM instance (Z.AI endpoint)
-    templates."claude-settings-glm.json" = {
-      owner = "andy";
-      group = "users";
-      mode = "0400";
-      content = ''
-        {
-          "env": {
-            "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
-            "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder.glm_token}",
-            "ANTHROPIC_MODEL": "glm-5.1",
-            "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.1",
-            "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5.1",
-            "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.1",
-            "ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES": "effort",
-            "ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES": "effort",
-            "ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES": "effort",
-            "DISABLE_TELEMETRY": "1",
-            "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-            "DISABLE_ERROR_REPORTING": "1"
-          },
-          "permissions": {
-            "deny": [
-              "Bash(nix search:*)"
-            ]
-          },
-          "effortLevel": "xhigh",
-          "cleanupPeriodDays": 99999,
-          "skipDangerousModePermissionPrompt": true,
-          "attribution": {
-            "commit": "Co-Authored-By: GLM 5.1 <noreply@z.ai>"
-          },
-          "statusLine": {
-            "type": "command",
-            "command": "~/.claude-shared/scripts/statusline.sh",
-            "refreshInterval": 30
-          },
-          "enabledPlugins": {
-            "ralph-loop@claude-plugins-official": true
-          }
-        }
-      '';
-    };
-
-    # Base MCP config without browser tooling. Claude GLM uses this; Opus uses
-    # claude-mcp-browser.json through the normal co launcher.
+    # Base MCP config without browser tooling. The normal co launcher uses
+    # claude-mcp-browser.json.
     # Loaded via --mcp-config flag (claude does not read mcpServers from settings.json).
     templates."claude-mcp.json" = {
       owner = "andy";

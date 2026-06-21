@@ -390,7 +390,7 @@ in
     package = pkgs.llama-cpp-vulkan;
     openFirewall = false;
     settings = {
-      host = "127.0.0.1";
+      host = "0.0.0.0";
       port = 8080;
       model = "/home/andy/models/gemma-4-12b-it-qat-q4_0/gemma-4-12b-it-qat-q4_0.gguf";
       alias = "google/gemma-4-12B-it-qat-q4_0-gguf:Q4_0";
@@ -398,9 +398,11 @@ in
       n-gpu-layers = 99;
       parallel = 1;
       reasoning = "off";
-      no-ui = true;
     };
   };
+
+  # Expose the llama.cpp chat UI to Andy's tablet over Tailscale only.
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 8080 ];
 
   systemd.services.llama-cpp.serviceConfig = {
     # The trial model is a manually downloaded multi-GB artifact under Andy's

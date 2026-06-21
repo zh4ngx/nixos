@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   self,
   ...
@@ -383,6 +384,37 @@ in
     pkgs.keychron-udev-rules
   ];
   hardware.amdgpu.initrd.enable = true;
+
+  services.llama-cpp = {
+    enable = true;
+    package = pkgs.llama-cpp-vulkan;
+    openFirewall = false;
+    settings = {
+      host = "127.0.0.1";
+      port = 8080;
+      model = "/home/andy/models/gemma-4-12b-it-qat-q4_0/gemma-4-12b-it-qat-q4_0.gguf";
+      alias = "google/gemma-4-12B-it-qat-q4_0-gguf:Q4_0";
+      ctx-size = 16384;
+      n-gpu-layers = 99;
+      parallel = 1;
+      reasoning = "off";
+      no-ui = true;
+    };
+  };
+
+  systemd.services.llama-cpp.serviceConfig = {
+    # The trial model is a manually downloaded multi-GB artifact under Andy's
+    # home, outside rebuild-time Nix inputs.
+    DynamicUser = lib.mkForce false;
+    User = "andy";
+    Group = "users";
+    SupplementaryGroups = [
+      "render"
+      "video"
+    ];
+    ProtectHome = lib.mkForce "read-only";
+    PrivateUsers = lib.mkForce false;
+  };
 
   environment.systemPackages = [
     pkgs.lm_sensors

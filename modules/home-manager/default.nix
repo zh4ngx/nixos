@@ -481,6 +481,13 @@
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 
+        # Install Pi globally, but leave ~/.pi/agent runtime-managed. Pi rewrites
+        # OAuth auth and provider state there, so HM must not own those files.
+        programs.pi-coding-agent = {
+          enable = true;
+          package = pkgs.pi-coding-agent;
+        };
+
         # Shared MCP servers (injected into tools via enableMcpIntegration)
         programs.mcp = {
           enable = true;

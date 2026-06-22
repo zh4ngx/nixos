@@ -424,9 +424,12 @@ in
       model = "/home/andy/models/gemma-4-12b-it-qat-q4_0/gemma-4-12b-it-qat-q4_0.gguf";
       mmproj = "/home/andy/models/gemma-4-12b-it-qat-q4_0/mmproj-gemma-4-12b-it-qat-q4_0.gguf";
       alias = "google/gemma-4-12B-it-qat-q4_0-gguf:Q4_0";
-      ctx-size = 16384;
+      ctx-size = 32768;
       n-gpu-layers = 99;
       parallel = 1;
+      cache-type-k = "q8_0";
+      cache-type-v = "q8_0";
+      flash-attn = "auto";
       jinja = true;
       ui-config-file = gemmaLlamaUiConfig;
       reasoning = "off";

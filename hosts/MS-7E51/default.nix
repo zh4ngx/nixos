@@ -341,6 +341,35 @@ let
       cat "$tmp"
     '';
   };
+
+  gemmaVoiceChatPython = pkgs.python3.withPackages (p: [ p.wyoming ]);
+  gemmaVoiceChat = pkgs.writeShellApplication {
+    name = "gemma-voice-chat";
+    runtimeInputs = [ gemmaVoiceChatPython ];
+    text = ''
+      exec ${gemmaVoiceChatPython}/bin/python3 ${../../files/gemma-voice-chat.py} "$@"
+    '';
+  };
+  gemmaCommsSystemPrompt = ''
+    You are Gemma, Andy's local fallback assistant.
+
+    Talking to Andy:
+    Be brief, and use progressive disclosure: lead with the simple, accurate answer; keep the detail ready and let Andy pull more. Brevity is not dropping information, it is not front-loading all of it. You must actually have the depth when he drills in. Most replies are too long; match length to how hard the question is.
+
+    - Plain English. ELI5 a hard idea only when it helps.
+    - Use the correct precise term when it is the right word (quota, endpoint, polling, heuristic, persistent thread, one-shot vs stateful, KL, LoRA). Do not dumb down or avoid real terms.
+    - One good example beats a paragraph.
+
+    Avoid AI-slop. It is two patterns, not a fixed list:
+    1. Jargon pile-up: stacking shorthand in one breath.
+    2. Over-naming: coining a label for a concept instead of just saying it. "Fused vs seams" and "load-bearing" are tells, so are the buzzwords (delve, robust, seamless, leverage, synergy). The blocklist always lags, so judge by the pattern, not the word: if it reads like an AI reaching for a label, cut it and say the plain thing.
+
+    The bar: the Q4-vs-BF16 exemplar at /home/andy/vault/02-areas/agents/comms-style-exemplar.md.
+  '';
+  gemmaLlamaUiConfig = pkgs.writeText "llama-ui-config.json" (builtins.toJSON {
+    autoMicOnEmpty = true;
+    systemMessage = gemmaCommsSystemPrompt;
+  });
 in
 
 {
@@ -393,16 +422,119 @@ in
       host = "0.0.0.0";
       port = 8080;
       model = "/home/andy/models/gemma-4-12b-it-qat-q4_0/gemma-4-12b-it-qat-q4_0.gguf";
+      mmproj = "/home/andy/models/gemma-4-12b-it-qat-q4_0/mmproj-gemma-4-12b-it-qat-q4_0.gguf";
       alias = "google/gemma-4-12B-it-qat-q4_0-gguf:Q4_0";
       ctx-size = 16384;
       n-gpu-layers = 99;
       parallel = 1;
+      jinja = true;
+      ui-config-file = gemmaLlamaUiConfig;
       reasoning = "off";
     };
   };
 
   # Expose the llama.cpp chat UI to Andy's tablet over Tailscale only.
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 8080 ];
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    443
+    8080
+  ];
+
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    virtualHosts.gemma-tailnet = {
+      listen = [
+        {
+          addr = "127.0.0.1";
+          port = 18080;
+        }
+      ];
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:8080";
+        proxyWebsockets = true;
+        extraConfig = ''
+          client_max_body_size 64m;
+          proxy_buffering off;
+          proxy_read_timeout 300s;
+        '';
+      };
+      locations."/voice/" = {
+        proxyPass = "http://127.0.0.1:18082/";
+        extraConfig = ''
+          client_max_body_size 64m;
+          proxy_buffering off;
+          proxy_read_timeout 300s;
+        '';
+      };
+    };
+  };
+
+  systemd.services.gemma-voice-chat = {
+    description = "Reliable Gemma voice chat bridge through Wyoming STT";
+    after = [
+      "network.target"
+      "wyoming-faster-whisper-stt.service"
+      "llama-cpp.service"
+    ];
+    wants = [
+      "wyoming-faster-whisper-stt.service"
+      "llama-cpp.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    environment = {
+      GEMMA_VOICE_HOST = "127.0.0.1";
+      GEMMA_VOICE_PORT = "18082";
+      GEMMA_VOICE_WYOMING_HOST = "127.0.0.1";
+      GEMMA_VOICE_WYOMING_PORT = "10300";
+      GEMMA_VOICE_LLAMA_BASE_URL = "http://127.0.0.1:8080/v1";
+      GEMMA_VOICE_LLAMA_MODEL = "google/gemma-4-12B-it-qat-q4_0-gguf:Q4_0";
+      GEMMA_VOICE_SYSTEM_PROMPT = gemmaCommsSystemPrompt;
+    };
+    serviceConfig = {
+      ExecStart = "${gemmaVoiceChat}/bin/gemma-voice-chat";
+      DynamicUser = true;
+      Restart = "on-failure";
+      RestartSec = "2s";
+    };
+  };
+
+  systemd.services.tailscale-serve-gemma = {
+    description = "Expose Gemma chat over Tailscale HTTPS";
+    after = [
+      "tailscaled.service"
+      "nginx.service"
+    ];
+    wants = [
+      "tailscaled.service"
+      "nginx.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    path = [
+      pkgs.coreutils
+      pkgs.tailscale
+    ];
+    script = ''
+      set -euo pipefail
+
+      for _ in $(seq 1 30); do
+        if tailscale status --self >/dev/null 2>&1; then
+          break
+        fi
+        sleep 1
+      done
+
+      if ! timeout 20s tailscale serve --bg --yes --https=443 127.0.0.1:18080; then
+        cat >&2 <<'EOF'
+Tailscale Serve is not enabled or could not be configured automatically.
+Enable Serve in the tailnet admin flow, then run:
+  sudo systemctl start tailscale-serve-gemma.service
+EOF
+      fi
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
 
   systemd.services.llama-cpp.serviceConfig = {
     # The trial model is a manually downloaded multi-GB artifact under Andy's

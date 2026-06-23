@@ -560,6 +560,12 @@ EOF
 
   hardware.rasdaemon.enable = true;
 
+  boot.kernelModules = [ "nct6683" ];
+  boot.extraModprobeConfig = ''
+    # Expose MSI MAG X870 TOMAHAWK WIFI fan/pump tach sensors.
+    options nct6683 force=1
+  '';
+
   boot.kernelParams = [
     # Let pstore-capable backends keep kmsg breadcrumbs when the kernel gets
     # far enough to dump them before a reset. systemd-pstore is already enabled

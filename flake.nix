@@ -11,6 +11,7 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     claude-code.url = "github:sadjow/claude-code-nix";
+    fakebook.url = "path:/home/andy/fakebook";
   };
 
   outputs =

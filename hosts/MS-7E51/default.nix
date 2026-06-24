@@ -1,4 +1,5 @@
 {
+  inputs,
   lib,
   pkgs,
   self,
@@ -439,6 +440,7 @@ in
   # Expose the llama.cpp chat UI to Andy's tablet over Tailscale only.
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
     443
+    8443
     8080
   ];
 
@@ -468,6 +470,21 @@ in
           proxy_buffering off;
           proxy_read_timeout 300s;
         '';
+      };
+    };
+    virtualHosts.fakebook-tailnet = {
+      listen = [
+        {
+          addr = "127.0.0.1";
+          port = 18084;
+        }
+      ];
+      root = "${inputs.fakebook.packages.x86_64-linux.web}";
+      extraConfig = ''
+        index index.html;
+      '';
+      locations."/" = {
+        tryFiles = "$uri $uri/ /index.html";
       };
     };
   };
@@ -531,6 +548,44 @@ in
 Tailscale Serve is not enabled or could not be configured automatically.
 Enable Serve in the tailnet admin flow, then run:
   sudo systemctl start tailscale-serve-gemma.service
+EOF
+      fi
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+
+  systemd.services.tailscale-serve-fakebook = {
+    description = "Expose Fakebook over Tailscale HTTPS";
+    after = [
+      "tailscaled.service"
+      "nginx.service"
+    ];
+    wants = [
+      "tailscaled.service"
+      "nginx.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    path = [
+      pkgs.coreutils
+      pkgs.tailscale
+    ];
+    script = ''
+      set -euo pipefail
+
+      for _ in $(seq 1 30); do
+        if tailscale status --self >/dev/null 2>&1; then
+          break
+        fi
+        sleep 1
+      done
+
+      if ! timeout 20s tailscale serve --bg --yes --https=8443 127.0.0.1:18084; then
+        cat >&2 <<'EOF'
+Tailscale Serve is not enabled or could not be configured automatically.
+Enable Serve in the tailnet admin flow, then run:
+  sudo systemctl start tailscale-serve-fakebook.service
 EOF
       fi
     '';

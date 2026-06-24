@@ -432,6 +432,11 @@
 
   users.users.andy = {
     isNormalUser = true;
+    # Keep andy's user services (codex-app-server, clade-lensd) running at boot
+    # and across disconnects, with no login session. So the agent layer
+    # auto-recovers after an unattended power reboot, not just the system-level
+    # Gemma serving floor. Enabled 2026-06-24 for the 6-week remote period.
+    linger = true;
     description = "Andy";
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [

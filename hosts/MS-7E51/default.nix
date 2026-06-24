@@ -647,4 +647,18 @@ EOF
       AccuracySec = "1s";
     };
   };
+
+  # UPS monitoring for the APC Back-UPS Pro (USB), staged 2026-06-24.
+  # apcupsd autodetects the USB UPS, serves status on localhost (`apcaccess
+  # status`), and gracefully shuts the box down on a real outage (module default:
+  # below 50% battery or under 5 min remaining runtime). Brief mains dropouts are
+  # ridden through by the UPS battery and never trigger a shutdown. Pairs with the
+  # BIOS "Restore after AC Power Loss = Power On" setting so the box auto-returns
+  # when mains comes back.
+  #
+  # STAGED: the UPS is not connected yet. Once the unit is plugged in over USB,
+  # flip enable to true and rebuild. Relying on the module's default configText
+  # (USB autodetect + localhost NIS + safe shutdown thresholds) on purpose; no
+  # custom apcupsd.conf needed for a single USB UPS.
+  services.apcupsd.enable = false;
 }

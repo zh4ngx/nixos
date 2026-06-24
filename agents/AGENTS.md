@@ -325,6 +325,10 @@ Write in Andy's voice: direct, specific, low-drama, and not promotional. Prefer 
 9. Preserve useful specificity: dates, costs, model names, links, invoice numbers, error messages, and concrete asks.
 10. Before finalizing external text, scan once for AI tells and rewrite anything that sounds like a generic assistant.
 
+## Lean code (YAGNI)
+
+Prefer the leanest correct solution. Before adding code or a dependency, check in order: does this need to exist at all; can the standard library or a native platform feature do it; is there already an installed dependency for it; can it be a one-liner. Only write new code when every answer is no, and keep it minimal. When you defer a heavier option, leave a one-line note saying what and why. This is the code-side companion to the anti-slop writing rule; agents over-engineer code the way they over-write prose.
+
 ## Project Boundaries (Dispatch)
 
 This rule is **agent-agnostic** — applies to Claude Code, OpenCode, Codex, Qwen

@@ -410,6 +410,34 @@ in
   # the unattended window. (2026-06-25 incident)
   systemd.watchdog.runtimeTime = "60s";
 
+  # GPU power cap: limit the RX 6900 XT (PCI 0000:03:00.0) board power to its
+  # firmware floor of 292W (down from 325W) to shrink the transient current
+  # spikes that can trip the PSU's over-current protection -- the "full-dark,
+  # needs-a-human" death under inference load. 250W was wanted but power1_cap_min
+  # is 292W; going lower needs clock-limiting. Safe: the card just clocks down to
+  # stay under the cap. Re-applied each boot (the cap resets on GPU reset).
+  # (2026-06-25 incident)
+  systemd.services.gpu-power-cap = {
+    description = "Cap RX 6900 XT board power (transient-spike / PSU-OCP mitigation)";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      set -uo pipefail
+      applied=0
+      for cap in /sys/bus/pci/devices/0000:03:00.0/hwmon/hwmon*/power1_cap; do
+        [ -w "$cap" ] || continue
+        if echo 292000000 > "$cap"; then
+          echo "6900XT power1_cap set to $(cat "$cap") uW"
+          applied=1
+        fi
+      done
+      [ "$applied" = 1 ] || echo "WARN: 6900XT power1_cap not found at 0000:03:00.0"
+    '';
+  };
+
   networking.hostName = baseNameOf ./.;
   time.timeZone = "America/Los_Angeles";
 

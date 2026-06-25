@@ -661,4 +661,59 @@ EOF
   # (USB autodetect + localhost NIS + safe shutdown thresholds) on purpose; no
   # custom apcupsd.conf needed for a single USB UPS.
   services.apcupsd.enable = true;
+
+  # Standing watch on the (shipping-punctured) UPS over the unattended window.
+  # The unit arrived with a corner puncture; it's ONLINE now, but if the battery
+  # was damaged it'll surface as a REPLACEBATT flag or a failed self-test. This
+  # daily check logs a snapshot to the journal and, on the first appearance of
+  # either, sends a deduped CLADE-inbox alert to andy-co so the shipping-damage
+  # claim can start (Andy has the photo + packaging). Added 2026-06-25.
+  systemd.services.ups-health-watch = {
+    description = "Watch apcupsd for UPS battery degradation (punctured-unit standing watch)";
+    after = [ "apcupsd.service" ];
+    path = [ pkgs.apcupsd pkgs.coreutils pkgs.gnugrep pkgs.gnused ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "andy";
+      StateDirectory = "ups-health-watch";
+    };
+    script = ''
+      set -uo pipefail
+      state="$STATE_DIRECTORY/last-condition"
+      status=$(apcaccess status 2>/dev/null || true)
+      get() { printf '%s\n' "$status" | grep -E "^$1[[:space:]]*:" | head -1 | sed 's/^[^:]*:[[:space:]]*//;s/[[:space:]]*$//'; }
+      ST=$(get STATUS); SELF=$(get SELFTEST); TL=$(get TIMELEFT); BC=$(get BCHARGE); LV=$(get LINEV)
+      echo "ups snapshot: STATUS=$ST SELFTEST=$SELF BCHARGE=$BC TIMELEFT=$TL LINEV=$LV"
+
+      problem=""
+      case "$ST" in *REPLACEBATT*) problem="UPS STATUS reports REPLACEBATT (battery needs replacement)";; esac
+      case "$SELF" in
+        BT) problem="''${problem:+$problem; }SELFTEST=BT (battery failed self-test)";;
+        NG) problem="''${problem:+$problem; }SELFTEST=NG (self-test failed)";;
+      esac
+
+      if [ -n "$problem" ]; then
+        prev=$(cat "$state" 2>/dev/null || true)
+        if [ "$problem" != "$prev" ]; then
+          printf '%s' "$problem" > "$state"
+          msg="UPS HEALTH ALERT on MS-7E51 (punctured shipping unit): $problem. Snapshot STATUS=$ST SELFTEST=$SELF BCHARGE=$BC TIMELEFT=$TL LINEV=$LV. Likely the shipping damage manifesting; start the shipping-damage claim (Andy has photo + packaging)."
+          echo "ALERT: $msg" >&2
+          CLADE=/home/andy/clade/skills/clade-inbox/scripts/clade-inbox
+          [ -x "$CLADE" ] && "$CLADE" --actor nixos-co inbox send --from nixos-co --to andy-co \
+            --subject "UPS HEALTH ALERT: degradation on the punctured unit (start claim)" --body "$msg" || true
+        fi
+      else
+        rm -f "$state"
+      fi
+    '';
+  };
+  systemd.timers.ups-health-watch = {
+    description = "Daily UPS battery-degradation check";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+      RandomizedDelaySec = "10m";
+    };
+  };
 }

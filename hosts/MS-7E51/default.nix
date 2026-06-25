@@ -401,6 +401,15 @@ in
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
 
+  # Hardware watchdog: if the box ever HARD-HANGS (GPU lockup under load, kernel
+  # freeze) it self-recovers with NO human. The SP5100 TCO watchdog is present
+  # but was unarmed. systemd pets it while healthy; a true freeze stops the
+  # petting and the hardware resets within the timeout. This closes the gap that
+  # BIOS auto-power-on can't: a frozen-but-powered box (no power was lost, so
+  # auto-on never fires) otherwise needs a physical force-reboot. Critical for
+  # the unattended window. (2026-06-25 incident)
+  systemd.watchdog.runtimeTime = "60s";
+
   networking.hostName = baseNameOf ./.;
   time.timeZone = "America/Los_Angeles";
 

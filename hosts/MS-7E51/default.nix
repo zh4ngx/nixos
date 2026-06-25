@@ -660,5 +660,5 @@ EOF
   # flip enable to true and rebuild. Relying on the module's default configText
   # (USB autodetect + localhost NIS + safe shutdown thresholds) on purpose; no
   # custom apcupsd.conf needed for a single USB UPS.
-  services.apcupsd.enable = false;
+  services.apcupsd.enable = true;
 }

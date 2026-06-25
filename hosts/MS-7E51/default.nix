@@ -390,6 +390,17 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
 
+  # This box runs headless / server-role. It must NEVER auto-suspend. GDM's
+  # GNOME power daemon was idle-suspending it after ~15 min with no console
+  # login, and the amdgpu resume intermittently HANGS -> "went to sleep, won't
+  # wake, needs a force-reboot". That was the real cause of the repeated
+  # "deaths" (NOT power; UPS was fine). Mask all sleep targets so nothing can
+  # suspend it. (2026-06-25 incident)
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
+
   networking.hostName = baseNameOf ./.;
   time.timeZone = "America/Los_Angeles";
 

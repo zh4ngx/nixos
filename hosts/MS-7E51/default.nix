@@ -438,6 +438,18 @@ in
     '';
   };
 
+  # Gemma off by default (trip safety, 2026-06-26). The GPU-loading backend
+  # (llama-cpp) and the voice bridge do NOT auto-start, and stay off across every
+  # reboot -- so the repeated-inference workload that triggers the PSU transient
+  # trip ("full-dark, needs a human") never runs unattended. The tablet endpoint
+  # + nginx proxies stay up but serve nothing until Gemma is brought up.
+  #   Bring up for a session (over SSH):  sudo systemctl start llama-cpp
+  #       (+ sudo systemctl start gemma-voice-chat   for the voice bridge)
+  #   Take it down:                       sudo systemctl stop llama-cpp gemma-voice-chat
+  # A reboot always returns to the safe (off) state.
+  systemd.services.llama-cpp.wantedBy = lib.mkForce [ ];
+  # (gemma-voice-chat's wantedBy is set to [] in its own block below)
+
   networking.hostName = baseNameOf ./.;
   time.timeZone = "America/Los_Angeles";
 
@@ -548,7 +560,7 @@ in
       "wyoming-faster-whisper-stt.service"
       "llama-cpp.service"
     ];
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = [ ]; # Gemma off by default (trip safety) -- on-demand only
     environment = {
       GEMMA_VOICE_HOST = "127.0.0.1";
       GEMMA_VOICE_PORT = "18082";

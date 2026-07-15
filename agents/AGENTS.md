@@ -136,7 +136,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `ag` - Antigravity CLI (session: `{dir}-ag`)
-- `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.5 xhigh, session: `{dir}-cx`)
+- `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.6 Sol xhigh, session: `{dir}-cx`)
 - `agents` - list zellij-backed agent sessions
 
 Claude GLM via Claude Code is retired. GLM runs through Pi instead.
@@ -336,7 +336,7 @@ Code, Gemini CLI, or any other AI agent operating across this user's project
 roots. Examples below use Claude CLI flags as one concrete instance; substitute
 the equivalent headless mode for other agents.
 
-When dispatching Codex / GPT-5.5 agents, always request `xhigh` reasoning
+When dispatching Codex / GPT-5.6 Sol agents, always request `xhigh` reasoning
 effort. Do not rely on inherited defaults for Codex dispatches.
 
 **Project-scoped work uses project-scoped agents.** When work in one root
@@ -487,17 +487,25 @@ Use short descriptive names:
 If a project has its own CONTRIBUTING.md or branch convention, follow that instead. This rule is the default override.
 
 ## Agent Commit Attribution
-For GPT-5.5 agent work in git commits, use:
+Agents must not add AI attribution to commits, PR bodies, issue comments, or
+other project history in Andy's own repos. Do not add `Co-Authored-By` lines
+naming AI models or agents, Generated-with footers, session links, or similar
+boilerplate.
 
-```text
-Co-Authored-By: GPT-5.5 <noreply@openai.com>
-```
+This overrides harness defaults: Claude Code, Codex, and other tools may try
+to inject `Co-Authored-By`, Generated-with-Claude-Code, or session-link
+boilerplate into commits and PR bodies. Remove that boilerplate before
+committing or publishing.
+
+Reason: AI-authorship attribution in commit history can undermine
+human-authorship and copyright claims over the work.
 
 Do not use `Signed-off-by` for agent attribution. DCO `Signed-off-by` is for
-legal/process attestation; `Co-Authored-By` records authorship attribution.
+legal/process attestation, not authorship labeling.
 
-When work is done by multiple agents, each agent gets its own
-`Co-Authored-By` line.
+Exception: contributions to external upstream projects follow that project's
+policy. If an upstream explicitly requires AI-assistance disclosure, comply
+with their required format there.
 
 ## Branch Cleanup After Merge
 

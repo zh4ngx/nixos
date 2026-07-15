@@ -104,7 +104,7 @@ objects. It is not OpenCode's `{parts:[...]}` payload, and it is not a string.
       }
     ],
     "cwd": "/home/andy/nixos",
-    "model": "gpt-5.5",
+    "model": "gpt-5.6-sol",
     "effort": "xhigh",
     "approvalPolicy": "never",
     "sandboxPolicy": {

@@ -343,11 +343,13 @@
             has_harness=0
             has_cwd=0
             has_thread_id=0
+            has_codex_model=0
             for arg in "$@"; do
               case "$arg" in
                 --harness|--harness=*) has_harness=1 ;;
                 --cwd|--cwd=*) has_cwd=1 ;;
                 --thread-id|--thread-id=*) has_thread_id=1 ;;
+                --codex-model|--codex-model=*) has_codex_model=1 ;;
               esac
             done
 
@@ -361,6 +363,9 @@
               fi
               if [ "$has_thread_id" -eq 0 ]; then
                 connect_args+=(--thread-id "$CODEX_THREAD_ID")
+              fi
+              if [ "$has_codex_model" -eq 0 ]; then
+                connect_args+=(--codex-model gpt-5.6-sol)
               fi
             fi
             connect_args+=("$@")

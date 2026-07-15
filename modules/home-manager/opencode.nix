@@ -22,6 +22,9 @@ in
       name = "opencode-with-libstdcxx";
       paths = [ pkgs.opencode ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
+      meta = (pkgs.opencode.meta or { }) // {
+        mainProgram = "opencode";
+      };
       postBuild = ''
         wrapProgram $out/bin/opencode \
           --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}

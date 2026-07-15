@@ -41,8 +41,8 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1782283260,
-        "narHash": "sha256-i9ZGHa4ZqP6Kri9aXnl7JGt4j9CD9ahIeE0PADMAzww=",
+        "lastModified": 1784104129,
+        "narHash": "sha256-02BedpgfQtTrtw2Iubp++1o8tpLNv7f5iw3qIn+rmA8=",
         "path": "/home/andy/fakebook",
         "type": "path"
       },

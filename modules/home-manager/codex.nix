@@ -15,7 +15,7 @@ in
       # Prefer OAuth (ChatGPT Pro plan) over API key fallback.
       preferred_auth_method = "chatgpt";
 
-      model = "gpt-5.5";
+      model = "gpt-5.6-sol";
       model_reasoning_effort = "xhigh";
       sandbox_mode = "danger-full-access";
       approval_policy = "never";

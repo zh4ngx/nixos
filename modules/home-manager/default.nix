@@ -468,7 +468,7 @@
               --remote ws://127.0.0.1:4107
               --no-alt-screen
               -C "$PWD"
-              -c 'model="gpt-5.5"'
+              -c 'model="gpt-5.6-sol"'
               -c 'model_reasoning_effort="xhigh"'
               -c 'notice.hide_rate_limit_model_nudge=true'
               -c "projects.$PWD.trust_level=\"trusted\""

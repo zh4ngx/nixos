@@ -1,6 +1,7 @@
 { config, lib, ... }:
 let
   codexHome = "${config.xdg.configHome}/codex";
+  enableCodexRemoteControl = false;
 in
 {
   programs.codex = {
@@ -68,5 +69,22 @@ in
     };
 
     Install.WantedBy = [ "default.target" ];
+  };
+
+  # Experimental Codex Remote Control host path for ChatGPT mobile / desktop
+  # Remote. Keep disabled until Andy explicitly tests account/workspace pairing.
+  # The command uses OpenAI's relay and does not expose an app-server listener.
+  systemd.user.services.codex-remote-control = lib.mkIf enableCodexRemoteControl {
+    Unit = {
+      Description = "Codex Remote Control host";
+      After = [ "network.target" ];
+    };
+
+    Service = {
+      Environment = "CODEX_HOME=${config.xdg.configHome}/codex";
+      ExecStart = "${lib.getExe config.programs.codex.package} remote-control --json -c notice.hide_rate_limit_model_nudge=true";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
   };
 }

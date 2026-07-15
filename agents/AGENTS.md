@@ -136,7 +136,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `ag` - Antigravity CLI (session: `{dir}-ag`)
-- `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.6 Sol xhigh, session: `{dir}-cx`)
+- `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.6 Sol max, session: `{dir}-cx`)
 - `agents` - list zellij-backed agent sessions
 
 Claude GLM via Claude Code is retired. GLM runs through Pi instead.
@@ -336,7 +336,7 @@ Code, Gemini CLI, or any other AI agent operating across this user's project
 roots. Examples below use Claude CLI flags as one concrete instance; substitute
 the equivalent headless mode for other agents.
 
-When dispatching Codex / GPT-5.6 Sol agents, always request `xhigh` reasoning
+When dispatching Codex / GPT-5.6 Sol agents, always request `max` reasoning
 effort. Do not rely on inherited defaults for Codex dispatches.
 
 **Project-scoped work uses project-scoped agents.** When work in one root

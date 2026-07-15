@@ -16,7 +16,7 @@ in
       preferred_auth_method = "chatgpt";
 
       model = "gpt-5.6-sol";
-      model_reasoning_effort = "xhigh";
+      model_reasoning_effort = "max";
       sandbox_mode = "danger-full-access";
       approval_policy = "never";
 

@@ -344,12 +344,14 @@
             has_cwd=0
             has_thread_id=0
             has_codex_model=0
+            has_codex_effort=0
             for arg in "$@"; do
               case "$arg" in
                 --harness|--harness=*) has_harness=1 ;;
                 --cwd|--cwd=*) has_cwd=1 ;;
                 --thread-id|--thread-id=*) has_thread_id=1 ;;
                 --codex-model|--codex-model=*) has_codex_model=1 ;;
+                --codex-effort|--codex-effort=*) has_codex_effort=1 ;;
               esac
             done
 
@@ -366,6 +368,9 @@
               fi
               if [ "$has_codex_model" -eq 0 ]; then
                 connect_args+=(--codex-model gpt-5.6-sol)
+              fi
+              if [ "$has_codex_effort" -eq 0 ]; then
+                connect_args+=(--codex-effort max)
               fi
             fi
             connect_args+=("$@")
@@ -474,7 +479,7 @@
               --no-alt-screen
               -C "$PWD"
               -c 'model="gpt-5.6-sol"'
-              -c 'model_reasoning_effort="xhigh"'
+              -c 'model_reasoning_effort="max"'
               -c 'notice.hide_rate_limit_model_nudge=true'
               -c "projects.$PWD.trust_level=\"trusted\""
             )
@@ -928,7 +933,7 @@
               '';
             in
             {
-              co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions";
+              co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --effort max --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --effort max";
               oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";
               ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";

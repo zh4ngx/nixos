@@ -30,6 +30,7 @@
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
         cladeLensSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-lens";
         cladeLensScript = "/home/andy/clade/skills/clade-lens/scripts/clade-lens";
+        claudePackage = inputs.claude-code.packages.${pkgs.system}.claude-code;
       in
       {
         imports = [
@@ -79,7 +80,7 @@
           # (pkgs.writeShellScriptBin "my-hello" ''
           #   echo "Hello, ${config.home.username}!"
           # '')
-          inputs.claude-code.packages.x86_64-linux.claude-code
+          claudePackage
           beeper
           tea # Codeberg CLI
           gnomeExtensions.appindicator
@@ -751,6 +752,21 @@
             ];
             ExecStart = "/etc/profiles/per-user/andy/bin/clade-lens lensd --socket %t/clade-lensd.sock --log %h/.local/share/clade/trace.jsonl --store %h/.local/share/clade/blobs --distiller teacher";
             Restart = "on-failure";
+            RestartSec = "5s";
+          };
+
+          Install.WantedBy = [ "default.target" ];
+        };
+
+        systemd.user.services.claude-daemon = {
+          Unit = {
+            Description = "Claude Code remote-control daemon";
+            After = [ "network.target" ];
+          };
+
+          Service = {
+            ExecStart = "${lib.getExe claudePackage} daemon run";
+            Restart = "always";
             RestartSec = "5s";
           };
 

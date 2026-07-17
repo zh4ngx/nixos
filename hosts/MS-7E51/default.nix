@@ -1,5 +1,4 @@
 {
-  inputs,
   lib,
   pkgs,
   self,
@@ -539,13 +538,31 @@ in
           port = 18084;
         }
       ];
-      root = "${inputs.fakebook.packages.x86_64-linux.web}";
+      # Fakebook is a host-local prototype, deployed independently with:
+      # nix build path:/home/andy/fakebook#web --out-link /srv/fakebook/current
+      root = "/srv/fakebook/current";
       extraConfig = ''
         index index.html;
       '';
       locations."/" = {
         tryFiles = "$uri $uri/ /index.html";
       };
+    };
+  };
+
+  systemd.tmpfiles.rules = [ "d /srv/fakebook 0755 andy users -" ];
+
+  systemd.services.fakebook-web-deploy = {
+    description = "Build the host-local Fakebook web bundle";
+    before = [ "nginx.service" ];
+    wantedBy = [ "multi-user.target" ];
+    unitConfig.ConditionPathExists = "/home/andy/fakebook/flake.nix";
+    environment.HOME = "/home/andy";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "andy";
+      Group = "users";
+      ExecStart = "${pkgs.nix}/bin/nix build --no-write-lock-file path:/home/andy/fakebook#web --out-link /srv/fakebook/current";
     };
   };
 

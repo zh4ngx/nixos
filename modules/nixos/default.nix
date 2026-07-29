@@ -314,6 +314,10 @@
   programs.niri = {
     enable = true;
     useNautilus = true;
+    # niri 26.04's Rust binding requires libdisplay-info < 0.4.
+    package = pkgs.niri.override {
+      libdisplay-info = pkgs.libdisplay-info_0_2;
+    };
   };
 
   programs.nh = {

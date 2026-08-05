@@ -400,14 +400,21 @@ in
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
 
-  # Hardware watchdog: if the box ever HARD-HANGS (GPU lockup under load, kernel
-  # freeze) it self-recovers with NO human. The SP5100 TCO watchdog is present
-  # but was unarmed. systemd pets it while healthy; a true freeze stops the
-  # petting and the hardware resets within the timeout. This closes the gap that
-  # BIOS auto-power-on can't: a frozen-but-powered box (no power was lost, so
-  # auto-on never fires) otherwise needs a physical force-reboot. Critical for
-  # the unattended window. (2026-06-25 incident)
+  # Hardware watchdog: if PID 1 or the kernel stops petting the SP5100 TCO, the
+  # hardware resets within the timeout. This does not catch every partial hang:
+  # during the 2026-07-30 freeze, systemd kept petting the watchdog while the
+  # rest of userspace was wedged.
   systemd.watchdog.runtimeTime = "60s";
+
+  # Escalate detected lockups and kernel oopses to a panic, then reboot after
+  # ten seconds. The lockup detectors are already enabled. Deliberately leave
+  # hung_task_panic off because an I/O stall can otherwise cause a false reboot.
+  boot.kernel.sysctl = {
+    "kernel.panic" = 10;
+    "kernel.softlockup_panic" = 1;
+    "kernel.hardlockup_panic" = 1;
+    "kernel.panic_on_oops" = 1;
+  };
 
   # GPU power cap: limit the RX 6900 XT (PCI 0000:03:00.0) board power to its
   # firmware floor of 292W (down from 325W) to shrink the transient current
@@ -733,11 +740,18 @@ EOF
   # BIOS "Restore after AC Power Loss = Power On" setting so the box auto-returns
   # when mains comes back.
   #
-  # STAGED: the UPS is not connected yet. Once the unit is plugged in over USB,
-  # flip enable to true and rebuild. Relying on the module's default configText
-  # (USB autodetect + localhost NIS + safe shutdown thresholds) on purpose; no
-  # custom apcupsd.conf needed for a single USB UPS.
-  services.apcupsd.enable = true;
+  # Keep the module's safe defaults explicit because defining configText replaces
+  # them. Persist UPS events across reboots so abrupt failures leave evidence.
+  services.apcupsd = {
+    enable = true;
+    configText = ''
+      UPSTYPE usb
+      NISIP 127.0.0.1
+      BATTERYLEVEL 50
+      MINUTES 5
+      EVENTSFILE /var/log/apcupsd.events
+    '';
+  };
 
   # Standing watch on the (shipping-punctured) UPS over the unattended window.
   # The unit arrived with a corner puncture; it's ONLINE now, but if the battery
@@ -758,8 +772,12 @@ EOF
       set -uo pipefail
       state="$STATE_DIRECTORY/last-condition"
       status=$(apcaccess status 2>/dev/null || true)
-      get() { printf '%s\n' "$status" | grep -E "^$1[[:space:]]*:" | head -1 | sed 's/^[^:]*:[[:space:]]*//;s/[[:space:]]*$//'; }
+      get() { printf '%s\n' "$status" | grep -E "^$1[[:space:]]*:" | head -1 | sed 's/^[^:]*:[[:space:]]*//;s/[[:space:]]*$//' || true; }
       ST=$(get STATUS); SELF=$(get SELFTEST); TL=$(get TIMELEFT); BC=$(get BCHARGE); LV=$(get LINEV)
+      if [ -z "$ST" ]; then
+        echo "ups snapshot unavailable: apcaccess returned no STATUS; retrying on next timer run" >&2
+        exit 0
+      fi
       echo "ups snapshot: STATUS=$ST SELFTEST=$SELF BCHARGE=$BC TIMELEFT=$TL LINEV=$LV"
 
       problem=""

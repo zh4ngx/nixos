@@ -64,8 +64,12 @@ in
     Service = {
       Environment = "CODEX_HOME=${config.xdg.configHome}/codex";
       ExecStart = "${lib.getExe config.programs.codex.package} app-server --listen ws://127.0.0.1:4107 -c notice.hide_rate_limit_model_nudge=true";
+      # Tool commands are app-server descendants. Killing the whole cgroup
+      # during Home Manager activation can kill nixos-rebuild itself.
+      KillMode = "process";
       Restart = "on-failure";
       RestartSec = "5s";
+      TimeoutStopSec = "15s";
     };
 
     Install.WantedBy = [ "default.target" ];

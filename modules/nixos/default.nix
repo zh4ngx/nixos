@@ -84,6 +84,8 @@
       owner = "andy";
       group = "users";
       mode = "0400";
+      # User-scope defaults only: /model and /effort still override them for
+      # the active session.
       content = ''
         {
           "env": {
@@ -98,8 +100,9 @@
             ]
           },
           "alwaysThinkingEnabled": true,
+          "model": "claude-opus-5",
           "switchModelsOnFlag": false,
-          "effortLevel": "max",
+          "effortLevel": "xhigh",
           "cleanupPeriodDays": 99999,
           "teammateMode": "tmux",
           "skipDangerousModePermissionPrompt": true,

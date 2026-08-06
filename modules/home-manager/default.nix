@@ -949,7 +949,7 @@
               '';
             in
             {
-              co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --effort max --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --effort max";
+              co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions";
               oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";
               ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";

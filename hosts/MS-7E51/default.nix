@@ -404,7 +404,7 @@ in
   # hardware resets within the timeout. This does not catch every partial hang:
   # during the 2026-07-30 freeze, systemd kept petting the watchdog while the
   # rest of userspace was wedged.
-  systemd.watchdog.runtimeTime = "60s";
+  systemd.settings.Manager.RuntimeWatchdogSec = "60s";
 
   # Escalate detected lockups and kernel oopses to a panic, then reboot after
   # ten seconds. The lockup detectors are already enabled. Deliberately leave

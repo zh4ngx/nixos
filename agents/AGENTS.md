@@ -447,6 +447,13 @@ Use `sudo nixos-rebuild switch --flake .` instead of `nh os switch`.
 
 **Always `git pull` before rebuilding.** The flake-lock workflow may have pushed newer flake.lock or config changes to origin.
 
+**Audit evaluation warnings before rebuilding.** Run
+`clade-lens run -- ./scripts/check-evaluation-warnings` after pulling or
+updating the lock file. Treat each `evaluation warning:` as maintenance work:
+apply behavior-preserving local migrations, rerun the audit, and report
+upstream-only warnings. If resolving a warning would change user-visible
+behavior or requires a real preference choice, ask Andy instead of guessing.
+
 **NixOS upgrades are manual.** Do not re-enable `system.autoUpgrade` or `nixos-upgrade.timer` unless Andy explicitly changes that policy. Keep `nh clean` / garbage collection automation enabled; it is separate from host upgrades.
 
 **Don't specify `.#<hostname>` unless cross-host deploying.** Plain `.` auto-matches by `hostname -s` and fails safely on mismatch. Manually typing the hostname risks silently activating the wrong machine's config (recoverable via rollback to previous generation, but disruptive).

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+host_name="${1:-}"
+if [[ -z "$host_name" ]]; then
+  IFS= read -r host_name < /proc/sys/kernel/hostname
+fi
+
+flake_attr=".#nixosConfigurations.${host_name}.config.system.build.toplevel.drvPath"
+
+if eval_stderr=$(nix eval --no-write-lock-file --raw "$flake_attr" 2>&1 >/dev/null); then
+  :
+else
+  printf '%s\n' "$eval_stderr" >&2
+  exit 1
+fi
+
+if [[ -n "$eval_stderr" ]]; then
+  printf '%s\n' "$eval_stderr" >&2
+fi
+
+if [[ "$eval_stderr" == *"evaluation warning:"* ]]; then
+  printf 'Evaluation completed with warnings for %s.\n' "$host_name" >&2
+  exit 2
+fi
+
+printf 'No evaluation warnings for %s.\n' "$host_name"

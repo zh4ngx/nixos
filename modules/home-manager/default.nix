@@ -30,7 +30,7 @@
         cladeInboxSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-inbox";
         cladeLensSkill = config.lib.file.mkOutOfStoreSymlink "/home/andy/clade/skills/clade-lens";
         cladeLensScript = "/home/andy/clade/skills/clade-lens/scripts/clade-lens";
-        claudePackage = inputs.claude-code.packages.${pkgs.system}.claude-code;
+        claudePackage = inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.claude-code;
       in
       {
         imports = [
@@ -783,6 +783,7 @@
         programs.fzf = {
           enable = true;
           enableFishIntegration = true;
+          historyWidget.fish.command = "";
         };
 
         programs.starship = {

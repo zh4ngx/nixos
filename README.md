@@ -34,3 +34,15 @@ policy.
 After first time setup, manually activate changes with
 `sudo nixos-rebuild switch --flake .` from the repo root. Keep `nh clean` /
 garbage collection automation enabled; it is separate from host upgrades.
+
+Before activating a lock or configuration update, check the current host for
+evaluation warnings:
+
+```bash
+./scripts/check-evaluation-warnings
+```
+
+The command exits with status 2 when evaluation succeeds but emits warnings.
+Fix local deprecations and configuration conflicts, then rerun it before
+activation. Report warnings originating only in upstream inputs rather than
+patching their store copies.

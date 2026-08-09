@@ -1,3 +1,5 @@
+
+
 # NixOS new machine setup
 
 Identify which host you are setting up and replace <hostname> with the appropriate hostname.
@@ -5,7 +7,7 @@ Identify which host you are setting up and replace <hostname> with the appropria
 ```fish
 # Set up nix flake
 cd ~
-nix run nixpkgs#git clone https://github.com/zh4ngx/nixos.git nixos-config --extra-experimental-features nix-command --extra-experimental-features flakes
+nix run --extra-experimental-features nix-command --extra-experimental-features flakes nixpkgs#git -- clone https://github.com/zh4ngx/nixos.git nixos-config
 # insert script to run the rest of this
 cd nixos-config/hosts
 # copy an existing host config - this could be scripted

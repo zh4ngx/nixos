@@ -655,6 +655,8 @@
             oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
+            # pc: start Pi Coding Agent without shadowing the `pi` binary
+            pc = "__zj (basename $PWD | string replace -a . _)-pc pc";
             # ag: start Antigravity CLI
             ag = "__zj (basename $PWD | string replace -a . _)-ag ag";
             # cx: start OpenAI Codex CLI (auth via `codex login` against ChatGPT Pro)
@@ -917,7 +919,7 @@
         };
 
         # Zellij is the canonical multiplexer for AI launchers (migrated from
-        # tmux 2026-04-29). Fish shortcuts for co/oc/qc/ag/cx attach to
+        # tmux 2026-04-29). Fish shortcuts for co/oc/qc/pc/ag/cx attach to
         # or spawn a zellij session that loads the corresponding layout below.
         # Layouts are materialized under
         # ~/.config/zellij/layouts/<name>.kdl by home-manager and referenced
@@ -953,6 +955,7 @@
               co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions";
               oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";
+              pc = agentLayout "clade-agent-env pc pi";
               ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";
               cx = agentLayout "clade-agent-env cx codex-continue-current";
             };

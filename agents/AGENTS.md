@@ -135,6 +135,7 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 - `co` - Claude Code with supervised Agent Chrome / Playwright MCP, per-project (session: `{dir}-co`)
 - `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
+- `pc` - Pi Coding Agent with its runtime-managed config (session: `{dir}-pc`)
 - `ag` - Antigravity CLI (session: `{dir}-ag`)
 - `cx` - Codex CLI attached to the persistent local `codex-app-server` (GPT-5.6 Sol max, session: `{dir}-cx`)
 - `agents` - list zellij-backed agent sessions

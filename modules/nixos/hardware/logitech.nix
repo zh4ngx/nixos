@@ -4,8 +4,8 @@
   # System-level drivers and udev rules
   hardware.logitech.wireless = {
     enable = true;
-    enableGraphical = true;
   };
+  programs.solaar.enable = true;
 
   # User-level background service for DPI persistence
   systemd.user.services.solaar = {

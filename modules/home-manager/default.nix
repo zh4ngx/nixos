@@ -790,6 +790,8 @@
           ".qwen/QWEN.md".source = ./../../agents/AGENTS.md;
           ".qwen/skills/clade-inbox".source = cladeInboxSkill;
           ".qwen/skills/clade-lens".source = cladeLensSkill;
+          ".pi/agent/skills/clade-inbox".source = cladeInboxSkill;
+          ".pi/agent/skills/clade-lens".source = cladeLensSkill;
 
           # tea CLI config from sops-nix template
           ".config/tea/config.yml".source =

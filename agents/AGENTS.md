@@ -123,6 +123,22 @@ Run after: `/plugin` commands, `/reload-plugins`, or when seeing "/bin/bash: bad
 - **Patch for NixOS**: Fix shebangs to use `#!/usr/bin/env nix-shell` with required packages.
 - **No Imperative Installs**: Never use `/plugin install`. Manage declaratively.
 
+## Pi Sessions Only
+
+Applies to `pi` / the `pc` launcher. Other harnesses can skip this section.
+
+- **Config is declarative.** `~/.pi/agent/settings.json` and
+  `~/.pi/agent/models.json` are read-only `/nix/store` symlinks owned by
+  `programs.pi-coding-agent` in `~/nixos`. Never edit them at runtime and never
+  work around them with `chmod` or a writable copy. Changes go through
+  `nixos-co` and a rebuild.
+- **Runtime-managed, yours to write:** `auth.json` (written by `/login`),
+  `models-store.json` (provider cache), and `sessions/`.
+- **No inbox wake path yet.** Nothing pokes a Pi session when another agent
+  sends it a message; messages go durable and sit unread. Run
+  `clade-inbox-read <your-agent-id>` at session start and again before going
+  idle. Remove this bullet once the wake extension lands.
+
 ## Permissionless Safety (--dangerously-skip-permissions)
 All AI CLI launchers (`co`, `ag`, `oc`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).

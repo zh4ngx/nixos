@@ -500,6 +500,11 @@
           enable = true;
           package = pkgs.pi-coding-agent;
 
+          # Same canonical ruleset every other harness gets, rendered to
+          # ~/.pi/agent/AGENTS.md. Pi-specific rules live in a marked section
+          # inside that file rather than in a Pi-only fork.
+          context = ./../../agents/AGENTS.md;
+
           settings = {
             # Tracks the installed package so Pi never needs to write the file
             # to record that it showed the changelog.

@@ -492,11 +492,74 @@
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 
-        # Install Pi globally, but leave ~/.pi/agent runtime-managed. Pi rewrites
-        # OAuth auth and provider state there, so HM must not own those files.
+        # Install Pi globally and manage its static config declaratively.
+        # settings.json and models.json are store symlinks; auth.json (written by
+        # /login), models-store.json (provider cache), sessions/, and trust.json
+        # stay runtime-managed because Pi rewrites them.
         programs.pi-coding-agent = {
           enable = true;
           package = pkgs.pi-coding-agent;
+
+          settings = {
+            # Tracks the installed package so Pi never needs to write the file
+            # to record that it showed the changelog.
+            lastChangelogVersion = pkgs.pi-coding-agent.version;
+            defaultProvider = "zai";
+            defaultModel = "glm-5.3";
+            defaultThinkingLevel = "medium";
+            theme = "dark";
+            # Models offered by Ctrl+P cycling: main, GLM, consulting.
+            enabledModels = [
+              "opencode-go/kimi-k3"
+              "zai/glm-5.3"
+              "opencode-go/qwen3.8-max"
+            ];
+          };
+
+          # apiKey values are shell indirections evaluated by Pi at runtime, so
+          # no secret material enters the Nix store.
+          models.providers = {
+            ollama-cloud = {
+              baseUrl = "https://ollama.com/v1";
+              api = "openai-completions";
+              apiKey = "!cat /run/secrets/ollama-token";
+              authHeader = true;
+              compat = {
+                supportsDeveloperRole = false;
+                supportsReasoningEffort = false;
+              };
+              models = [
+                {
+                  id = "gpt-oss:120b";
+                  reasoning = true;
+                  contextWindow = 131072;
+                }
+                {
+                  id = "qwen3-coder:480b";
+                  contextWindow = 262144;
+                }
+              ];
+            };
+            opencode-go = {
+              baseUrl = "https://opencode.ai/zen/go/v1";
+              api = "openai-completions";
+              apiKey = "!jq -r '.\"opencode-go\".key' /home/andy/.local/share/opencode/auth.json";
+              authHeader = true;
+              compat = {
+                supportsDeveloperRole = false;
+                supportsReasoningEffort = false;
+              };
+              models = [
+                {
+                  id = "kimi-k3";
+                  name = "Kimi K3";
+                  reasoning = true;
+                  contextWindow = 1048576;
+                  maxTokens = 131072;
+                }
+              ];
+            };
+          };
         };
 
         # Shared MCP servers (injected into tools via enableMcpIntegration)

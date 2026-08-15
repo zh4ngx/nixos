@@ -48,8 +48,7 @@ in
     };
   };
 
-  home.file.".config/codex/AGENTS.md".source =
-    config.lib.file.mkOutOfStoreSymlink "/home/andy/nixos/agents/AGENTS.md";
+  home.file.".config/codex/AGENTS.md".source = ./../../agents/AGENTS.md;
 
   # Structured-injection substrate for Codex project agents. `cx` connects its
   # TUI to this loopback app-server, so orchestrators can use the Codex

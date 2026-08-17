@@ -511,7 +511,11 @@
             lastChangelogVersion = pkgs.pi-coding-agent.version;
             defaultProvider = "zai";
             defaultModel = "glm-5.3";
-            defaultThinkingLevel = "medium";
+            # zai/glm-5.3 ships no thinkingLevelMap, so Pi falls back to the
+            # provider default mapping: levels through "high" work, "xhigh" and
+            # "max" are unsupported and get clamped away. "high" is the ceiling
+            # on this route. opencode-go/glm-5.3 does expose "max".
+            defaultThinkingLevel = "high";
             theme = "dark";
             # Models offered by Ctrl+P cycling: main, GLM, consulting.
             enabledModels = [

@@ -134,10 +134,12 @@ Applies to `pi` / the `pc` launcher. Other harnesses can skip this section.
   `nixos-co` and a rebuild.
 - **Runtime-managed, yours to write:** `auth.json` (written by `/login`),
   `models-store.json` (provider cache), and `sessions/`.
-- **No inbox wake path yet.** Nothing pokes a Pi session when another agent
-  sends it a message; messages go durable and sit unread. Run
-  `clade-inbox-read <your-agent-id>` at session start and again before going
-  idle. Remove this bullet once the wake extension lands.
+- **Inbox wake is live.** The `clade-inbox-wake` extension (deployed via
+  home.file, canonical source `~/clade/prototypes/clade-inbox-wake`) pokes
+  this session when unread CLADE messages arrive. Still run
+  `clade-inbox-read <your-agent-id>` at session start to drain any backlog
+  that accrued while the session was down; wakes only fire for new arrivals
+  while armed.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
 All AI CLI launchers (`co`, `ag`, `oc`, `qc`, `cx`) run inside zellij

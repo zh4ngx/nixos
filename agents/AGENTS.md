@@ -502,6 +502,8 @@ export SOPS_AGE_KEY=$(ssh-to-age -private-key -i ~/.ssh/id_ed25519) \
 ## Git Branch Naming
 Never use `feat/`, `fix/`, or `chore/` branch prefixes — they're meaningless noise in small-team and personal projects. `docs/` is acceptable when the branch is genuinely docs-only.
 
+Same ban for commit messages: no conventional-commit prefixes (`feat:`, `fix(scope):`, `chore:`, or any variant). Write a plain imperative description of what changed; the type is already obvious from the diff.
+
 Use short descriptive names:
 - `vscode-agda` not `feat/vscode-agda`
 - `gemini-oauth` not `fix/auth-method`

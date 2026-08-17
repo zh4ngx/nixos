@@ -535,13 +535,16 @@
             # below survive catalog updates.
             zai = {
               modelOverrides."glm-5.3" = {
-                # Same mapping pi ships for zai/glm-5.2: low/medium collapse to
-                # "high", max passes through, minimal is unsupported.
+                # Same shape pi ships for zai/glm-5.2, plus xhigh: andy-pc
+                # live-tested the endpoint enum
+                # (none,minimal,low,medium,high,xhigh,max). low/medium collapse
+                # to "high", xhigh and max pass through, minimal is unsupported.
                 thinkingLevelMap = {
                   minimal = null;
                   low = "high";
                   medium = "high";
                   high = "high";
+                  xhigh = "xhigh";
                   max = "max";
                 };
                 compat.supportsReasoningEffort = true;
@@ -821,6 +824,13 @@
           ".pi/agent/skills/clade-inbox".source = cladeInboxSkill;
           ".pi/agent/skills/clade-lens".source = cladeLensSkill;
 
+          # Pi inbox wake extension (ln prototype, canonical source owned by
+          # the clade root). Deploys as a global extension pi auto-discovers in
+          # every pc session; arms from CLADE_AGENT_ID.
+          ".pi/agent/extensions/clade-inbox-wake".source =
+            config.lib.file.mkOutOfStoreSymlink
+              "/home/andy/clade/prototypes/clade-inbox-wake";
+
           # tea CLI config from sops-nix template
           ".config/tea/config.yml".source =
             config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/tea-config.yml";
@@ -1048,7 +1058,7 @@
               co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions";
               oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";
-              pc = agentLayout "clade-agent-env pc pi";
+              pc = agentLayout "clade-agent-env pc pi --session-id (basename $PWD | string replace -a . _)-pc";
               ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";
               cx = agentLayout "clade-agent-env cx codex-continue-current";
             };

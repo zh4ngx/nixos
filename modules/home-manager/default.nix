@@ -511,11 +511,12 @@
             lastChangelogVersion = pkgs.pi-coding-agent.version;
             defaultProvider = "zai";
             defaultModel = "glm-5.3";
-            # zai/glm-5.3 ships no thinkingLevelMap, so Pi falls back to the
-            # provider default mapping: levels through "high" work, "xhigh" and
-            # "max" are unsupported and get clamped away. "high" is the ceiling
-            # on this route. opencode-go/glm-5.3 does expose "max".
-            defaultThinkingLevel = "high";
+            # The models.dev catalog marks zai/glm-5.3 supportsReasoningEffort
+            # false with no thinkingLevelMap, so Pi never sends reasoning_effort
+            # on this route and "high" was the effective ceiling. The endpoint
+            # does accept "high"/"max" (pi's own zai/glm-5.2 catalog entry maps
+            # max -> "max"), so the modelOverrides below expose max here.
+            defaultThinkingLevel = "max";
             theme = "dark";
             # Models offered by Ctrl+P cycling: main, GLM, consulting.
             enabledModels = [
@@ -528,6 +529,24 @@
           # apiKey values are shell indirections evaluated by Pi at runtime, so
           # no secret material enters the Nix store.
           models.providers = {
+            # Built-in Z.ai provider: no baseUrl/apiKey needed, only per-model
+            # overrides. modelOverrides are the topmost config layer and are
+            # reapplied after every models-store refresh, so the flipped flags
+            # below survive catalog updates.
+            zai = {
+              modelOverrides."glm-5.3" = {
+                # Same mapping pi ships for zai/glm-5.2: low/medium collapse to
+                # "high", max passes through, minimal is unsupported.
+                thinkingLevelMap = {
+                  minimal = null;
+                  low = "high";
+                  medium = "high";
+                  high = "high";
+                  max = "max";
+                };
+                compat.supportsReasoningEffort = true;
+              };
+            };
             ollama-cloud = {
               baseUrl = "https://ollama.com/v1";
               api = "openai-completions";

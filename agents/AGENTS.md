@@ -161,9 +161,13 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 Claude GLM via Claude Code is retired. GLM runs through Pi instead.
 
 There is no special `main` launcher. Main-loop identity is operational:
-`cwd + harness`. Examples: `cd ~; oc` → `andy-oc`, `cd ~; cx` →
-`andy-cx`, `cd ~/nixos; co` → `nixos-co`. Run agents from the project root
-they own instead of adding unrelated roots to scope.
+`cwd + harness`. The root orchestration workspace is `~/main`. Examples:
+`cd ~/main; oc` → `main-oc`, `cd ~/main; cx` → `main-cx`, `cd ~/nixos; co` →
+`nixos-co`. Run agents from the project root they own instead of adding
+unrelated roots to scope.
+
+The root seats were `andy-*` before the move to `~/main`. A dual-read bridge
+sweeps the legacy queues until 2026-08-30; address `main-*` from now on.
 
 ## Tooling Discipline
 
@@ -193,7 +197,7 @@ explicitly debugging that lower-level transport. Report the exception when you
 use it.
 
 Examples:
-- Use `clade-inbox-send andy-ag "<message>"` or
+- Use `clade-inbox-send main-ag "<message>"` or
   `clade-inbox-send clade-cx "<message>"` for direct wakeup and inbox
   coordination.
 - Dispatch vault writes to `vault-cx` instead of editing `~/vault` directly

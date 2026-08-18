@@ -757,7 +757,7 @@ EOF
   # The unit arrived with a corner puncture; it's ONLINE now, but if the battery
   # was damaged it'll surface as a REPLACEBATT flag or a failed self-test. This
   # daily check logs a snapshot to the journal and, on the first appearance of
-  # either, sends a deduped CLADE-inbox alert to andy-co so the shipping-damage
+  # either, sends a deduped CLADE-inbox alert to main-co so the shipping-damage
   # claim can start (Andy has the photo + packaging). Added 2026-06-25.
   systemd.services.ups-health-watch = {
     description = "Watch apcupsd for UPS battery degradation (punctured-unit standing watch)";
@@ -794,7 +794,7 @@ EOF
           msg="UPS HEALTH ALERT on MS-7E51 (punctured shipping unit): $problem. Snapshot STATUS=$ST SELFTEST=$SELF BCHARGE=$BC TIMELEFT=$TL LINEV=$LV. Likely the shipping damage manifesting; start the shipping-damage claim (Andy has photo + packaging)."
           echo "ALERT: $msg" >&2
           CLADE=/home/andy/clade/skills/clade-inbox/scripts/clade-inbox
-          [ -x "$CLADE" ] && "$CLADE" --actor nixos-co inbox send --from nixos-co --to andy-co \
+          [ -x "$CLADE" ] && "$CLADE" --actor nixos-co inbox send --from nixos-co --to main-co \
             --subject "UPS HEALTH ALERT: degradation on the punctured unit (start claim)" --body "$msg" || true
         fi
       else

@@ -36,27 +36,72 @@ in the chain is already fine:
 | RX 6900 XT | RDNA2, HDMI 2.1 hardware. Fine. |
 | `amdgpu` driver | **The blocker.** |
 
-The following is as reported by main-co's research, not independently verified
-here. The HDMI Forum prohibited open-source HDMI 2.1 in February 2024. AMD
-submitted FRL patches upstream in May 2026, reportedly on Valve's push, with a
-target merge in **Linux 7.2**.
+The status below is from main-co's web research, not verifiable from this
+host. The HDMI Forum prohibited open-source HDMI 2.1 in February 2024. AMD
+submitted FRL patches upstream in May 2026, reportedly on Valve's push, and
+**Linux 7.2 has been released with FRL merged**; the 7.3 merge window opened
+2026-08-17. Everything in the next section, by contrast, is measured here.
 
-### Watch item: Linux 7.2
+### Watch item: nixpkgs shipping Linux 7.2
 
-**Trigger:** nixpkgs ships Linux 7.2. This host is on
-`pkgs.linuxPackages_latest` (`modules/nixos/default.nix:270`) and is running
-7.1.8, so 7.2 arrives on its own without a config change.
+**The gate is nixpkgs, not upstream.** 7.2 is out. What is missing is nixpkgs
+packaging it.
 
-**When it lands, flag it to Andy along with these caveats:**
+Measured 2026-08-18:
 
-- FRL is **disabled by default**. It needs `amdgpu.dc_feature_mask=0x400` in
-  `boot.kernelParams`.
-- Only FRL was submitted. **VRR and DSC were not.** VRR matters on an OLED if
-  he games, so 7.2 may not be the full win.
-- Full compliance testing was still in progress as of the reporting.
+| | |
+|---|---|
+| Flake's nixpkgs pin | `e5bdc4a4`, 2026-08-16 |
+| `config.boot.kernelPackages.kernel.version` | 7.1.8 |
+| `linuxPackages_latest` on nixos-unstable HEAD | 7.1.8 |
+| `linuxPackages_7_2` on nixos-unstable HEAD | **does not exist** |
 
-**The clean path, once 7.2 is in:** add the kernel parameter, plug HDMI
-directly into the 6900 XT, drop the adapter. No iGPU move at any point.
+So a flake update today gets nothing. Unstable itself has not moved.
+
+**The check**, which is the whole watch item:
+
+```
+nix eval --raw github:NixOS/nixpkgs/nixos-unstable#linuxPackages_latest.kernel.version
+nix eval --raw github:NixOS/nixpkgs/nixos-unstable#linuxPackages_7_2.kernel.version
+```
+
+Either returning 7.2 is the trigger. The second is the faster path: if a
+`linuxPackages_7_2` attribute appears before `_latest` moves, Andy can pin it
+explicitly instead of waiting. This host is on `pkgs.linuxPackages_latest`
+(`modules/nixos/default.nix:270`), so if `_latest` moves first, a flake update
+plus rebuild is the whole job.
+
+> Reading the pin: use `.nodes.root.inputs.nixpkgs` in `flake.lock` and follow
+> the pointer. It currently resolves to `nixpkgs_3`. The bare `.nodes.nixpkgs`
+> entry is some transitive dependency's nixpkgs (`6b5e5b7a`, 2026-08-13) and
+> is **not** what this host builds from. Two of us have now misread this the
+> same way.
+
+### When it lands
+
+Add to `boot.kernelParams` in `hosts/MS-7E51/default.nix` (the block is at
+line 714):
+
+```nix
+# HDMI 2.1 FRL is off by default in amdgpu; this enables it. Requires
+# Linux 7.2 or newer, and does nothing on older kernels.
+"amdgpu.dc_feature_mask=0x400"
+```
+
+This is deliberately **not** in the live config. It is inert at best on 7.1.8
+and an unexplained kernel parameter is worse than none, so it waits here until
+the kernel is actually present.
+
+Then **plug HDMI directly into the RX 6900 XT** and drop the DP-to-HDMI
+adapter. Not the motherboard. The dGPU is RDNA2 and has HDMI 2.1 hardware; the
+iGPU is irrelevant to this and always was. This thread began as an iGPU
+discussion and that is the detail most likely to get confused later.
+
+**Set expectations before he does this.** VRR was reported as not submitted
+alongside FRL, and DSC status in 7.2 is unclear. FRL alone should carry 4K120
+on the LG CX, since HDMI 2.1 at 48 Gbps covers it without DSC. But if Andy
+games on that panel, HDMI 2.1 *without VRR* is not the upgrade he is probably
+picturing. Worth saying out loud before he pulls the adapter out.
 
 ## The one change that was kept
 

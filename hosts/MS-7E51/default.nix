@@ -493,6 +493,12 @@ in
       alias = "google/gemma-4-12B-it-qat-q4_0-gguf:Q4_0";
       ctx-size = 32768;
       n-gpu-layers = 99;
+      # Pin the dGPU explicitly. The iGPU advertises ~16 GiB of GTT-backed
+      # "free" memory, so if enumeration order ever changes, an unpinned run
+      # lands the model on the iGPU and gets slow rather than broken, which is
+      # the hard failure to notice. Verify with `llama-server --list-devices`
+      # after any GPU/display change; Vulkan0 must be the RX 6900 XT.
+      device = "Vulkan0";
       parallel = 1;
       cache-type-k = "q8_0";
       cache-type-v = "q8_0";

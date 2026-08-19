@@ -42,40 +42,36 @@ submitted FRL patches upstream in May 2026, reportedly on Valve's push, and
 **Linux 7.2 has been released with FRL merged**; the 7.3 merge window opened
 2026-08-17. Everything in the next section, by contrast, is measured here.
 
-### Watch item: nixpkgs shipping Linux 7.2
+### RESOLVED 2026-08-19: Linux 7.2 landed
 
-**The gate is nixpkgs, not upstream.** 7.2 is out. What is missing is nixpkgs
-packaging it.
+Kernel 7.2 reached `nixos-unstable` and Andy pulled it with `nix flake update`
+on 2026-08-19 (pin moved to `0ae2bc1`, 2026-08-18). The configured kernel is
+now 7.2. **The remaining work is the kernel parameter and the cable, below.**
 
-Measured 2026-08-18:
+The watch is closed, but the lesson in how it was misread is worth keeping.
+Earlier the same day this file asserted that `linuxPackages_7_2` "does not
+exist" on nixos-unstable. That was measured correctly and was still wrong in
+substance, for two reasons:
 
-| | |
-|---|---|
-| Flake's nixpkgs pin | `e5bdc4a4`, 2026-08-16 |
-| `config.boot.kernelPackages.kernel.version` | 7.1.8 |
-| `linuxPackages_latest` on nixos-unstable HEAD | 7.1.8 |
-| `linuxPackages_7_2` on nixos-unstable HEAD | **does not exist** |
+- **`master` had 7.2 before `nixos-unstable` did.** `nixos-unstable` is master
+  held back until Hydra builds it and the NixOS tests pass, which is also what
+  populates the binary cache. Checking only `nixos-unstable` answers "can I
+  get this now without compiling," not "does nixpkgs have it."
+- **The branch moved within hours.** A measurement against a fast-moving
+  branch is a timestamp, not a fact. Re-run before relying on it.
 
-So a flake update today gets nothing. Unstable itself has not moved.
-
-**The check**, which is the whole watch item:
+So: check both refs, and record which one you checked.
 
 ```
-nix eval --raw github:NixOS/nixpkgs/nixos-unstable#linuxPackages_latest.kernel.version
-nix eval --raw github:NixOS/nixpkgs/nixos-unstable#linuxPackages_7_2.kernel.version
+nix eval --refresh --raw github:NixOS/nixpkgs/nixos-unstable#linuxPackages_latest.kernel.version
+nix eval --refresh --raw github:NixOS/nixpkgs/master#linuxPackages_7_2.kernel.version
 ```
 
-Either returning 7.2 is the trigger. The second is the faster path: if a
-`linuxPackages_7_2` attribute appears before `_latest` moves, Andy can pin it
-explicitly instead of waiting. This host is on `pkgs.linuxPackages_latest`
-(`modules/nixos/default.nix:270`), so if `_latest` moves first, a flake update
-plus rebuild is the whole job.
-
-> Reading the pin: use `.nodes.root.inputs.nixpkgs` in `flake.lock` and follow
-> the pointer. It currently resolves to `nixpkgs_3`. The bare `.nodes.nixpkgs`
-> entry is some transitive dependency's nixpkgs (`6b5e5b7a`, 2026-08-13) and
-> is **not** what this host builds from. Two of us have now misread this the
-> same way.
+We stay on `nixos-unstable`. `master` is ungated: a bad merge reaches the
+machine directly, cache coverage is spottier so you compile more, and
+staging-next merges land mass rebuilds unabsorbed. If a single package is ever
+needed ahead of the channel again, add a second nixpkgs input pinned to master
+and take only that attribute from it, rather than moving the whole system.
 
 ### When it lands
 

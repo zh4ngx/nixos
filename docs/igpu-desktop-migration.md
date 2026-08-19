@@ -73,31 +73,67 @@ staging-next merges land mass rebuilds unabsorbed. If a single package is ever
 needed ahead of the channel again, add a second nixpkgs input pinned to master
 and take only that attribute from it, rather than moving the whole system.
 
-### When it lands
+### Why FRL is off by default, and why that matters
 
-Add to `boot.kernelParams` in `hosts/MS-7E51/default.nix` (the block is at
-line 714):
+AMD disabled FRL by default **specifically because HDMI VRR is not finished**.
+Their stated position is that FRL without VRR is a *regression* for people
+with FRL-capable displays, so they will not ship it on by default until VRR
+lands. Once VRR is complete AMD intends to flip FRL on by default and the
+kernel parameter becomes unnecessary.
+
+Read that as guidance, not trivia: AMD is saying that turning FRL on today is
+a downgrade in one respect for exactly this setup (an FRL-capable OLED used
+for gaming). DSC *is* functional in 7.2; VRR is the missing piece.
+
+Reported via Phoronix/wccftech coverage of the patch submission, 2026-08-19.
+
+### To enable it anyway
+
+Add to `boot.kernelParams` in `hosts/MS-7E51/default.nix` (block at line 714):
 
 ```nix
-# HDMI 2.1 FRL is off by default in amdgpu; this enables it. Requires
-# Linux 7.2 or newer, and does nothing on older kernels.
+# HDMI 2.1 FRL is off by default in amdgpu until HDMI VRR is complete.
+# Remove this once AMD enables FRL by default; it is a temporary workaround.
 "amdgpu.dc_feature_mask=0x400"
 ```
 
-This is deliberately **not** in the live config. It is inert at best on 7.1.8
-and an unexplained kernel parameter is worse than none, so it waits here until
-the kernel is actually present.
+Then plug HDMI **directly into the RX 6900 XT**, not the motherboard. The dGPU
+is RDNA2 with HDMI 2.1 hardware; the iGPU is irrelevant to this and always was.
 
-Then **plug HDMI directly into the RX 6900 XT** and drop the DP-to-HDMI
-adapter. Not the motherboard. The dGPU is RDNA2 and has HDMI 2.1 hardware; the
-iGPU is irrelevant to this and always was. This thread began as an iGPU
-discussion and that is the detail most likely to get confused later.
+### Native HDMI 2.1 vs the DP-to-HDMI adapter
 
-**Set expectations before he does this.** VRR was reported as not submitted
-alongside FRL, and DSC status in 7.2 is unclear. FRL alone should carry 4K120
-on the LG CX, since HDMI 2.1 at 48 Gbps covers it without DSC. But if Andy
-games on that panel, HDMI 2.1 *without VRR* is not the upgrade he is probably
-picturing. Worth saying out loud before he pulls the adapter out.
+Not strictly better today, and that is the actionable conclusion.
+
+- **FRL is required** for the high-bandwidth modes. HDMI 2.0's TMDS signalling
+  tops out near 18 Gbps (4K60 8-bit); FRL is what unlocks up to 48 Gbps and
+  therefore 4K120.
+- **Native advantages:** no conversion layer, CEC, cleaner HDR and mode-change
+  handshakes, and VRR once it exists. Active DP-to-HDMI adapters are a known
+  source of black screens on mode change and HDR handshake quirks.
+- **But neither path gives VRR right now**, and AMD itself calls FRL-without-
+  VRR a regression. Switching to native today trades adapter quirks for driver
+  immaturity.
+
+**So there is no urgency.** Wait for VRR. When it lands, the kernel parameter
+disappears on its own *and* native becomes clearly better than the adapter, in
+one step, instead of two disruptive changes for a partial win.
+
+### Does the kernel parameter hurt while still on the adapter?
+
+It should be inert. `dc_feature_mask` bit 0x400 enables FRL on the GPU's native
+HDMI encoder. On a DP-to-HDMI adapter the GPU drives a DisplayPort output and
+the adapter does the conversion, so the HDMI encoder path is not in use. Low
+risk rather than guaranteed no-op: not verified on this hardware, and there is
+no reason to set it before moving the cable anyway.
+
+## Open items
+
+- [ ] `amdgpu.dc_feature_mask=0x400` not added. Deliberate: wait for VRR.
+- [ ] Cable still on DP-to-HDMI adapter. Move to the 6900 XT's HDMI when VRR
+      lands, not before.
+- [ ] **Watch: HDMI VRR in amdgpu.** When it merges, FRL should become
+      default-on, this parameter becomes removable, and the adapter can go.
+      That is the single trigger for finishing this whole thread.
 
 ## The one change that was kept
 

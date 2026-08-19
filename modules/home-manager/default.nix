@@ -461,13 +461,6 @@
               })
             }/bin/qwen --auth-type openai -m qwen3.6-max-preview "$@"
           '')
-          (pkgs.writeShellScriptBin "opencode-attach-current" ''
-            #!/usr/bin/env bash
-            set -euo pipefail
-
-            ${pkgs.systemd}/bin/systemctl --user start opencode-serve.service
-            exec opencode attach http://127.0.0.1:4096 --dir "$PWD" -c "$@"
-          '')
           (pkgs.writeShellScriptBin "codex-continue-current" ''
             #!/usr/bin/env bash
             set -euo pipefail
@@ -745,8 +738,6 @@
             '';
             # co: Claude Code with supervised Agent Chrome / Playwright MCP
             co = "__zj (basename $PWD | string replace -a . _)-co co";
-            # oc: start opencode attached to the persistent OpenCode server
-            oc = "__zj (basename $PWD | string replace -a . _)-oc oc";
             # qc: start qwen-code (Paid 3.6 Plus CLI)
             qc = "__zj (basename $PWD | string replace -a . _)-qc qc";
             # pc: start Pi Coding Agent without shadowing the `pi` binary
@@ -813,9 +804,6 @@
           ".gemini/antigravity-cli/GEMINI.md".source = ./../../agents/AGENTS.md;
           ".gemini/antigravity-cli/skills/clade-inbox".source = cladeInboxSkill;
           ".gemini/antigravity-cli/skills/clade-lens".source = cladeLensSkill;
-          ".config/opencode/AGENTS.md".source = ./../../agents/AGENTS.md;
-          ".config/opencode/skills/clade-inbox".source = cladeInboxSkill;
-          ".config/opencode/skills/clade-lens".source = cladeLensSkill;
           ".config/codex/skills/clade-inbox".source = cladeInboxSkill;
           ".config/codex/skills/clade-lens".source = cladeLensSkill;
           ".qwen/QWEN.md".source = ./../../agents/AGENTS.md;
@@ -850,6 +838,10 @@
             Environment = [
               "PATH=${
                 lib.makeBinPath [
+                  # clade-lens's `teacher` distiller is an OpencodeDistiller
+                  # that shells out to this binary for
+                  # opencode-go/deepseek-v4-flash. It is the only surviving
+                  # consumer of opencode now that the `oc` harness is gone.
                   config.programs.opencode.package
                   pkgs.coreutils
                 ]
@@ -1056,7 +1048,6 @@
             in
             {
               co = agentLayout "clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions --continue; or clade-agent-env co claude --mcp-config /run/secrets/rendered/claude-mcp-browser.json --dangerously-skip-permissions";
-              oc = agentLayout "clade-agent-env oc opencode-attach-current";
               qc = agentLayout "clade-agent-env qc qwencode -c";
               pc = agentLayout "clade-agent-env pc pi --session-id (basename $PWD | string replace -a . _)-pc";
               ag = agentLayout "clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --continue --dangerously-skip-permissions; or clade-agent-env ag env AGY_CLI_HIDE_ACCOUNT_INFO=1 agy --dangerously-skip-permissions";

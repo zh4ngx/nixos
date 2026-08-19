@@ -142,7 +142,7 @@ Applies to `pi` / the `pc` launcher. Other harnesses can skip this section.
   while armed.
 
 ## Permissionless Safety (--dangerously-skip-permissions)
-All AI CLI launchers (`co`, `ag`, `oc`, `qc`, `cx`) run inside zellij
+All AI CLI launchers (`co`, `ag`, `pc`, `qc`, `cx`) run inside zellij
 with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 - **Commit-Before-Destructive**: Ensure clean git state before rm/mv/nix-collect-garbage.
@@ -151,7 +151,6 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 ### Fish Functions
 - `co` - Claude Code with supervised Agent Chrome / Playwright MCP, per-project (session: `{dir}-co`)
-- `oc` - OpenCode attached to the persistent local `opencode-serve` API server (session: `{dir}-oc`)
 - `qc` - Qwen Code 3.6 Plus (session: `{dir}-qc`)
 - `pc` - Pi Coding Agent with its runtime-managed config (session: `{dir}-pc`)
 - `ag` - Antigravity CLI (session: `{dir}-ag`)
@@ -160,9 +159,14 @@ with auto-approve flags (`--dangerously-skip-permissions` / `--yolo`).
 
 Claude GLM via Claude Code is retired. GLM runs through Pi instead.
 
+OpenCode as a harness is retired as of 2026-08-19: no `oc` launcher, no
+`opencode-serve`, no `main-oc` seat. The OpenCode Go subscription survives and
+is consumed directly by Pi (`opencode-go/*` models) and by clade-lens's
+`teacher` distiller. Do not reintroduce an `oc` seat.
+
 There is no special `main` launcher. Main-loop identity is operational:
 `cwd + harness`. The root orchestration workspace is `~/main`. Examples:
-`cd ~/main; oc` → `main-oc`, `cd ~/main; cx` → `main-cx`, `cd ~/nixos; co` →
+`cd ~/main; pc` → `main-pc`, `cd ~/main; cx` → `main-cx`, `cd ~/nixos; co` →
 `nixos-co`. Run agents from the project root they own instead of adding
 unrelated roots to scope.
 
@@ -235,7 +239,6 @@ Native paths currently managed by Home Manager:
 
 - Codex: `~/.config/codex/skills/clade-inbox`
 - Claude Code: `~/.claude/skills/clade-inbox`
-- OpenCode: `~/.config/opencode/skills/clade-inbox`
 - Qwen Code: `~/.qwen/skills/clade-inbox`
 - Gemini CLI: `~/.gemini/skills/clade-inbox`
 - Antigravity CLI: `~/.gemini/antigravity-cli/skills/clade-inbox`
@@ -256,7 +259,7 @@ to the wrong live session.
 
 Do not hardcode, save, or declaratively pin a Codex thread id. Use only the
 live `CODEX_THREAD_ID` from the currently running Codex session. Do not use
-`--harness codex` for Claude, Antigravity, OpenCode, or any other non-Codex
+`--harness codex` for Claude, Antigravity, Pi, or any other non-Codex
 agent unless it is actually a Codex app-server session with `CODEX_THREAD_ID`.
 
 Keep connects model-visible and tracked. Do not create hidden detached shell
@@ -283,7 +286,7 @@ Start it only when Andy asks for browser-backed research:
    browser login and 2FA in that visible window.
 2. Start Claude with `co`. It attaches Playwright MCP to the running agent
    Chrome profile and includes Claude's permission-skip flag by default. Normal
-   `cx`, `oc`, `ag`, and `qc` sessions do not get browser MCP.
+   `cx`, `pc`, `ag`, and `qc` sessions do not get browser MCP.
 3. Use one browser-capable agent at a time. Close the agent Chrome window after
    collection.
 
@@ -354,7 +357,7 @@ Prefer the leanest correct solution. Before adding code or a dependency, check i
 
 ## Project Boundaries (Dispatch)
 
-This rule is **agent-agnostic** — applies to Claude Code, OpenCode, Codex, Qwen
+This rule is **agent-agnostic** — applies to Claude Code, Pi, Codex, Qwen
 Code, Gemini CLI, or any other AI agent operating across this user's project
 roots. Examples below use Claude CLI flags as one concrete instance; substitute
 the equivalent headless mode for other agents.
@@ -392,12 +395,12 @@ clade-inbox-send <target-agent-id> "<message>"
 
 Include the task, subject, body, and artifacts needed to continue. If no live
 lease exists, accept CLADE inbox's durable queued delivery instead of forcing a
-wake through another channel. Do not use OpenCode `prompt_async`, Codex
+wake through another channel. Do not use Codex
 app-server JSON-RPC, raw backend APIs, zellij keystroke messaging, or hidden
 side channels as normal agent coordination paths; those are debugging/fallback
 primitives only, and the exception should be explicit in the task or report.
 
-Interactive project agents should use the standard launchers (`co`, `oc`,
+Interactive project agents should use the standard launchers (`co`, `pc`,
 `qc`, `ag`, `cx`) from the project root so project-scoped history, skill paths,
 and `CLADE_AGENT_ID` are set consistently. Do not launch raw CLIs for persistent
 agent sessions unless you are explicitly debugging the launcher itself.
@@ -440,7 +443,7 @@ slug. Use only for cross-project research / synthesis where the trace
 genuinely belongs in the parent.
 
 **Interactive attach by default.** Don't default to spawning interactive
-`co`/`oc`/`ag`/`qc` instances. Reserve for tasks that genuinely need
+`co`/`pc`/`ag`/`qc` instances. Reserve for tasks that genuinely need
 real-time human steering — and ask the user first.
 
 **`cd` in parent-agent shell tool calls without a subshell.** Use

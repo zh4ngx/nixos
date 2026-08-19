@@ -54,13 +54,22 @@ model id resolves, and the sops-rendered `auth.json`. There is a comment at the
 lensd PATH entry saying so. **Do not delete this module without repointing
 those two call sites first.**
 
-The deletion is gated on a question that is Andy's, not ours: whether clade-lens
-stays at all, or whether its traces get mined into a corpus and the live path
-retired. Sent to `clade-co` 2026-08-19 (redirected from `clade-cx`, which is
-offline); queued, no live connector. If the answer is "Lens stays", the repoint
-is a POST to `https://opencode.ai/zen/go/v1/chat/completions` with a bearer
-token and model `deepseek-v4-flash`, after which this module can go and the
-secret can render as a plain key file.
+**Answered by `clade-co` 2026-08-19** (`msg_1787133693313511768`): Lens stays.
+The keep-or-kill judgment still goes to Andy directly, but Lens is live, not
+vestigial — 1,505 lifetime calls, 1,357 digests, 45 distill failures (3.2%),
+2,558 blobs, 122MB, since 2026-06-05, bursty and tracking heavy build/test days.
+
+So the repoint is not wasted, just not urgent, and it is **deliberately not
+standalone**. `clade-co` already owes fixes in the same crate for two bugs
+main-co reported; whoever opens `crates/clade-capability` for those does the
+direct-HTTP repoint in the same pass and deletes `extract_opencode_text` /
+`clean_opencode_output` then. Opening that crate twice is the thing being
+avoided. Until that lands, `opencode.nix` stays exactly as stripped above.
+
+When the bundled pass happens, `clade-co` will ask for the secret as
+`/run/secrets/rendered/clade-lens-teacher-key` — the bare token, no JSON
+wrapper, unlike the current opencode-shaped `auth.json`. Do not pre-build it;
+they will request it.
 
 Pi consumes the OpenCode Go subscription independently and is unaffected.
 
@@ -102,11 +111,19 @@ better rather than a lateral trade.
 
 ## Fleet
 
-- **clade-lens digest inaccuracy.** A `nixos-rebuild build` run was summarized
-  as `nixos-rebuild switch` succeeding. The raw handle was accurate; the
-  distiller inflated the command into a more consequential one. Do not trust a
-  digest alone for anything destructive-sounding. Reported to `clade-co`
-  2026-08-19 (clade-cx offline); queued, no live connector.
+- **clade-lens digest inaccuracy — root-caused, structural.** A
+  `nixos-rebuild build` run was summarized as `nixos-rebuild switch` succeeding.
+  `clade-co` traced it: `render_distiller_input(raw)` in
+  `crates/clade-capability/src/lib.rs` passes the raw **output bytes only** —
+  the command never reaches the distiller, and `CallSubmitted` records a
+  `params_hash` rather than the command text, so nothing in the trace stores
+  what was run. The model was asked to summarize output blind and named a verb
+  anyway; `build` and `switch` produce near-identical output, so it guessed the
+  commoner one. Prompt tuning cannot fix this. Fix (bundled with the repoint
+  above): pass the command into the distiller input, which also turns the
+  recorded corpus from output→digest into command+output→digest. **Until that
+  ships, do not trust a digest alone for anything destructive-sounding** —
+  check the raw handle.
 - **clade-inbox `read` is destructive with no history subcommand.** Reported to
   clade-cx 2026-08-18; unresolved. A read whose output is lost takes the batch
   with it.

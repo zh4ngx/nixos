@@ -91,8 +91,7 @@
           "env": {
             "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
             "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-            "DISABLE_ERROR_REPORTING": "1",
-            "ANTHROPIC_BETA": "compact-2026-01-12"
+            "DISABLE_ERROR_REPORTING": "1"
           },
           "permissions": {
             "deny": [
@@ -111,13 +110,6 @@
             "type": "command",
             "command": "~/.claude/scripts/statusline.sh",
             "refreshInterval": 30
-          },
-          "context_management": {
-            "edits": [{
-              "type": "compact_20260112",
-              "trigger": {"type": "input_tokens", "value": 400000},
-              "instruction": "Preserve mathematical formulations, design decisions, code references, file paths, key open questions. Discard tool-result chatter and stale debugging output."
-            }]
           }
         }
       '';
